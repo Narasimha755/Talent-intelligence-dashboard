@@ -216,9 +216,9 @@ const recruitmentData = [
     "interview2": "Completed",
     "clientFeedback": "Offer Shortlisted",
     "presentCtcRaw": "",
-    "status": "Offer Shortlisted",
-    "offeredCtcRaw": "",
-    "doj": "",
+    "status": "Offered",
+    "offeredCtcRaw": "770000",
+    "doj": "01-11-2026",
     "onboard": "",
     "skillGroup": "CDM",
     "roleSelected": ""
@@ -296,7 +296,7 @@ const recruitmentData = [
     "interview2": "",
     "clientFeedback": "Int No Show",
     "presentCtcRaw": "",
-    "status": "",
+    "status": "rejected",
     "offeredCtcRaw": "",
     "doj": "",
     "onboard": "",
@@ -376,9 +376,9 @@ const recruitmentData = [
     "interview2": "Completed",
     "clientFeedback": "Offer Shortlisted",
     "presentCtcRaw": "",
-    "status": "Offer Shortlisted",
+    "status": "Offered",
     "offeredCtcRaw": "",
-    "doj": "",
+    "doj": "01-09-2026",
     "onboard": "",
     "skillGroup": "CDM",
     "roleSelected": ""
@@ -424,10 +424,10 @@ const recruitmentData = [
     "interview2": "Completed",
     "clientFeedback": "Offer Shortlisted",
     "presentCtcRaw": "",
-    "status": "Offer Shortlisted",
-    "offeredCtcRaw": "",
-    "doj": "",
-    "onboard": "",
+    "status": "Offered",
+    "offeredCtcRaw": "820000",
+    "doj": "01-10-2026",
+    "onboard": "YTO",
     "skillGroup": "CDM",
     "roleSelected": ""
   },
@@ -456,9 +456,9 @@ const recruitmentData = [
     "interview2": "Completed",
     "clientFeedback": "Offer Shortlisted",
     "presentCtcRaw": "",
-    "status": "Offer Shortlisted",
-    "offeredCtcRaw": "",
-    "doj": "",
+    "status": "Offered",
+    "offeredCtcRaw": "780000",
+    "doj": "01-11-2026",
     "onboard": "",
     "skillGroup": "CDM",
     "roleSelected": ""
@@ -472,9 +472,9 @@ const recruitmentData = [
     "interview2": "Completed",
     "clientFeedback": "Offer Shortlisted",
     "presentCtcRaw": "",
-    "status": "Offer Shortlisted",
-    "offeredCtcRaw": "",
-    "doj": "",
+    "status": "Offered",
+    "offeredCtcRaw": "780000",
+    "doj": "01-09-2026",
     "onboard": "",
     "skillGroup": "CDM",
     "roleSelected": ""
@@ -504,9 +504,9 @@ const recruitmentData = [
     "interview2": "Completed",
     "clientFeedback": "Offer Shortlisted",
     "presentCtcRaw": "",
-    "status": "Offer Shortlisted",
-    "offeredCtcRaw": "",
-    "doj": "",
+    "status": "Offered",
+    "offeredCtcRaw": "1200000",
+    "doj": "01-11-2026",
     "onboard": "",
     "skillGroup": "CDM",
     "roleSelected": ""
@@ -929,7 +929,7 @@ const recruitmentData = [
   },
   {
     "sno": 60,
-    "name": "Parmeshwar Madke",
+    "name": "Parmeshwar Madke,",
     "function": "CDM",
     "role": "Data Reviewer",
     "interviewDate": "",
@@ -961,7 +961,7 @@ const recruitmentData = [
   },
   {
     "sno": 62,
-    "name": "Gayatri Gireesh",
+    "name": "Gayatri Gireesh,",
     "function": "CDM",
     "role": "Data Reviewer",
     "interviewDate": "",
@@ -1052,8 +1052,8 @@ const recruitmentData = [
     "offeredCtcRaw": "",
     "doj": "",
     "onboard": "",
-    "skillGroup": "RAVE Programmer",
-    "roleSelected": ""
+    "skillGroup": "CDM",
+    "roleSelected": "RAVE Programmer"
   },
   {
     "sno": 68,
@@ -1068,12 +1068,12 @@ const recruitmentData = [
     "offeredCtcRaw": "",
     "doj": "",
     "onboard": "",
-    "skillGroup": "RAVE Programmer",
-    "roleSelected": ""
+    "skillGroup": "CDM",
+    "roleSelected": "RAVE Programmer"
   },
   {
     "sno": 69,
-    "name": "Ansari Aishabanu",
+    "name": "Ansari Aishabanu,",
     "function": "CDM",
     "role": "Vendor Data Manager",
     "interviewDate": "",
@@ -1089,7 +1089,7 @@ const recruitmentData = [
   },
   {
     "sno": 70,
-    "name": "Aakansha Murekar",
+    "name": "Aakansha Murekar,",
     "function": "CDM",
     "role": "Lab Data Manager",
     "interviewDate": "",
@@ -1121,7 +1121,7 @@ const recruitmentData = [
   },
   {
     "sno": 72,
-    "name": "Shahin Jawle",
+    "name": "Shahin Jawle,",
     "function": "CDM",
     "role": "Data Reviewer",
     "interviewDate": "",
@@ -1137,7 +1137,7 @@ const recruitmentData = [
   },
   {
     "sno": 73,
-    "name": "Nikita Awate",
+    "name": "Nikita Awate,",
     "function": "CDM",
     "role": "Data Reviewer",
     "interviewDate": "",
@@ -1185,7 +1185,7 @@ const recruitmentData = [
   },
   {
     "sno": 76,
-    "name": "Greeshma Jadhav",
+    "name": "Greeshma Jadhav,",
     "function": "CDM",
     "role": "Vendor Data Manager",
     "interviewDate": "",
@@ -1361,7 +1361,7 @@ const recruitmentData = [
   },
   {
     "sno": 87,
-    "name": "Naga Vamsi",
+    "name": "Naga Vamsi,",
     "function": "CDM",
     "role": "Lab Data Manager",
     "interviewDate": "",
@@ -1393,7 +1393,7 @@ const recruitmentData = [
   },
   {
     "sno": 89,
-    "name": "Alka Devvanshi",
+    "name": "Alka Devvanshi,",
     "function": "CDM",
     "role": "Data Reviewer",
     "interviewDate": "",
@@ -1409,7 +1409,7 @@ const recruitmentData = [
   },
   {
     "sno": 90,
-    "name": "Prajakta Kashalikar",
+    "name": "Prajakta Kashalikar,",
     "function": "CDM",
     "role": "Data Reviewer",
     "interviewDate": "",
@@ -1425,7 +1425,7 @@ const recruitmentData = [
   },
   {
     "sno": 91,
-    "name": "M Rangaswamy",
+    "name": "M Rangaswamy,",
     "function": "CDM",
     "role": "Lab Data Manager",
     "interviewDate": "",
@@ -1441,7 +1441,7 @@ const recruitmentData = [
   },
   {
     "sno": 92,
-    "name": "Sauradeep Mitra",
+    "name": "Sauradeep Mitra,",
     "function": "CDM",
     "role": "Lab Data Manager",
     "interviewDate": "",
@@ -1473,7 +1473,7 @@ const recruitmentData = [
   },
   {
     "sno": 94,
-    "name": "Nupur Shimpi",
+    "name": "Nupur Shimpi,",
     "function": "CDM",
     "role": "UAT Tester",
     "interviewDate": "",
@@ -1601,7 +1601,7 @@ const recruitmentData = [
   },
   {
     "sno": 102,
-    "name": "Rishil Shah",
+    "name": "Rishil Shah,",
     "function": "CDM",
     "role": "External Data Manager",
     "interviewDate": "",
@@ -1649,7 +1649,7 @@ const recruitmentData = [
   },
   {
     "sno": 105,
-    "name": "Megha Shasrei",
+    "name": "Megha Shasrei,",
     "function": "CDM",
     "role": "External Data Manager",
     "interviewDate": "",
@@ -1921,7 +1921,7 @@ const recruitmentData = [
   },
   {
     "sno": 122,
-    "name": "Nourin  Fakruddin Mullannava",
+    "name": "Nourin Fakruddin Mullannava",
     "function": "CDM",
     "role": "Report Programmer",
     "interviewDate": "11-08-2026",
