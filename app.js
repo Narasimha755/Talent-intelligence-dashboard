@@ -91,8 +91,24 @@ function initDashboardApp() {
     const d = {};
     if (rawObj && typeof rawObj === 'object') {
       Object.keys(rawObj).forEach(k => {
-        const cleanKey = k.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
-        d[cleanKey] = (rawObj[k] !== undefined && rawObj[k] !== null) ? String(rawObj[k]).trim() : '';
+        if (!k) return;
+        const cleanKey = String(k).trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+        let val = rawObj[k];
+        if (val instanceof Date) {
+          try {
+            const y = val.getFullYear();
+            const m = String(val.getMonth() + 1).padStart(2, '0');
+            const day = String(val.getDate()).padStart(2, '0');
+            val = `${day}-${m}-${y}`;
+          } catch(e) {
+            val = String(val);
+          }
+        } else if (val !== undefined && val !== null) {
+          val = String(val).trim();
+        } else {
+          val = '';
+        }
+        d[cleanKey] = val;
       });
     }
 
@@ -100,10 +116,10 @@ function initDashboardApp() {
       for (const alias of aliases) {
         const key = alias.toLowerCase().replace(/[^a-z0-9]/g, '');
         if (d[key] !== undefined && d[key] !== '') {
-          return d[key];
+          return String(d[key]).trim();
         }
       }
-      return defaultVal;
+      return String(defaultVal).trim();
     }
 
     let role = getVal(['role', 'specialistrole', 'specialization', 'position', 'stream', 'jobtitle', 'title'], 'CDM Specialist');
