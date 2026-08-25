@@ -7874,30 +7874,49 @@ function initDashboardApp() {
   ];
 
   /* ── Data Normalization Helper ── */
-  function normalizeRecord(d, idx) {
-    let role = (d.role || d.Role || d['Specialist Role'] || '').trim();
+  function normalizeRecord(rawObj, idx) {
+    const d = {};
+    if (rawObj && typeof rawObj === 'object') {
+      Object.keys(rawObj).forEach(k => {
+        const cleanKey = k.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+        d[cleanKey] = (rawObj[k] !== undefined && rawObj[k] !== null) ? String(rawObj[k]).trim() : '';
+      });
+    }
+
+    function getVal(aliases, defaultVal = '') {
+      for (const alias of aliases) {
+        const key = alias.toLowerCase().replace(/[^a-z0-9]/g, '');
+        if (d[key] !== undefined && d[key] !== '') {
+          return d[key];
+        }
+      }
+      return defaultVal;
+    }
+
+    let role = getVal(['role', 'specialistrole', 'specialization', 'position', 'stream', 'jobtitle', 'title'], 'CDM Specialist');
     if (/^rave programmer$/i.test(role)) role = 'RAVE Programmer';
-    if (!role) role = 'CDM Specialist';
 
-    let name = (d.name || d.Name || d['Candidate Name'] || `Candidate ${idx + 1}`).trim();
-    let fn = (d.function || d.Function || d['Functional Domain'] || 'CDM').trim();
-    let l1Date = (d.interviewDate || d['Interview Date'] || d['L1 Date'] || d['Round 1'] || '').trim();
-    let l2 = (d.interview2 || d['Interview 2'] || d['Round 2'] || d['L2 Round 2'] || '').trim();
-    let fb = (d.clientFeedback || d['Client Feedback'] || d.Feedback || '').trim();
-    let st = (d.status || d.Status || fb || 'Pipeline').trim();
-    let pCtc = (d.presentCtcRaw || d['Present CTC'] || d.presentCtc || '').trim();
-    let oCtc = (d.offeredCtcRaw || d['Offered CTC'] || d.offeredCtc || '').trim();
-    let doj = (d.doj || d.DOJ || d['Date of Joining'] || '').trim();
-    let ob = (d.onboard || d.Onboard || d.Onboarding || '').trim();
-    let skill = (d.skillGroup || d['Skill Group'] || 'CDM').trim();
+    let name = getVal(['name', 'candidatename', 'candidate', 'person', 'fullname'], `Candidate ${idx + 1}`);
+    let fn = getVal(['function', 'functionaldomain', 'domain', 'dept', 'department'], 'CDM');
+    let l1Date = getVal(['interviewdate', 'l1date', 'l1interviewdate', 'round1', 'r1', 'date', 'interview1'], '');
+    let l2 = getVal(['interview2', 'l2round2', 'l2date', 'round2', 'r2', 'interview2date'], '');
+    let fb = getVal(['clientfeedback', 'feedback', 'clientstatus', 'remarks', 'clientfeedbackstatus'], '');
+    let st = getVal(['status', 'candidatestatus', 'state', 'finalstatus'], fb || 'Pipeline');
+    let pCtc = getVal(['presentctcraw', 'presentctc', 'currentctc', 'presentsalary', 'existingctc', 'currentctcraw'], '');
+    let oCtc = getVal(['offeredctcraw', 'offeredctc', 'offeredctcnr', 'approvedctc', 'offeredsalary', 'finalctc'], '');
+    let doj = getVal(['doj', 'dateofjoining', 'joiningdate', 'dojdate'], '');
+    let ob = getVal(['onboard', 'onboarding', 'onboardingstatus', 'joined'], '');
+    let skill = getVal(['skillgroup', 'skill', 'primaryskill', 'skills'], 'CDM');
 
-    let city = (d.currentLocation || d.city || d.City || d.Location || 'Bangalore Hub').trim();
-    let notice = (d.noticePeriod || d.Notice || d['Notice Period'] || '30 Days Notice').trim();
-    let exp = d.experienceYears || d.Exp || d.Experience || '6.0';
+    let city = getVal(['currentlocation', 'city', 'location', 'locationhub', 'basecity'], 'Bangalore Hub');
+    let notice = getVal(['noticeperiod', 'notice', 'availability', 'joiningtime'], '30 Days Notice');
+    let exp = getVal(['experienceyears', 'exp', 'experience', 'totalexp', 'yrsofexp'], '6.0');
+
+    let snoVal = getVal(['sno', 'snumber', 'id', 'candidateid'], idx + 1);
 
     return {
-      sno: d.sno || d['S.No'] || d['SNo'] || (idx + 1),
-      id: d.id || `CDM-${String(idx + 1).padStart(3, '0')}`,
+      sno: parseInt(snoVal, 10) || (idx + 1),
+      id: getVal(['id'], `CDM-${String(idx + 1).padStart(3, '0')}`),
       name,
       function: fn,
       role,
