@@ -1871,8 +1871,9 @@ function initDashboardApp() {
     const delimiter = isTab ? '\t' : isCsv ? ',' : '\t';
 
     const results = [];
-    const firstCols = lines[0].split(delimiter).map(c => c.trim().toLowerCase());
-    const hasHeader = firstCols.some(c => c.includes('name') || c.includes('role') || c.includes('candidate'));
+    const rawHeaders = lines[0].split(delimiter).map(c => c.replace(/^["']|["']$/g, '').trim());
+    const firstColsLower = rawHeaders.map(c => c.toLowerCase());
+    const hasHeader = firstColsLower.some(c => c.includes('name') || c.includes('role') || c.includes('candidate'));
     const startIdx = hasHeader ? 1 : 0;
 
     for (let i = startIdx; i < lines.length; i++) {
@@ -1880,21 +1881,29 @@ function initDashboardApp() {
       if (!line) continue;
       const parts = line.split(delimiter).map(p => p.replace(/^["']|["']$/g, '').trim());
       if (parts.length >= 2) {
-        results.push({
-          sno: results.length + 1,
-          name: parts[1] || parts[0],
-          function: parts[2] || 'CDM',
-          role: parts[3] || parts[2] || 'CDM Specialist',
-          interviewDate: parts[4] || '',
-          interview2: parts[5] || '',
-          clientFeedback: parts[6] || '',
-          status: parts[7] || parts[6] || 'Pipeline',
-          presentCtcRaw: parts[8] || '',
-          offeredCtcRaw: parts[9] || '',
-          doj: parts[10] || '',
-          onboard: parts[11] || '',
-          skillGroup: parts[12] || 'CDM'
-        });
+        if (hasHeader) {
+          const rowObj = {};
+          rawHeaders.forEach((h, colIdx) => {
+            if (h) rowObj[h] = parts[colIdx] !== undefined ? parts[colIdx] : '';
+          });
+          results.push(rowObj);
+        } else {
+          results.push({
+            sno: results.length + 1,
+            name: parts[1] || parts[0],
+            function: parts[2] || 'CDM',
+            role: parts[3] || parts[2] || 'CDM Specialist',
+            interviewDate: parts[4] || '',
+            interview2: parts[5] || '',
+            clientFeedback: parts[6] || '',
+            status: parts[7] || parts[6] || 'Pipeline',
+            presentCtcRaw: parts[8] || '',
+            offeredCtcRaw: parts[9] || '',
+            doj: parts[10] || '',
+            onboard: parts[11] || '',
+            skillGroup: parts[12] || 'CDM'
+          });
+        }
       }
     }
     return results;
