@@ -1681,11 +1681,17 @@ function initDashboardApp() {
 
   if (importBtn) {
     importBtn.addEventListener('click', () => {
-      if (importModal) importModal.classList.add('open');
+      if (importModal) {
+        importModal.style.display = 'flex';
+        setTimeout(() => importModal.classList.add('open'), 10);
+      }
     });
   }
   function closeImportModal() {
-    if (importModal) importModal.classList.remove('open');
+    if (importModal) {
+      importModal.classList.remove('open');
+      setTimeout(() => { importModal.style.display = 'none'; }, 180);
+    }
     if (excelFileInput) excelFileInput.value = '';
     if (pasteDataInput) pasteDataInput.value = '';
     uploadedDataset = null;
@@ -1797,7 +1803,9 @@ function initDashboardApp() {
         return;
       }
 
-      const mode = document.querySelector('input[name="importMode"]:checked').value;
+      const radioChecked = document.querySelector('input[name="importMode"]:checked');
+      const mode = radioChecked ? radioChecked.value : 'append';
+
       if (mode === 'replace') {
         masterData = newRecords;
       } else {
@@ -1806,13 +1814,20 @@ function initDashboardApp() {
         masterData = [...masterData, ...appended];
       }
 
-      // Rebuild All Selectors & Re-calculate everything dynamically!
+      window.masterData = masterData;
+
+      // Rebuild All Selectors, Filters, and Rerender All Dashboard Charts
       rebuildRoleSelectors();
       applyGlobalFilters();
+      if (typeof window.renderAllCharts === 'function') {
+        window.renderAllCharts();
+      }
+
       closeImportModal();
 
-      // Show toast / notification
-      alert(`✅ Success! Dashboard updated. Total active pool is now ${masterData.length} candidates.`);
+      setTimeout(() => {
+        alert(`✅ Success! Dashboard updated. Total active candidate pool is now ${masterData.length} candidates.`);
+      }, 220);
     });
   }
 
