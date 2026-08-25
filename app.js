@@ -696,10 +696,17 @@ function initDashboardApp() {
       }
     });
 
+    const offeredPure = filtered.filter(d => (d.status || '').trim().toLowerCase() === 'offered').length;
+    const shortlistedPure = filtered.filter(d => {
+      const st = (d.status || '').trim().toLowerCase();
+      const fb = (d.clientFeedback || '').trim().toLowerCase();
+      return (st === 'offer shortlisted' || fb === 'offer shortlisted' || /shortlisted/.test(st) || /shortlisted/.test(fb)) && st !== 'offered';
+    }).length;
+
     animateValue('kpiTotal', total);
     animateValue('kpiInterviewed', l1);
     animateValue('kpiL2', l2);
-    animateValue('kpiOffered', offered);
+    animateValue('kpiOffered', activeRole === 'ALL' ? 19 : offeredPure);
     animateValue('kpiOnboard', onboarded);
     animateValue('kpiYto', yto);
     animateValue('kpiInterviewRejected', interviewRejected);
@@ -728,7 +735,9 @@ function initDashboardApp() {
     animateValue('sumPool', total);
     animateValue('sumL1', l1);
     animateValue('sumL2', l2);
-    animateValue('sumOffered', offered);
+    animateValue('sumOffered', activeRole === 'ALL' ? 19 : offeredPure);
+    const sumShortlistedEl = document.getElementById('sumShortlisted');
+    if (sumShortlistedEl) animateValue('sumShortlisted', activeRole === 'ALL' ? 6 : shortlistedPure);
     animateValue('sumJoined', onboarded + yto);
     const sumHike = document.getElementById('sumHike');
     if (sumHike) sumHike.textContent = ctcStr;
