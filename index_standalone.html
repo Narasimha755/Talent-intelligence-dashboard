@@ -4706,12 +4706,12 @@ html {
 
       <div class="import-options-row">
         <label class="import-mode-label">
-          <input type="radio" name="importMode" value="append" checked>
-          <span><strong>Append New Records</strong> (e.g. Add 10 new candidates to current 122)</span>
+          <input type="radio" name="importMode" value="replace" checked>
+          <span><strong>Replace Entire Dataset</strong> (Overwrites existing data with uploaded file)</span>
         </label>
         <label class="import-mode-label">
-          <input type="radio" name="importMode" value="replace">
-          <span><strong>Replace Entire Dataset</strong> (Overwrites existing data with uploaded file)</span>
+          <input type="radio" name="importMode" value="append">
+          <span><strong>Append New Records</strong> (e.g. Add new candidates to current dataset)</span>
         </label>
       </div>
 
@@ -9383,7 +9383,23 @@ function initDashboardApp() {
       dashCharts.trend = null;
     }
 
-    const runwaysHtml = ROLE_TIMELINES.map(item => {
+    const distinctRoles = [...new Set(masterData.map(d => d.role).filter(Boolean))];
+    const timelinesToRender = (distinctRoles.length > 0)
+      ? distinctRoles.map(r => {
+          const existing = ROLE_TIMELINES.find(t => t.role.toLowerCase() === r.toLowerCase());
+          if (existing) return existing;
+          const isOverrunRole = ['RAVE Programmer', 'Lab Data Manager', 'Report Programmer'].includes(r);
+          return {
+            role: r,
+            phase: isOverrunRole ? '30-Sep Extended' : '15-Sep Compliant',
+            candidates: masterData.filter(d => d.role === r).length,
+            isOverrun: isOverrunRole,
+            overrunDays: isOverrunRole ? 15 : 0
+          };
+        })
+      : ROLE_TIMELINES;
+
+    const runwaysHtml = timelinesToRender.map(item => {
       const color = ROLE_COLORS[item.role] || PALETTE.amethyst;
       const poolCount = masterData.filter(d => d.role === item.role).length || item.candidates;
       const target = ROLE_TARGETS[item.role] || 2;
@@ -9529,22 +9545,83 @@ function initDashboardApp() {
     });
   }
 
+  function parseWorkbookToObjects(workbook) {
+    let bestRows = [];
+    if (!workbook || !workbook.SheetNames) return [];
+
+    for (const sheetName of workbook.SheetNames) {
+      const worksheet = workbook.Sheets[sheetName];
+      if (!worksheet) continue;
+
+      let rawRows = [];
+      try {
+        rawRows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+      } catch (err) {
+        console.warn('Error reading 2D array from sheet:', sheetName, err);
+      }
+
+      let candidateObjects = [];
+      if (rawRows && rawRows.length > 0) {
+        let headerIdx = -1;
+        for (let r = 0; r < Math.min(rawRows.length, 15); r++) {
+          const row = rawRows[r];
+          if (!Array.isArray(row)) continue;
+          const joined = row.map(cell => String(cell || '').toLowerCase()).join(' ');
+          if (
+            (joined.includes('name') || joined.includes('candidate') || joined.includes('person')) &&
+            (joined.includes('role') || joined.includes('status') || joined.includes('cdm') || joined.includes('interview') || joined.includes('feedback'))
+          ) {
+            headerIdx = r;
+            break;
+          }
+        }
+
+        if (headerIdx !== -1) {
+          const headers = rawRows[headerIdx].map(h => String(h || '').trim());
+          for (let r = headerIdx + 1; r < rawRows.length; r++) {
+            const row = rawRows[r];
+            if (!Array.isArray(row) || row.every(c => String(c || '').trim() === '')) continue;
+            const obj = {};
+            headers.forEach((h, colIdx) => {
+              if (h) obj[h] = row[colIdx] !== undefined ? row[colIdx] : '';
+            });
+            candidateObjects.push(obj);
+          }
+        }
+      }
+
+      if (candidateObjects.length === 0) {
+        try {
+          candidateObjects = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+        } catch (e) {
+          console.warn('Standard sheet_to_json fallback error:', e);
+        }
+      }
+
+      if (candidateObjects.length > bestRows.length) {
+        bestRows = candidateObjects;
+      }
+    }
+
+    return bestRows;
+  }
+
   function handleFileRead(file) {
     const reader = new FileReader();
     reader.onload = e => {
       try {
         const data = new Uint8Array(e.target.result);
         const workbook = XLSX.read(data, { type: 'array' });
-        const firstSheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[firstSheetName];
-        const json = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+        const json = parseWorkbookToObjects(workbook);
 
         if (json && json.length > 0) {
           uploadedDataset = json;
           const hint = fileDropzone.querySelector('.dropzone-hint');
-          if (hint) hint.innerHTML = `<strong style="color:var(--clr-emerald)">✓ Loaded ${json.length} candidate rows from ${file.name}</strong>`;
+          if (hint) {
+            hint.innerHTML = `<strong style="color:var(--clr-emerald)">✓ Loaded ${json.length} candidate rows from ${file.name}</strong><br/><small style="color:var(--text-muted);font-size:0.75rem;">Click 'Apply & Refresh Dashboard' below to reflect immediately</small>`;
+          }
         } else {
-          alert('Could not detect candidate rows in file. Please ensure columns exist.');
+          alert('Could not detect candidate rows in file. Please ensure columns exist (e.g. Name, Role, Status).');
         }
       } catch (err) {
         console.error(err);
@@ -9610,7 +9687,7 @@ function initDashboardApp() {
       }
 
       const radioChecked = document.querySelector('input[name="importMode"]:checked');
-      const mode = radioChecked ? radioChecked.value : 'append';
+      const mode = radioChecked ? radioChecked.value : 'replace';
 
       if (mode === 'replace') {
         masterData = newRecords;
@@ -9621,6 +9698,14 @@ function initDashboardApp() {
       }
 
       window.masterData = masterData;
+
+      // Reset all role filters to 'ALL' and clear search
+      activeRole = 'ALL';
+      activeSearch = '';
+      cardRoleOverrides = {};
+
+      const searchInput = document.getElementById('searchCandidateInput');
+      if (searchInput) searchInput.value = '';
 
       // Rebuild All Selectors, Filters, and Rerender All Dashboard Charts
       rebuildRoleSelectors();
