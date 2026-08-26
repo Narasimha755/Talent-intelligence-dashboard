@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const dir = 'C:/Users/lucky/.gemini/antigravity/scratch/cdm_recruitment_dashboard';
-const html = fs.readFileSync(path.join(dir, 'index.html'), 'utf8');
+const html = fs.readFileSync(path.join(dir, 'index_source.html'), 'utf8');
 const css = fs.readFileSync(path.join(dir, 'styles.css'), 'utf8');
 const data = fs.readFileSync(path.join(dir, 'data.js'), 'utf8');
 const app = fs.readFileSync(path.join(dir, 'app.js'), 'utf8');

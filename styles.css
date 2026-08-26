@@ -4247,3 +4247,326 @@ html {
 #offerBriefModal .sla-modal-window {
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.85);
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   ADVANCED EXECUTIVE INTELLIGENCE SUITE V3 & ZERO-LAG THEME FADE
+══════════════════════════════════════════════════════════════════ */
+
+/* ── Zero-Lag Theme Cross-Fade Transition Layer ── */
+.theme-fade-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-app);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 999999;
+  transition: opacity 0.24s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.theme-fade-overlay.fading {
+  opacity: 0.88;
+  pointer-events: all;
+}
+
+/* ── 1. AI Audio Briefing Studio V3 ── */
+.audio-studio-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.audio-waveform-canvas {
+  width: 100%;
+  height: 80px;
+  border-radius: var(--radius-md);
+  background: rgba(0, 0, 0, 0.32);
+  border: 1px solid var(--border-subtle);
+  display: block;
+}
+.focus-modes-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.focus-mode-pill {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border-light);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.16s ease;
+}
+.focus-mode-pill:hover {
+  background: rgba(37, 99, 235, 0.12);
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+.focus-mode-pill.active {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  border-color: #3b82f6;
+  box-shadow: 0 0 14px rgba(37, 99, 235, 0.45);
+}
+.audio-controls-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.audio-play-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+}
+.audio-play-btn:hover {
+  transform: scale(1.06);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.6);
+}
+.audio-scrubber-container {
+  flex: 1;
+  min-width: 140px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.audio-scrubber {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  accent-color: #3b82f6;
+  cursor: pointer;
+}
+.audio-time-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.audio-speed-btn-group {
+  display: flex;
+  gap: 4px;
+}
+.speed-btn {
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-light);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 0.70rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.14s ease;
+}
+.speed-btn.active, .speed-btn:hover {
+  background: #2563eb;
+  color: #fff;
+  border-color: #2563eb;
+}
+.teleprompter-box {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  max-height: 180px;
+  overflow-y: auto;
+  font-size: 0.84rem;
+  line-height: 1.65;
+  color: var(--text-primary);
+}
+.teleprompter-sentence {
+  transition: background 0.2s ease, color 0.2s ease;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+.teleprompter-sentence.active {
+  background: rgba(37, 99, 235, 0.25);
+  color: #60a5fa;
+  font-weight: 700;
+}
+
+/* ── 2. SLA Radar & Turnaround Velocity V3 ── */
+.sla-velocity-grid {
+  display: grid;
+  grid-template-columns: 290px 1fr;
+  gap: 16px;
+}
+.velocity-speedometer-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+}
+.tat-stages-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+.tat-stage-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: transform 0.16s ease, border-color 0.16s ease;
+}
+.tat-stage-card:hover {
+  transform: translateY(-2px);
+  border-color: #3b82f6;
+}
+
+/* ── 3. Compensation & TA Agency ROI Optimizer V3 ── */
+.roi-optimizer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.roi-slider-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.roi-slider-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.roi-slider-group label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.roi-slider {
+  width: 100%;
+  accent-color: #059669;
+  cursor: pointer;
+}
+.savings-callout-card {
+  background: linear-gradient(135deg, rgba(5, 150, 105, 0.14), rgba(16, 185, 129, 0.04));
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* ── 4. 360° Candidate Dossier Inspector & Smart Offer Memo V3 ── */
+.dossier-deepdive-grid {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 16px;
+}
+.dossier-radar-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.offer-memo-preview {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  font-size: 0.80rem;
+  line-height: 1.6;
+  color: var(--text-primary);
+}
+
+/* ── 5. AI Talent Matcher & Comparison Grid V3 ── */
+.talent-matcher-toolbar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+}
+.matcher-search-box {
+  flex: 1;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.78rem;
+  color: var(--text-primary);
+  outline: none;
+}
+.compare-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+}
+.compare-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: transform 0.16s ease, border-color 0.16s ease;
+}
+.compare-card:hover {
+  transform: translateY(-2px);
+  border-color: #3b82f6;
+}
+
+/* ── 6. Universal Responsive Overrides ── */
+@media (max-width: 1100px) {
+  .sla-velocity-grid, .roi-optimizer-grid, .dossier-deepdive-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 768px) {
+  .executive-tools-bar {
+    overflow-x: auto;
+    padding: 6px;
+  }
+  .audio-controls-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

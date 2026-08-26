@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CDM Talent Intelligence Executive Command Center</title>
+  <meta name="description" content="Clinical Data Management Talent Intelligence & Decision Command Center — Real-time Funnel Analytics, Candidate Directory Dossiers, and Live Excel Dataset Integration.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<!-- Ambient Zero-Lag Theme Cross-Fade Transition Layer -->
+<div class="theme-fade-overlay" id="themeFadeOverlay"></div>
+<!-- Ambient 240Hz Interactive Particle Grid Background Canvas -->
+<canvas id="bgParticleCanvas"></canvas>
+
+<div class="app-shell">
+
+  <!-- ── 1. EXECUTIVE COMMAND TOPBAR WITH VIEW SWITCHER ─────── -->
+  <header class="topbar">
+    <div class="brand-group">
+      <div class="brand-logo"><i data-lucide="activity"></i></div>
+      <div>
+        <h1 class="brand-title">CDM Talent Intelligence</h1>
+        <p class="brand-desc">Clinical Data Management Executive Suite · <span id="brandTotalRecordCount">122</span> Verified Records</p>
+      </div>
+    </div>
+
+    <!-- View Switcher Tabs (2 Clean Dedicated Tabs) -->
+    <nav class="view-nav-group" id="viewNavGroup">
+      <button class="view-nav-btn active" data-view="analytics" title="6-Graph Analytics Matrix">
+        <i data-lucide="layout-grid"></i>
+        <span>Analytics Matrix</span>
+      </button>
+      <button class="view-nav-btn" data-view="directory" title="Interactive Candidate Directory & Dossiers">
+        <i data-lucide="users"></i>
+        <span>Candidate Directory</span>
+        <span class="nav-count-badge" id="navDirCount">122</span>
+      </button>
+    </nav>
+
+    <div class="topbar-actions">
+
+      <div class="status-indicator">
+        <span class="pulse-dot"></span>
+        <span class="status-text"><strong id="totalHeaderCount">122</strong> Candidates</span>
+      </div>
+      <button id="importExcelBtn" class="theme-btn highlight-btn" title="Import new candidates from Excel/CSV file or live update dataset">
+        <i data-lucide="file-up"></i>
+        <span>Import / Update</span>
+      </button>
+      <button id="printBriefBtn" class="theme-btn" title="Export Dashboard as PDF / Print Document">
+        <i data-lucide="file-down"></i>
+        <span>Export PDF</span>
+      </button>
+      <button id="themeToggleBtn" class="theme-btn" title="Toggle Light/Dark Theme">
+        <i data-lucide="moon"></i>
+        <span>Theme</span>
+      </button>
+      <button id="exportCsvBtn" class="primary-btn" title="Export Current Dataset to CSV">
+        <i data-lucide="download"></i>
+        <span>Export CSV</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ── EXECUTIVE AT-A-GLANCE SUMMARY BANNER ──────────────── -->
+  <div class="executive-summary-banner" id="execSummaryBanner">
+    <div class="summary-pill"><i data-lucide="sparkles"></i> <strong>Recruitment Pipeline Intelligence:</strong></div>
+    <div class="summary-stat-item"><span class="stat-dot dot-indigo"></span> Total Sourced: <strong id="sumPool">122</strong></div>
+    <div class="summary-stat-item"><span class="stat-dot dot-cyan"></span> L1 Technical: <strong id="sumL1">51</strong></div>
+    <div class="summary-stat-item"><span class="stat-dot dot-purple"></span> L2 Client: <strong id="sumL2">29</strong></div>
+    <div class="summary-stat-item"><span class="stat-dot dot-emerald"></span> Offers Released: <strong id="sumOffered">20</strong></div>
+    <div class="summary-stat-item"><span class="stat-dot dot-cyan"></span> Offer Shortlisted: <strong id="sumShortlisted">5</strong></div>
+    <div class="summary-stat-item"><span class="stat-dot dot-teal"></span> Onboarded/YTO: <strong id="sumJoined">18</strong></div>
+    <div class="summary-stat-item" id="bannerCtcItem" style="cursor:pointer;" title="Click for Executive Compensation & Budget Analytics"><span class="stat-dot dot-gold"></span> Avg Offered CTC: <strong id="sumHike">₹12.16 LPA</strong> <i data-lucide="external-link" style="width:10px;height:10px;display:inline-block;vertical-align:middle;margin-left:2px;opacity:0.7;"></i></div>
+  </div>
+
+  <!-- ── EXECUTIVE ADVANCED TOOLBAR SUITE (7 FEATURE BUTTONS) ── -->
+  <div class="executive-tools-bar" id="execToolsBar">
+    <div class="exec-tools-group">
+      <span class="exec-tools-label"><i data-lucide="sparkles"></i> <strong>Executive Suite:</strong></span>
+      
+      <button class="exec-tool-btn audio-btn" id="btnVoiceBriefing" title="Play AI Executive Audio Summary Briefing">
+        <i data-lucide="volume-2"></i>
+        <span>AI Audio Briefing</span>
+        <span class="audio-wave-pulse" id="audioWavePulse" style="display:none;"></span>
+      </button>
+
+      <button class="exec-tool-btn sla-btn" id="btnSlaRadar" title="View Candidate Interview Speed & Turnaround SLA Velocity">
+        <i data-lucide="zap"></i>
+        <span>SLA Radar Velocity</span>
+      </button>
+
+      <button class="exec-tool-btn geo-btn" id="btnTalentTelemetry" title="View Consolidated Talent Market Telemetry &amp; Hubs Matrix (Geo, Notice &amp; Skills)" style="background:rgba(14,165,233,0.12);color:#0ea5e9;border:1px solid rgba(14,165,233,0.28);">
+        <i data-lucide="bar-chart-3"></i>
+        <span>Talent Telemetry &amp; Hubs</span>
+      </button>
+
+      <button class="exec-tool-btn budget-btn" id="btnBudgetOptimizer" title="View Compensation &amp; TA Budget ROI Optimizer (Agency Savings &amp; Buyout ROI)" style="background:rgba(217,119,6,0.12);color:#d97706;border:1px solid rgba(217,119,6,0.28);">
+        <i data-lucide="wallet"></i>
+        <span>Budget &amp; ROI Optimizer</span>
+      </button>
+
+      <button class="exec-tool-btn dossier-btn" id="btnCandidateDossier" title="View Executive Candidate Dossier &amp; Profile Inspector" style="background:rgba(99,102,241,0.12);color:#6366f1;border:1px solid rgba(99,102,241,0.28);">
+        <i data-lucide="user-check"></i>
+        <span>Candidate Dossier Inspector</span>
+      </button>
+
+      <button class="exec-tool-btn forecast-btn" id="btnTimeToFill" title="View Predictive Time-to-Fill &amp; Role Closure Forecast">
+        <i data-lucide="trending-up"></i>
+        <span>Time-to-Fill Forecast</span>
+      </button>
+
+      <button class="exec-tool-btn matcher-btn" id="btnAiRecommender" title="AI Talent Match &amp; Shortlist Recommender">
+        <i data-lucide="sparkles"></i>
+        <span>AI Talent Matcher</span>
+      </button>
+
+      <button class="exec-tool-btn risk-btn" id="btnRiskAnalyzer" title="View AI Offer Risk &amp; Campaign Bottleneck Intelligence Center" style="background:rgba(239,68,68,0.12);color:#ef4444;border:1px solid rgba(239,68,68,0.28);">
+        <i data-lucide="shield-alert"></i>
+        <span>AI Risk &amp; Bottleneck Center</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── VIEW 1: EXECUTIVE ANALYTICS MATRIX ────────────────── -->
+  <div id="viewAnalytics" class="app-view-container active">
+
+    <!-- 3. HIGH-DENSITY METRIC SCORECARDS (9 TILES WITH L1 & L2 INTERVIEW STAGES) -->
+    <section class="kpi-grid">
+      <div class="kpi-box indigo" data-tilt>
+        <div class="kpi-icon"><i data-lucide="users"></i></div>
+        <div class="kpi-data">
+          <span class="kpi-number" id="kpiTotal">122</span>
+          <span class="kpi-name">Total Pool</span>
+        </div>
+      </div>
+      <div class="kpi-box cyan" data-tilt>
+        <div class="kpi-icon"><i data-lucide="calendar-check"></i></div>
+        <div class="kpi-data">
+          <span class="kpi-number" id="kpiInterviewed">51</span>
+          <span class="kpi-name">L1 Interviewed</span>
+        </div>
+      </div>
+      <div class="kpi-box purple" data-tilt>
+        <div class="kpi-icon"><i data-lucide="badge-check"></i></div>
+        <div class="kpi-data">
+          <span class="kpi-number" id="kpiL2">29</span>
+          <span class="kpi-name">L2 Completed</span>
+        </div>
+      </div>
+      <div class="kpi-box emerald" data-tilt>
+        <div class="kpi-icon"><i data-lucide="check-circle-2"></i></div>
+        <div class="kpi-data">
+          <span class="kpi-number" id="kpiOffered">20</span>
+          <span class="kpi-name">Offered (Released)</span>
+        </div>
+      </div>
+      <div class="kpi-box teal" data-tilt>
+        <div class="kpi-icon"><i data-lucide="user-check"></i></div>
+        <div class="kpi-data">
+          <span class="kpi-number" id="kpiOnboard">4</span>
+          <span class="kpi-name">Onboarded</span>
+        </div>
+      </div>
+      <div class="kpi-box amber" data-tilt>
+        <div class="kpi-icon"><i data-lucide="clock"></i></div>
+        <div class="kpi-data">
+          <span class="kpi-number" id="kpiYto">14</span>
+          <span class="kpi-name">Yet to Onboard</span>
+        </div>
+      </div>
+      <div class="kpi-box rose" data-tilt>
+        <div class="kpi-icon"><i data-lucide="x-circle"></i></div>
+        <div class="kpi-data">
+          <span class="kpi-number" id="kpiInterviewRejected">16</span>
+          <span class="kpi-name">Interview Rejection</span>
+        </div>
+      </div>
+      <div class="kpi-box terracotta" data-tilt>
+        <div class="kpi-icon"><i data-lucide="user-x"></i></div>
+        <div class="kpi-data">
+          <span class="kpi-number" id="kpiCandidateRejected">5</span>
+          <span class="kpi-name">Candidate Rejection</span>
+        </div>
+      </div>
+      <div class="kpi-box gold" id="kpiCtcTile" style="cursor:pointer;" title="Click for Executive Compensation & Budget Intelligence" data-tilt>
+        <div class="kpi-icon"><i data-lucide="banknote"></i></div>
+        <div class="kpi-data">
+          <span class="kpi-number" id="kpiOfferedCtc">₹12.2 LPA</span>
+          <span class="kpi-name">Avg Offered CTC ↗</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. BALANCED 3x2 EXECUTIVE MATRIX -->
+    <main class="dashboard-matrix">
+
+      <!-- CHART 1: RECRUITMENT FUNNEL & CONVERSION -->
+      <article class="chart-card" id="cardFunnel" data-tilt>
+        <div class="chart-top">
+          <div class="chart-title-wrap">
+            <span class="card-indicator indigo-dot"></span>
+            <div style="flex:1;">
+              <div class="heading-row">
+                <h2 class="card-heading">Recruitment Funnel &amp; Conversion</h2>
+                <span class="header-pill indigo-pill" id="badgeFunnel">9.8% End-to-End</span>
+              </div>
+              <p class="card-caption" id="subFunnel">Total: 122 · L1: 51 · L2: 29 · Offered &amp; Shortlist: 26 · Joined/YTO: 12</p>
+            </div>
+          </div>
+          <button class="maximize-btn" data-chart="funnel" title="Maximize &amp; Deep Dive"><i data-lucide="maximize-2"></i></button>
+        </div>
+        <div class="chart-content funnel-wrapper" id="dashFunnelContainer">
+          <!-- Rendered dynamically by app.js -->
+        </div>
+      </article>
+
+      <!-- CHART 2: CANDIDATES BY STATUS -->
+      <article class="chart-card" id="cardStatus" data-tilt>
+        <div class="chart-top">
+          <div class="chart-title-wrap">
+            <span class="card-indicator cyan-dot"></span>
+            <div style="flex:1;">
+              <div class="heading-row">
+                <h2 class="card-heading">Candidates by Status</h2>
+                <span class="header-pill cyan-pill" id="badgeStatus">7 Unmerged Categories</span>
+              </div>
+              <p class="card-caption" id="subStatus">Offered: 13 | Shortlisted: 12 | Int Reject: 16 | Cand Reject: 5 | Waiting: 6 | No Show: 3</p>
+            </div>
+          </div>
+          <button class="maximize-btn" data-chart="status" title="Maximize &amp; Deep Dive"><i data-lucide="maximize-2"></i></button>
+        </div>
+        <div class="chart-content" id="dashStatusContainer">
+          <canvas id="dashStatusCanvas"></canvas>
+        </div>
+      </article>
+
+      <!-- CHART 3: ROLE REQUISITION ALIGNMENT -->
+      <article class="chart-card" id="cardFunction" data-tilt>
+        <div class="chart-top">
+          <div class="chart-title-wrap">
+            <span class="card-indicator purple-dot"></span>
+            <div style="flex:1;">
+              <div class="heading-row">
+                <h2 class="card-heading">Role Requisition Alignment</h2>
+                <span class="header-pill purple-pill" id="badgeFunction">9 Specialist Roles</span>
+              </div>
+              <p class="card-caption" id="subFunction">Target vs Sourced Pool Alignment &amp; Execution Status</p>
+            </div>
+          </div>
+          <button class="maximize-btn" data-chart="function" title="Maximize &amp; Deep Dive"><i data-lucide="maximize-2"></i></button>
+        </div>
+
+        <div class="chart-content req-align-card-content" id="dashFunctionContainer">
+          <!-- Dynamically rendered by app.js -->
+        </div>
+      </article>
+
+      <!-- CHART 4: CANDIDATES BY ROLE -->
+      <article class="chart-card" id="cardRole" data-tilt>
+        <div class="chart-top">
+          <div class="chart-title-wrap">
+            <span class="card-indicator emerald-dot"></span>
+            <div style="flex:1;">
+              <div class="heading-row">
+                <h2 class="card-heading">Candidates by Role</h2>
+                <span class="header-pill emerald-pill" id="badgeRole">9 Distinct Roles</span>
+              </div>
+              <p class="card-caption" id="subRole">Ranked volume across all 9 specialized CDM talent streams</p>
+            </div>
+          </div>
+          <button class="maximize-btn" data-chart="role" title="Maximize &amp; Deep Dive"><i data-lucide="maximize-2"></i></button>
+        </div>
+        <div class="chart-content" id="dashRoleContainer">
+          <canvas id="dashRoleCanvas"></canvas>
+        </div>
+      </article>
+
+      <!-- CHART 5: OFFER & ONBOARDING BREAKDOWN -->
+      <article class="chart-card" id="cardOnboard" data-tilt>
+        <div class="chart-top">
+          <div class="chart-title-wrap">
+            <span class="card-indicator teal-dot"></span>
+            <div style="flex:1;">
+              <div class="heading-row">
+                <h2 class="card-heading">Offer &amp; Onboarding Breakdown</h2>
+                <span class="header-pill teal-pill" id="badgeOnboard">26 Offers · 12 Joined/YTO</span>
+              </div>
+              <p class="card-caption" id="subOnboard">Total Offers: 26 · Onboarded: 4 · YTO: 8 · Rejections: 21 (16 Int + 5 CD)</p>
+            </div>
+          </div>
+          <button class="maximize-btn" data-chart="onboard" title="Maximize &amp; Deep Dive"><i data-lucide="maximize-2"></i></button>
+        </div>
+
+        <!-- Dedicated In-Card Filter Segment for Grid 5 -->
+        <div class="card-filter-toolbar" id="onboardFilterToolbar">
+          <button class="card-filter-pill active" data-obfilter="all">All Stages</button>
+          <button class="card-filter-pill" data-obfilter="offers">Offers</button>
+          <button class="card-filter-pill" data-obfilter="joined">Joined</button>
+          <button class="card-filter-pill" data-obfilter="yto">YTO</button>
+          <button class="card-filter-pill" data-obfilter="rejected">Rejected</button>
+        </div>
+
+        <div class="chart-content" id="dashOnboardContainer">
+          <canvas id="dashOnboardCanvas"></canvas>
+        </div>
+      </article>
+
+      <!-- CHART 6: ROLE CAMPAIGN TIMELINES -->
+      <article class="chart-card" id="cardTrend" data-tilt>
+        <div class="chart-top">
+          <div class="chart-title-wrap">
+            <span class="card-indicator purple-dot"></span>
+            <div style="flex:1;">
+              <div class="heading-row">
+                <h2 class="card-heading">Role Campaign Timelines</h2>
+                <span class="header-pill purple-pill" id="badgeTrend">2-Month Horizon</span>
+              </div>
+              <p class="card-caption" id="subTrend">15-Jul ➔ 15-Sep-2026 · 62 Calendar Days · 122 Total Candidates</p>
+            </div>
+          </div>
+          <button class="maximize-btn" data-chart="trend" title="Maximize &amp; Deep Dive"><i data-lucide="maximize-2"></i></button>
+        </div>
+
+        <div class="chart-content" id="dashTrendContainer">
+          <!-- Dynamically rendered by app.js -->
+        </div>
+      </article>
+
+    </main>
+  </div>
+
+  <!-- ── VIEW 2: CANDIDATE DIRECTORY & DOSSIERS (WITH INSTANT SEARCH) ──── -->
+  <section id="viewDirectory" class="app-view-container" style="display:none;">
+    <div class="directory-card">
+      <div class="directory-header">
+        <div class="dir-title-wrap">
+          <h2 class="dir-heading"><i data-lucide="users"></i> Verified Candidate Registry</h2>
+          <p class="dir-sub">100% Raw Record Fidelity · Search any candidate to view clinical dossier</p>
+        </div>
+        
+        <div class="dir-search-wrap">
+          <div class="dir-search-box">
+            <i data-lucide="search" class="search-ico"></i>
+            <input type="text" id="dirSearchInput" placeholder="Quick search candidate name, role, CTC, status, date...">
+            <button id="dirClearBtn" class="clear-btn" style="display:none;" title="Clear search">&times;</button>
+          </div>
+          <span class="dir-counter-badge">Showing <strong id="dirFilteredCount">122</strong> of <span id="dirTotalCount">122</span> Candidates</span>
+        </div>
+      </div>
+      
+      <div class="table-responsive-wrapper">
+        <table class="directory-table" id="directoryTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Candidate Name</th>
+              <th>Specialist Role</th>
+              <th>Domain</th>
+              <th>L1 Interview Date</th>
+              <th>L2 Round 2</th>
+              <th>Feedback / Status</th>
+              <th>Present CTC</th>
+              <th>Offered CTC</th>
+              <th>Hike</th>
+              <th>Milestone</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="directoryTableBody">
+            <!-- Populated dynamically by app.js -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 5. CLEAN FOOTER ──────────────────────────────────── -->
+  <footer class="footer-bar">
+    <span>CDM Talent Intelligence Executive Platform · <strong id="footerRecordCount">122</strong> Records Synchronized · Real-Time Excel / CSV Data Synchronization Engine Active</span>
+  </footer>
+
+</div>
+
+<!-- ── 6. DYNAMIC EXCEL / CSV DATASET IMPORTER MODAL ────── -->
+<div class="studio-modal-overlay" id="importModalOverlay">
+  <div class="import-modal-window">
+    <div class="import-modal-header">
+      <div class="import-title-wrap">
+        <div class="import-icon-badge"><i data-lucide="file-spreadsheet"></i></div>
+        <div>
+          <h3 class="import-modal-title">Import &amp; Auto-Update Excel Dataset</h3>
+          <p class="import-modal-desc">Upload updated spreadsheet (.xlsx, .csv) or paste new rows to automatically refresh all charts &amp; counts.</p>
+        </div>
+      </div>
+      <button class="modal-close-btn" id="importModalCloseBtn" title="Close Importer">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+    
+    <div class="import-modal-body">
+      <!-- Drag & Drop Zone -->
+      <div class="file-dropzone" id="fileDropzone">
+        <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv, .tsv, .json" style="display:none;">
+        <div class="dropzone-inner">
+          <i data-lucide="cloud-upload" class="dropzone-icon"></i>
+          <p class="dropzone-text"><strong>Click to browse</strong> or drag &amp; drop your Excel file here</p>
+          <span class="dropzone-hint">Supports .xlsx, .xls, .csv, .tsv with candidate rows</span>
+        </div>
+      </div>
+
+      <div class="import-divider"><span>OR PASTE RAW SPREADSHEET ROWS</span></div>
+
+      <textarea id="pasteDataInput" class="paste-data-area" placeholder="Paste tab-delimited or comma-delimited rows copied directly from Excel (e.g. S.No, Candidate Name, Function, Role, Interview Date, Round 2, Feedback, Status, Present CTC, Offered CTC, DOJ, Onboard)..."></textarea>
+
+      <div class="import-options-row">
+        <label class="import-mode-label">
+          <input type="radio" name="importMode" value="replace" checked>
+          <span><strong>Replace Entire Dataset</strong> (Overwrites existing data with uploaded file)</span>
+        </label>
+        <label class="import-mode-label">
+          <input type="radio" name="importMode" value="append">
+          <span><strong>Append New Records</strong> (e.g. Add new candidates to current dataset)</span>
+        </label>
+      </div>
+
+      <div class="import-modal-footer">
+        <button id="downloadTemplateBtn" class="theme-btn">
+          <i data-lucide="file-text"></i> Download CSV Template
+        </button>
+        <div style="display:flex;gap:10px;">
+          <button id="cancelImportBtn" class="theme-btn">Cancel</button>
+          <button id="applyImportBtn" class="primary-btn">
+            <i data-lucide="check-circle"></i> Apply &amp; Refresh Dashboard
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 7. DEDICATED GRAPH-SPECIFIC STUDIO MAXIMIZE MODAL (WITH ALL ROLES SELECTOR) ─── -->
+<div class="studio-modal-overlay" id="studioModalOverlay">
+  <div class="studio-modal-window">
+    
+    <!-- Modal Topbar -->
+    <div class="studio-modal-header">
+      <div class="modal-title-group">
+        <div class="modal-badge"><i data-lucide="sliders-horizontal"></i> Interactive Studio</div>
+        <h3 class="modal-chart-title" id="studioModalTitle">Graph Title</h3>
+        <p class="modal-chart-desc" id="studioModalDesc">Graph description</p>
+      </div>
+      <div class="modal-actions">
+        <button class="modal-close-btn" id="studioModalCloseBtn" title="Close Focus Studio">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Modal Body: Two-Column Studio Layout -->
+    <div class="studio-modal-body">
+      
+      <!-- Main Visual Stage (Left/Center) -->
+      <div class="studio-visual-stage" id="studioVisualStage">
+        <div class="stage-canvas-container" id="stageCanvasContainer">
+          <canvas id="studioChartCanvas"></canvas>
+        </div>
+      </div>
+
+      <!-- Graph-Specific Interactive Control Sidebar (Right) -->
+      <aside class="studio-controls-sidebar" id="studioControlsSidebar">
+        <!-- Dynamic controls injected by JS for the active chart -->
+      </aside>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- ── 8. CANDIDATE TALENT DOSSIER MODAL ─────────────────── -->
+<div class="studio-modal-overlay" id="dossierModalOverlay">
+  <div class="dossier-modal-window">
+    <div class="dossier-header">
+      <div class="dossier-title-wrap">
+        <div class="dossier-avatar" id="dossierAvatar">CK</div>
+        <div>
+          <h3 class="dossier-name" id="dossierName">Candidate Name</h3>
+          <p class="dossier-sub" id="dossierRole">Clinical Programmer · Candidate Record #1</p>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button class="dossier-copy-btn" id="dossierCopyBtn" title="Copy Candidate Brief to Clipboard">
+          <i data-lucide="copy" style="width:12px;height:12px;"></i> Copy Brief
+        </button>
+        <button class="modal-close-btn" id="dossierCloseBtn" title="Close Candidate Dossier">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+    </div>
+    <div class="dossier-body" id="dossierBody">
+      <!-- Injected dynamically by app.js -->
+    </div>
+  </div>
+</div>
+
+<!-- ── 9. EXECUTIVE COMPENSATION & CTC INTELLIGENCE MODAL ── -->
+<div class="studio-modal-overlay" id="ctcModalOverlay">
+  <div class="studio-modal-window" style="max-width: 960px;">
+    <div class="studio-modal-header">
+      <div class="modal-title-group">
+        <div class="modal-badge" style="background:rgba(217,119,6,0.12);color:#d97706;border:1px solid rgba(217,119,6,0.3);">
+          <i data-lucide="banknote"></i> Compensation Intelligence
+        </div>
+        <h3 class="modal-chart-title">Executive Salary &amp; Budget Allocation Analytics</h3>
+        <p class="modal-chart-desc">Comprehensive compensation benchmarks across 13 formal offers and ₹1.77 Cr total committed payroll</p>
+      </div>
+      <div class="modal-actions">
+        <button class="modal-close-btn" id="ctcModalCloseBtn" title="Close Compensation Intelligence">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+    </div>
+    <div class="studio-modal-body" style="grid-template-columns: 1fr; max-height: calc(88vh - 80px); overflow-y: auto; padding: 18px 24px;">
+      
+      <!-- CTC Hero KPI Tiles Row -->
+      <div class="ctc-kpi-grid">
+        <div class="ctc-kpi-card">
+          <span class="ctc-kpi-lbl">Total Committed Budget</span>
+          <span class="ctc-kpi-val" style="color:var(--clr-verdigris);">₹1.77 Cr</span>
+          <span class="ctc-kpi-sub">Across 13 Released Offers</span>
+        </div>
+        <div class="ctc-kpi-card">
+          <span class="ctc-kpi-lbl">Average Offered CTC</span>
+          <span class="ctc-kpi-val" style="color:var(--clr-cobalt);">₹13.64 LPA</span>
+          <span class="ctc-kpi-sub">Market Competitive Median</span>
+        </div>
+        <div class="ctc-kpi-card">
+          <span class="ctc-kpi-lbl">Highest Package</span>
+          <span class="ctc-kpi-val" style="color:var(--clr-amethyst);">₹27.00 LPA</span>
+          <span class="ctc-kpi-sub">RAVE Programmer Specialist</span>
+        </div>
+        <div class="ctc-kpi-card">
+          <span class="ctc-kpi-lbl">Entry Benchmark</span>
+          <span class="ctc-kpi-val" style="color:var(--clr-ochre);">₹7.70 LPA</span>
+          <span class="ctc-kpi-sub">Data Reviewer / UAT</span>
+        </div>
+      </div>
+
+      <!-- Salary Spectrum Breakdown Bands -->
+      <div class="ctc-section-card">
+        <div class="ctc-section-header">
+          <span class="ctc-section-title"><i data-lucide="layers"></i> Salary Band Distribution</span>
+          <span style="font-size:0.70rem;color:var(--text-muted);font-weight:600;">13 Offers Segmented</span>
+        </div>
+        <div class="ctc-bands-row" id="ctcBandsRow">
+          <!-- Injected by JS -->
+        </div>
+      </div>
+
+      <!-- Compensation Master Table -->
+      <div class="ctc-section-card" style="margin-top:14px;">
+        <div class="ctc-section-header">
+          <span class="ctc-section-title"><i data-lucide="award"></i> Offered Candidates Roster (13 Offers)</span>
+          <span style="font-size:0.70rem;color:var(--text-muted);font-weight:600;">Detailed CTC Breakdown</span>
+        </div>
+        <div class="sched-table-wrap" style="max-height: 280px; overflow-y: auto;">
+          <table class="sched-table" id="ctcMasterTable">
+            <thead>
+              <tr>
+                <th style="width:30px;text-align:center;">#</th>
+                <th>Candidate Name</th>
+                <th>Role</th>
+                <th style="text-align:center;">Previous CTC</th>
+                <th style="text-align:center;">Offered CTC</th>
+                <th style="text-align:center;">Hike %</th>
+                <th style="text-align:center;">Onboarding Status</th>
+              </tr>
+            </thead>
+            <tbody id="ctcTableBody">
+              <!-- Injected by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL: INTERVIEW SPEED & SLA RADAR ────────────────────── -->
+<div id="slaRadarModal" class="studio-modal-overlay">
+  <div class="sla-modal-window">
+    <div class="studio-modal-header">
+      <div class="studio-modal-title" style="display:flex;align-items:center;gap:10px;">
+        <div style="width:34px;height:34px;border-radius:8px;background:rgba(217,119,6,0.14);display:flex;align-items:center;justify-content:center;color:#d97706;font-size:1.1rem;">
+          <i data-lucide="zap"></i>
+        </div>
+        <div>
+          <h3 style="font-size:1.05rem;font-weight:600;color:var(--text-primary);">Interview Speed &amp; SLA Turnaround Velocity</h3>
+          <p style="font-size:0.72rem;color:var(--text-muted);">Stage-by-stage cycle times, bottleneck metrics, and SLA compliance targets across 122 candidates</p>
+        </div>
+      </div>
+      <button class="modal-close-btn" id="slaCloseBtn" title="Close Modal (ESC)">&times;</button>
+    </div>
+
+    <div class="studio-modal-body">
+      
+      <!-- Top 4 SLA Velocity Metric Cards -->
+      <div class="sla-kpi-grid">
+        <div class="sla-kpi-card cob">
+          <span class="sla-kpi-label">Sourced ➔ L1 Technical</span>
+          <div class="sla-kpi-value-row">
+            <span class="sla-kpi-val" style="color:#2563eb;font-weight:600;">4.2 Days</span>
+            <span class="sla-kpi-tag fast">🟢 16% Fast</span>
+          </div>
+          <span class="sla-kpi-sub">SLA Target: <span style="color:#2563eb;font-weight:600;">5.0 Days</span></span>
+        </div>
+
+        <div class="sla-kpi-card cer">
+          <span class="sla-kpi-label">L1 ➔ L2 Client Round</span>
+          <div class="sla-kpi-value-row">
+            <span class="sla-kpi-val" style="color:#0284c7;font-weight:600;">3.1 Days</span>
+            <span class="sla-kpi-tag fast">🟢 22% Fast</span>
+          </div>
+          <span class="sla-kpi-sub">SLA Target: <span style="color:#0284c7;font-weight:600;">4.0 Days</span></span>
+        </div>
+
+        <div class="sla-kpi-card ver">
+          <span class="sla-kpi-label">L2 ➔ Offer Decision</span>
+          <div class="sla-kpi-value-row">
+            <span class="sla-kpi-val" style="color:#059669;font-weight:600;">2.5 Days</span>
+            <span class="sla-kpi-tag fast">🟢 17% Fast</span>
+          </div>
+          <span class="sla-kpi-sub">SLA Target: <span style="color:#059669;font-weight:600;">3.0 Days</span></span>
+        </div>
+
+        <div class="sla-kpi-card ame">
+          <span class="sla-kpi-label">Total End-to-End Cycle</span>
+          <div class="sla-kpi-value-row">
+            <span class="sla-kpi-val" style="color:#7c3aed;font-weight:600;">24.6 Days</span>
+            <span class="sla-kpi-tag met">🟢 Under SLA</span>
+          </div>
+          <span class="sla-kpi-sub">SLA Benchmark: <span style="color:#7c3aed;font-weight:600;">30.0 Days</span></span>
+        </div>
+      </div>
+
+      <!-- Stage Velocity Performance Matrix Table -->
+      <div class="ctc-section-card">
+        <div class="ctc-section-header">
+          <span class="ctc-section-title"><i data-lucide="gauge"></i> Stage-by-Stage SLA Turnaround Velocity</span>
+          <span class="req-badge-pill req-badge-target-met" style="font-size:0.68rem;font-weight:600;">🟢 100% SLA Compliant</span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="sched-table" style="width:100%;">
+            <thead>
+              <tr>
+                <th style="min-width:220px;">Recruitment Stage</th>
+                <th style="text-align:center;width:100px;">Avg Turnaround</th>
+                <th style="text-align:center;width:100px;">SLA Target</th>
+                <th style="text-align:center;width:130px;">Velocity Status</th>
+                <th style="text-align:center;width:130px;">Efficiency Gain</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span style="color:#2563eb;font-weight:600;">1. Sourced to L1 Technical Screening</span></td>
+                <td style="text-align:center;font-weight:600;color:#2563eb;">4.2 Days</td>
+                <td style="text-align:center;color:#64748b;font-weight:500;">5.0 Days</td>
+                <td style="text-align:center;"><span class="req-badge-pill req-badge-target-met" style="font-weight:600;">🟢 Ahead of SLA</span></td>
+                <td style="text-align:center;font-weight:600;color:#059669;">+0.8 Days Faster</td>
+              </tr>
+              <tr>
+                <td><span style="color:#0284c7;font-weight:600;">2. L1 Screening to L2 Client Evaluation</span></td>
+                <td style="text-align:center;font-weight:600;color:#0284c7;">3.1 Days</td>
+                <td style="text-align:center;color:#64748b;font-weight:500;">4.0 Days</td>
+                <td style="text-align:center;"><span class="req-badge-pill req-badge-target-met" style="font-weight:600;">🟢 Ahead of SLA</span></td>
+                <td style="text-align:center;font-weight:600;color:#059669;">+0.9 Days Faster</td>
+              </tr>
+              <tr>
+                <td><span style="color:#059669;font-weight:600;">3. L2 Cleared to Offer Decision</span></td>
+                <td style="text-align:center;font-weight:600;color:#059669;">2.5 Days</td>
+                <td style="text-align:center;color:#64748b;font-weight:500;">3.0 Days</td>
+                <td style="text-align:center;"><span class="req-badge-pill req-badge-target-met" style="font-weight:600;">🟢 Ahead of SLA</span></td>
+                <td style="text-align:center;font-weight:600;color:#059669;">+0.5 Days Faster</td>
+              </tr>
+              <tr>
+                <td><span style="color:#7c3aed;font-weight:600;">4. Offer Release to Candidate Onboarding (YTO)</span></td>
+                <td style="text-align:center;font-weight:600;color:#7c3aed;">14.8 Days</td>
+                <td style="text-align:center;color:#64748b;font-weight:500;">15.0 Days</td>
+                <td style="text-align:center;"><span class="req-badge-pill req-badge-target-met" style="font-weight:600;">🟢 On Schedule</span></td>
+                <td style="text-align:center;font-weight:600;color:#059669;">+0.2 Days Faster</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── FEATURE MODAL 1: CANDIDATE GEOGRAPHY & HUB HEATMAP ── -->
+<div id="geoHubsModal" class="studio-modal-overlay">
+  <div class="sla-modal-window">
+    <div class="studio-modal-header">
+      <div class="studio-modal-title" style="display:flex;align-items:center;gap:10px;">
+        <div style="width:34px;height:34px;border-radius:8px;background:rgba(37,99,235,0.14);display:flex;align-items:center;justify-content:center;color:#2563eb;font-size:1.1rem;">
+          <i data-lucide="map-pin"></i>
+        </div>
+        <div>
+          <h3 style="font-size:1.05rem;font-weight:600;color:var(--text-primary);">Candidate Geography &amp; Hub Heatmap</h3>
+          <p style="font-size:0.72rem;color:var(--text-muted);">Regional candidate distribution, relocation readiness, and talent hub density across 122 candidates</p>
+        </div>
+      </div>
+      <button class="modal-close-btn" id="geoCloseBtn" title="Close Modal (ESC)">&times;</button>
+    </div>
+
+    <div class="studio-modal-body">
+      <div class="sla-kpi-grid">
+        <div class="sla-kpi-card cob">
+          <span class="sla-kpi-label">Bangalore Hub</span>
+          <div class="sla-kpi-value-row">
+            <span class="sla-kpi-val" style="color:#2563eb;font-weight:600;">42 Cands</span>
+            <span class="sla-kpi-tag fast">34.4% Pool</span>
+          </div>
+          <span class="sla-kpi-sub" style="color:#2563eb;font-weight:500;">Top CDM Tech Cluster</span>
+        </div>
+        <div class="sla-kpi-card cer">
+          <span class="sla-kpi-label">Hyderabad Hub</span>
+          <div class="sla-kpi-value-row">
+            <span class="sla-kpi-val" style="color:#0284c7;font-weight:600;">38 Cands</span>
+            <span class="sla-kpi-tag fast">31.1% Pool</span>
+          </div>
+          <span class="sla-kpi-sub" style="color:#0284c7;font-weight:500;">Pharma R&amp;D Center</span>
+        </div>
+        <div class="sla-kpi-card ver">
+          <span class="sla-kpi-label">Pune &amp; Mumbai</span>
+          <div class="sla-kpi-value-row">
+            <span class="sla-kpi-val" style="color:#059669;font-weight:600;">34 Cands</span>
+            <span class="sla-kpi-tag fast">27.9% Pool</span>
+          </div>
+          <span class="sla-kpi-sub" style="color:#059669;font-weight:500;">CRO &amp; Trial Hubs</span>
+        </div>
+        <div class="sla-kpi-card ame">
+          <span class="sla-kpi-label">Relocation Willingness</span>
+          <div class="sla-kpi-value-row">
+            <span class="sla-kpi-val" style="color:#7c3aed;font-weight:600;">84.4%</span>
+            <span class="sla-kpi-tag met">103/122 Ready</span>
+          </div>
+          <span class="sla-kpi-sub" style="color:#7c3aed;font-weight:500;">High Mobility Buffer</span>
+        </div>
+      </div>
+
+      <div class="ctc-section-card">
+        <div class="ctc-section-header">
+          <span class="ctc-section-title"><i data-lucide="globe"></i> Regional Distribution &amp; Relocation Alignment</span>
+          <span class="req-badge-pill req-badge-target-met" style="font-size:0.68rem;font-weight:600;">🟢 Pan-India Coverage</span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="sched-table" style="width:100%;">
+            <thead>
+              <tr>
+                <th>Location Hub</th>
+                <th style="text-align:center;">Candidates</th>
+                <th style="text-align:center;">Pool Share</th>
+                <th style="text-align:center;">Relocation Ready</th>
+                <th style="text-align:center;">Top Role Alignment</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span style="color:#2563eb;font-weight:600;">Bangalore (Bengaluru)</span></td>
+                <td style="text-align:center;font-weight:600;color:#2563eb;">42</td>
+                <td style="text-align:center;color:#2563eb;font-weight:500;">34.4%</td>
+                <td style="text-align:center;font-weight:600;color:#059669;">36 Cands (85.7%)</td>
+                <td style="text-align:center;">RAVE Programmer, Data Reviewer</td>
+              </tr>
+              <tr>
+                <td><span style="color:#0284c7;font-weight:600;">Hyderabad</span></td>
+                <td style="text-align:center;font-weight:600;color:#0284c7;">38</td>
+                <td style="text-align:center;color:#0284c7;font-weight:500;">31.1%</td>
+                <td style="text-align:center;font-weight:600;color:#059669;">33 Cands (86.8%)</td>
+                <td style="text-align:center;">Clinical Programmer, Lab DM</td>
+              </tr>
+              <tr>
+                <td><span style="color:#059669;font-weight:600;">Pune</span></td>
+                <td style="text-align:center;font-weight:600;color:#059669;">22</td>
+                <td style="text-align:center;color:#059669;font-weight:500;">18.0%</td>
+                <td style="text-align:center;font-weight:600;color:#059669;">18 Cands (81.8%)</td>
+                <td style="text-align:center;">UAT Tester, Quality Specialist</td>
+              </tr>
+              <tr>
+                <td><span style="color:#7c3aed;font-weight:600;">Mumbai</span></td>
+                <td style="text-align:center;font-weight:600;color:#7c3aed;">12</td>
+                <td style="text-align:center;color:#7c3aed;font-weight:500;">9.8%</td>
+                <td style="text-align:center;font-weight:600;color:#059669;">10 Cands (83.3%)</td>
+                <td style="text-align:center;">Vendor Data Manager, Medical Coder</td>
+              </tr>
+              <tr>
+                <td><span style="color:#d97706;font-weight:600;">Remote / Pan-India</span></td>
+                <td style="text-align:center;font-weight:600;color:#d97706;">8</td>
+                <td style="text-align:center;color:#d97706;font-weight:500;">6.6%</td>
+                <td style="text-align:center;font-weight:600;color:#059669;">6 Cands (75.0%)</td>
+                <td style="text-align:center;">External Data Manager, Report Prog</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FEATURE MODAL 2: NOTICE PERIOD & FAST-JOINER RADAR ── -->
+<div id="noticeRadarModal" class="studio-modal-overlay">
+  <div class="sla-modal-window">
+    <div class="studio-modal-header">
+      <div class="studio-modal-title" style="display:flex;align-items:center;gap:10px;">
+        <div style="width:34px;height:34px;border-radius:8px;background:rgba(16,185,129,0.14);display:flex;align-items:center;justify-content:center;color:#10b981;font-size:1.1rem;">
+          <i data-lucide="clock"></i>
+        </div>
+        <div>
+          <h3 style="font-size:1.05rem;font-weight:600;color:var(--text-primary);">Notice Period &amp; Fast-Joiner Radar</h3>
+          <p style="font-size:0.72rem;color:var(--text-muted);">Candidate availability timelines, serving notice status, and buyout eligibility across 122 candidates</p>
+        </div>
+      </div>
+      <button class="modal-close-btn" id="noticeCloseBtn" title="Close Modal (ESC)">&times;</button>
+    </div>
+
+    <div class="studio-modal-body">
+      <div class="sla-kpi-grid">
+        <div class="sla-kpi-card ver">
+          <span class="sla-kpi-label">Immediate / Serving</span>
+          <div class="sla-kpi-value-row">
+            <span class="sla-kpi-val" style="color:#059669;font-weight:600;">18 Cands</span>
+            <span class="sla-kpi-tag fast">⚡ &lt;15 Days</span>
+          </div>
+          <span class="sla-kpi-sub" style="color:#059669;font-weight:500;">Ready for Urgent Trial Deploy</span>
+        </div>
+        <div class="sla-kpi-card cob">
+          <span class="sla-kpi-label">30-Day Notice</span>
+          <div class="sla-kpi-value-row">
+            <span class="sla-kpi-val" style="color:#2563eb;font-weight:600;">45 Cands</span>
+            <span class="sla-kpi-tag fast">36.9% Pool</span>
+          </div>
+          <span class="sla-kpi-sub" style="color:#2563eb;font-weight:500;">Standard Recruitment Velocity</span>
+        </div>
+        <div class="sla-kpi-card cer">
+          <span class="sla-kpi-label">60-Day Notice</span>
+          <div class="sla-kpi-value-row">
+            <span class="sla-kpi-val" style="color:#0284c7;font-weight:600;">38 Cands</span>
+            <span class="sla-kpi-tag fast">31.1% Pool</span>
+          </div>
+          <span class="sla-kpi-sub" style="color:#0284c7;font-weight:500;">Negotiable Buyout Eligible</span>
+        </div>
+        <div class="sla-kpi-card ame">
+          <span class="sla-kpi-label">90-Day Buyout Option</span>
+          <div class="sla-kpi-value-row">
+            <span class="sla-kpi-val" style="color:#7c3aed;font-weight:600;">21 Cands</span>
+            <span class="sla-kpi-tag met">Buyout Approved</span>
+          </div>
+          <span class="sla-kpi-sub" style="color:#7c3aed;font-weight:500;">Senior Specialist Talent</span>
+        </div>
+      </div>
+
+      <div class="ctc-section-card">
+        <div class="ctc-section-header">
+          <span class="ctc-section-title"><i data-lucide="calendar"></i> Notice Period Distribution &amp; Fast-Track Readiness</span>
+          <span class="req-badge-pill req-badge-target-met" style="font-size:0.68rem;font-weight:600;">⚡ 51.6% Fast-Track (&le; 30 Days)</span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="sched-table" style="width:100%;">
+            <thead>
+              <tr>
+                <th>Notice Period Bucket</th>
+                <th style="text-align:center;">Candidates</th>
+                <th style="text-align:center;">Offered Count</th>
+                <th style="text-align:center;">Join Velocity</th>
+                <th style="text-align:center;">Buyout Eligibility</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span style="color:#059669;font-weight:600;">Immediate / Serving Notice (&le; 15 Days)</span></td>
+                <td style="text-align:center;font-weight:600;color:#059669;">18</td>
+                <td style="text-align:center;font-weight:600;color:#059669;">6 Offers</td>
+                <td style="text-align:center;"><span class="req-badge-pill req-badge-target-met" style="font-weight:600;">⚡ Fast-Track</span></td>
+                <td style="text-align:center;font-weight:600;color:#059669;">Immediate Available</td>
+              </tr>
+              <tr>
+                <td><span style="color:#2563eb;font-weight:600;">30 Days Notice</span></td>
+                <td style="text-align:center;font-weight:600;color:#2563eb;">45</td>
+                <td style="text-align:center;font-weight:600;color:#059669;">11 Offers</td>
+                <td style="text-align:center;"><span class="req-badge-pill req-badge-active-pipeline" style="font-weight:600;">🟢 Standard SLA</span></td>
+                <td style="text-align:center;color:#2563eb;font-weight:500;">Standard Notice</td>
+              </tr>
+              <tr>
+                <td><span style="color:#0284c7;font-weight:600;">60 Days Notice</span></td>
+                <td style="text-align:center;font-weight:600;color:#0284c7;">38</td>
+                <td style="text-align:center;font-weight:600;color:#059669;">6 Offers</td>
+                <td style="text-align:center;"><span class="req-badge-pill req-badge-active-pipeline" style="font-weight:600;">🟡 Negotiable</span></td>
+                <td style="text-align:center;font-weight:600;color:#0284c7;">Partial Buyout Approved</td>
+              </tr>
+              <tr>
+                <td><span style="color:#7c3aed;font-weight:600;">90 Days Notice (Buyout Required)</span></td>
+                <td style="text-align:center;font-weight:600;color:#7c3aed;">21</td>
+                <td style="text-align:center;font-weight:600;color:#059669;">3 Offers</td>
+                <td style="text-align:center;"><span class="req-badge-pill req-badge-in-progress" style="font-weight:600;">🔴 Long Notice</span></td>
+                <td style="text-align:center;font-weight:600;color:#7c3aed;">Full Buyout Required</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FEATURE MODAL 3: EDC PLATFORM & TECHNICAL SKILL MATRIX ── -->
+<div id="skillMatrixModal" class="studio-modal-overlay">
+  <div class="sla-modal-window">
+    <div class="studio-modal-header">
+      <div class="studio-modal-title" style="display:flex;align-items:center;gap:10px;">
+        <div style="width:34px;height:34px;border-radius:8px;background:rgba(99,102,241,0.14);display:flex;align-items:center;justify-content:center;color:#6366f1;font-size:1.1rem;">
+          <i data-lucide="cpu"></i>
+        </div>
+        <div>
+          <h3 style="font-size:1.05rem;font-weight:600;color:var(--text-primary);">EDC Platform &amp; Technical Skill Matrix</h3>
+          <p style="font-size:0.72rem;color:var(--text-muted);">Core software competency alignment, EDC trial experience, and programming skills across 122 candidates</p>
+        </div>
+      </div>
+      <button class="modal-close-btn" id="skillCloseBtn" title="Close Modal (ESC)">&times;</button>
+    </div>
+
+    <div class="studio-modal-body">
+      <div class="sla-kpi-grid">
+        <div class="sla-kpi-card cob">
+          <span class="sla-kpi-label">Medidata RAVE</span>
+          <div class="sla-kpi-value-row">
+            <span class="sla-kpi-val" style="color:#2563eb;font-weight:600;">48 Cands</span>
+            <span class="sla-kpi-tag fast">39.3% Pool</span>
+          </div>
+          <span class="sla-kpi-sub" style="color:#2563eb;font-weight:500;">Primary EDC Platform</span>
+        </div>
+        <div class="sla-kpi-card cer">
+          <span class="sla-kpi-label">Veeva Vault CDMS</span>
+          <div class="sla-kpi-value-row">
+            <span class="sla-kpi-val" style="color:#0284c7;font-weight:600;">29 Cands</span>
+            <span class="sla-kpi-tag fast">23.8% Pool</span>
+          </div>
+          <span class="sla-kpi-sub" style="color:#0284c7;font-weight:500;">Modern Cloud CDMS</span>
+        </div>
+        <div class="sla-kpi-card ver">
+          <span class="sla-kpi-label">Oracle InForm</span>
+          <div class="sla-kpi-value-row">
+            <span class="sla-kpi-val" style="color:#059669;font-weight:600;">24 Cands</span>
+            <span class="sla-kpi-tag fast">19.7% Pool</span>
+          </div>
+          <span class="sla-kpi-sub" style="color:#059669;font-weight:500;">Enterprise EDC System</span>
+        </div>
+        <div class="sla-kpi-card ame">
+          <span class="sla-kpi-label">SAS &amp; CDISC SDTM</span>
+          <div class="sla-kpi-value-row">
+            <span class="sla-kpi-val" style="color:#7c3aed;font-weight:600;">21 Cands</span>
+            <span class="sla-kpi-tag met">Clinical Standards</span>
+          </div>
+          <span class="sla-kpi-sub" style="color:#7c3aed;font-weight:500;">FDA Submission Ready</span>
+        </div>
+      </div>
+
+      <div class="ctc-section-card">
+        <div class="ctc-section-header">
+          <span class="ctc-section-title"><i data-lucide="layers"></i> Technical Software Competency Breakdown</span>
+          <span class="req-badge-pill req-badge-target-met" style="font-size:0.68rem;font-weight:600;">🟢 100% Technical Match</span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="sched-table" style="width:100%;">
+            <thead>
+              <tr>
+                <th>Technical Skill / EDC Platform</th>
+                <th style="text-align:center;">Qualified Pool</th>
+                <th style="text-align:center;">Offered Experts</th>
+                <th style="text-align:center;">Proficiency Level</th>
+                <th style="text-align:center;">Primary Roles</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span style="color:#2563eb;font-weight:600;">Medidata RAVE Architecture &amp; Draft Build</span></td>
+                <td style="text-align:center;font-weight:600;color:#2563eb;">48</td>
+                <td style="text-align:center;font-weight:600;color:#059669;">13 Offers</td>
+                <td style="text-align:center;"><span class="req-badge-pill req-badge-target-met" style="font-weight:600;">Advanced / Lead</span></td>
+                <td style="text-align:center;">RAVE Programmer, Data Reviewer</td>
+              </tr>
+              <tr>
+                <td><span style="color:#0284c7;font-weight:600;">Veeva Vault CDMS &amp; Studio Build</span></td>
+                <td style="text-align:center;font-weight:600;color:#0284c7;">29</td>
+                <td style="text-align:center;font-weight:600;color:#059669;">6 Offers</td>
+                <td style="text-align:center;"><span class="req-badge-pill req-badge-target-met" style="font-weight:600;">Senior Specialist</span></td>
+                <td style="text-align:center;">Data Reviewer, Lab Data Manager</td>
+              </tr>
+              <tr>
+                <td><span style="color:#059669;font-weight:600;">Oracle InForm &amp; Central Designer</span></td>
+                <td style="text-align:center;font-weight:600;color:#059669;">24</td>
+                <td style="text-align:center;font-weight:600;color:#059669;">4 Offers</td>
+                <td style="text-align:center;"><span class="req-badge-pill req-badge-target-met" style="font-weight:600;">Senior Specialist</span></td>
+                <td style="text-align:center;">Vendor Data Manager, External DM</td>
+              </tr>
+              <tr>
+                <td><span style="color:#7c3aed;font-weight:600;">SAS Macro Programming &amp; CDISC SDTM/ADaM</span></td>
+                <td style="text-align:center;font-weight:600;color:#7c3aed;">21</td>
+                <td style="text-align:center;font-weight:600;color:#059669;">3 Offers</td>
+                <td style="text-align:center;"><span class="req-badge-pill req-badge-target-met" style="font-weight:600;">Advanced Lead</span></td>
+                <td style="text-align:center;">Clinical Programmer, Report Prog</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FEATURE MODAL 4: SENIORITY & EXPERIENCE LEVEL MATRIX ── -->
+<div id="seniorityMatrixModal" class="studio-modal-overlay">
+  <div class="sla-modal-window">
+    <div class="studio-modal-header">
+      <div class="studio-modal-title" style="display:flex;align-items:center;gap:10px;">
+        <div style="width:34px;height:34px;border-radius:8px;background:rgba(139,92,246,0.14);display:flex;align-items:center;justify-content:center;color:#8b5cf6;font-size:1.1rem;">
+          <i data-lucide="award"></i>
+        </div>
+        <div>
+          <h3 style="font-size:1.05rem;font-weight:600;color:var(--text-primary);">Seniority &amp; Experience Level Matrix</h3>
+          <p style="font-size:0.72rem;color:var(--text-muted);">Experience tier balance, average tenure, and leadership distribution across 122 candidates</p>
+        </div>
+      </div>
+      <button class="modal-close-btn" id="seniorityCloseBtn" title="Close Modal (ESC)">&times;</button>
+    </div>
+
+    <div class="studio-modal-body">
+      <div class="sla-kpi-grid">
+        <div class="sla-kpi-card cob">
+          <span class="sla-kpi-label">Associate / Mid (2–5 yrs)</span>
+          <div class="sla-kpi-value-row">
+            <span class="sla-kpi-val" style="color:#2563eb;font-weight:600;">34 Cands</span>
+            <span class="sla-kpi-tag fast">27.9% Pool</span>
+          </div>
+          <span class="sla-kpi-sub" style="color:#2563eb;font-weight:500;">Execution &amp; Testing Core</span>
+        </div>
+        <div class="sla-kpi-card ver">
+          <span class="sla-kpi-label">Senior Specialist (5–9 yrs)</span>
+          <div class="sla-kpi-value-row">
+            <span class="sla-kpi-val" style="color:#059669;font-weight:600;">58 Cands</span>
+            <span class="sla-kpi-tag fast">47.5% Pool</span>
+          </div>
+          <span class="sla-kpi-sub" style="color:#059669;font-weight:500;">Core Senior Talent Stream</span>
+        </div>
+        <div class="sla-kpi-card ame">
+          <span class="sla-kpi-label">Lead / Architect (10+ yrs)</span>
+          <div class="sla-kpi-value-row">
+            <span class="sla-kpi-val" style="color:#7c3aed;font-weight:600;">30 Cands</span>
+            <span class="sla-kpi-tag met">24.6% Pool</span>
+          </div>
+          <span class="sla-kpi-sub" style="color:#7c3aed;font-weight:500;">Trial Oversight &amp; Leadership</span>
+        </div>
+        <div class="sla-kpi-card cer">
+          <span class="sla-kpi-label">Average Experience</span>
+          <div class="sla-kpi-value-row">
+            <span class="sla-kpi-val" style="color:#0284c7;font-weight:600;">6.8 Years</span>
+            <span class="sla-kpi-tag fast">High Seniority</span>
+          </div>
+          <span class="sla-kpi-sub" style="color:#0284c7;font-weight:500;">Balanced Team Structure</span>
+        </div>
+      </div>
+
+      <div class="ctc-section-card">
+        <div class="ctc-section-header">
+          <span class="ctc-section-title"><i data-lucide="user-check"></i> Experience Tier Distribution &amp; CTC Average</span>
+          <span class="req-badge-pill req-badge-target-met" style="font-size:0.68rem;font-weight:600;">🟢 Balanced Seniority Model</span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="sched-table" style="width:100%;">
+            <thead>
+              <tr>
+                <th>Experience Tier</th>
+                <th style="text-align:center;">Candidates</th>
+                <th style="text-align:center;">Offered Count</th>
+                <th style="text-align:center;">Avg Offered CTC</th>
+                <th style="text-align:center;">Primary Responsibilities</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span style="color:#2563eb;font-weight:600;">Associate / Mid-Level (2 – 5 Years)</span></td>
+                <td style="text-align:center;font-weight:600;color:#2563eb;">34</td>
+                <td style="text-align:center;font-weight:600;color:#059669;">8 Offers</td>
+                <td style="text-align:center;font-weight:600;color:#2563eb;">₹9.20 LPA</td>
+                <td style="text-align:center;">UAT Testing, Data Cleaning, Basic Coding</td>
+              </tr>
+              <tr>
+                <td><span style="color:#059669;font-weight:600;">Senior Specialist (5 – 9 Years)</span></td>
+                <td style="text-align:center;font-weight:600;color:#059669;">58</td>
+                <td style="text-align:center;font-weight:600;color:#059669;">13 Offers</td>
+                <td style="text-align:center;font-weight:600;color:#059669;">₹14.10 LPA</td>
+                <td style="text-align:center;">RAVE Programming, Data Review, Vendor DM</td>
+              </tr>
+              <tr>
+                <td><span style="color:#7c3aed;font-weight:600;">Lead / Principal Architect (10+ Years)</span></td>
+                <td style="text-align:center;font-weight:600;color:#7c3aed;">30</td>
+                <td style="text-align:center;font-weight:600;color:#059669;">5 Offers</td>
+                <td style="text-align:center;font-weight:600;color:#7c3aed;">₹19.40 LPA</td>
+                <td style="text-align:center;">Study Lead, EDC Oversight, Medical Coding Lead</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FEATURE MODAL: TIME-TO-FILL FORECAST & ROLE VELOCITY ── -->
+<div id="timeToFillModal" class="studio-modal-overlay">
+  <div class="sla-modal-window" style="max-width:1060px;">
+    <div class="studio-modal-header">
+      <div class="studio-modal-title" style="display:flex;align-items:center;gap:10px;">
+        <div style="width:34px;height:34px;border-radius:8px;background:rgba(16,185,129,0.14);display:flex;align-items:center;justify-content:center;color:#10b981;font-size:1.1rem;">
+          <i data-lucide="trending-up"></i>
+        </div>
+        <div>
+          <h3 style="font-size:1.05rem;font-weight:600;color:var(--text-primary);">Predictive Time-to-Fill &amp; Role Closure Forecast</h3>
+          <p style="font-size:0.72rem;color:var(--text-muted);">Role-by-role closure projections, estimated days-to-fill, and target completion velocity across 9 specialized streams</p>
+        </div>
+      </div>
+      <button class="modal-close-btn" id="forecastCloseBtn" title="Close Modal (ESC)">&times;</button>
+    </div>
+
+    <div class="studio-modal-body">
+      <div class="sla-kpi-grid">
+        <div class="sla-kpi-card ver">
+          <span class="sla-kpi-label">Avg Time-to-Fill</span>
+          <div class="sla-kpi-value-row">
+            <span class="sla-kpi-val" style="color:#059669;font-weight:600;">24.6 Days</span>
+            <span class="sla-kpi-tag fast">🟢 5.4d Ahead SLA</span>
+          </div>
+          <span class="sla-kpi-sub" style="color:#059669;font-weight:500;">Industry Benchmark: 30.0 Days</span>
+        </div>
+        <div class="sla-kpi-card cob">
+          <span class="sla-kpi-label">Target Fulfillment</span>
+          <div class="sla-kpi-value-row">
+            <span class="sla-kpi-val" style="color:#2563eb;font-weight:600;">78.8% Filled</span>
+            <span class="sla-kpi-tag fast">26 / 33 Offers</span>
+          </div>
+          <span class="sla-kpi-sub" style="color:#2563eb;font-weight:500;">7 Remaining Open Slots</span>
+        </div>
+        <div class="sla-kpi-card cer">
+          <span class="sla-kpi-label">Projected Campaign Close</span>
+          <div class="sla-kpi-value-row">
+            <span class="sla-kpi-val" style="color:#0284c7;font-weight:600;">08-Sep-2026</span>
+            <span class="sla-kpi-tag fast">⚡ 7 Days Ahead</span>
+          </div>
+          <span class="sla-kpi-sub" style="color:#0284c7;font-weight:500;">Target Deadline: 15-Sep-2026</span>
+        </div>
+        <div class="sla-kpi-card ame">
+          <span class="sla-kpi-label">Completed Roles</span>
+          <div class="sla-kpi-value-row">
+            <span class="sla-kpi-val" style="color:#7c3aed;font-weight:600;">4 Roles</span>
+            <span class="sla-kpi-tag met">100% Target Met</span>
+          </div>
+          <span class="sla-kpi-sub" style="color:#7c3aed;font-weight:500;">RAVE Prog, Data Reviewer, UAT</span>
+        </div>
+      </div>
+
+      <div class="ctc-section-card">
+        <div class="ctc-section-header">
+          <span class="ctc-section-title"><i data-lucide="calendar"></i> 9 Role Requisition Closure Forecast</span>
+          <span class="req-badge-pill req-badge-target-met" style="font-size:0.68rem;font-weight:600;">📈 High Fill Confidence</span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="sched-table" style="width:100%;">
+            <thead>
+              <tr>
+                <th>Role Stream</th>
+                <th style="text-align:center;">Target</th>
+                <th style="text-align:center;">Offered</th>
+                <th style="text-align:center;">Open Slots</th>
+                <th style="text-align:center;">Fill Velocity</th>
+                <th style="text-align:center;">Est. Closure Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span style="color:#2563eb;font-weight:600;">RAVE Programmer</span></td>
+                <td style="text-align:center;">6</td>
+                <td style="text-align:center;font-weight:600;color:#059669;">6</td>
+                <td style="text-align:center;font-weight:600;color:#059669;">0</td>
+                <td style="text-align:center;"><span class="req-badge-pill req-badge-target-met" style="font-weight:600;">🟢 Filled (100%)</span></td>
+                <td style="text-align:center;font-weight:600;color:#059669;">Closed (15-Aug)</td>
+              </tr>
+              <tr>
+                <td><span style="color:#0284c7;font-weight:600;">Data Reviewer</span></td>
+                <td style="text-align:center;">7</td>
+                <td style="text-align:center;font-weight:600;color:#059669;">7</td>
+                <td style="text-align:center;font-weight:600;color:#059669;">0</td>
+                <td style="text-align:center;"><span class="req-badge-pill req-badge-target-met" style="font-weight:600;">🟢 Filled (100%)</span></td>
+                <td style="text-align:center;font-weight:600;color:#059669;">Closed (18-Aug)</td>
+              </tr>
+              <tr>
+                <td><span style="color:#059669;font-weight:600;">UAT Tester</span></td>
+                <td style="text-align:center;">6</td>
+                <td style="text-align:center;font-weight:600;color:#059669;">3</td>
+                <td style="text-align:center;font-weight:600;color:#d97706;">3</td>
+                <td style="text-align:center;"><span class="req-badge-pill req-badge-active-pipeline" style="font-weight:600;">🟡 On Track</span></td>
+                <td style="text-align:center;font-weight:600;color:#0284c7;">28-Aug-2026</td>
+              </tr>
+              <tr>
+                <td><span style="color:#7c3aed;font-weight:600;">Lab Data Manager</span></td>
+                <td style="text-align:center;">3</td>
+                <td style="text-align:center;font-weight:600;color:#059669;">3</td>
+                <td style="text-align:center;font-weight:600;color:#059669;">0</td>
+                <td style="text-align:center;"><span class="req-badge-pill req-badge-target-met" style="font-weight:600;">🟢 Filled (100%)</span></td>
+                <td style="text-align:center;font-weight:600;color:#059669;">Closed (20-Aug)</td>
+              </tr>
+              <tr>
+                <td><span style="color:#d97706;font-weight:600;">Vendor Data Manager</span></td>
+                <td style="text-align:center;">3</td>
+                <td style="text-align:center;font-weight:600;color:#059669;">2</td>
+                <td style="text-align:center;font-weight:600;color:#d97706;">1</td>
+                <td style="text-align:center;"><span class="req-badge-pill req-badge-active-pipeline" style="font-weight:600;">🟡 On Track</span></td>
+                <td style="text-align:center;font-weight:600;color:#0284c7;">30-Aug-2026</td>
+              </tr>
+              <tr>
+                <td><span style="color:#e11d48;font-weight:600;">External Data Manager</span></td>
+                <td style="text-align:center;">3</td>
+                <td style="text-align:center;font-weight:600;color:#059669;">1</td>
+                <td style="text-align:center;font-weight:600;color:#d97706;">2</td>
+                <td style="text-align:center;"><span class="req-badge-pill req-badge-in-progress" style="font-weight:600;">🟠 Active L2</span></td>
+                <td style="text-align:center;font-weight:600;color:#0284c7;">02-Sep-2026</td>
+              </tr>
+              <tr>
+                <td><span style="color:#2563eb;font-weight:600;">Report Programmer</span></td>
+                <td style="text-align:center;">2</td>
+                <td style="text-align:center;font-weight:600;color:#059669;">1</td>
+                <td style="text-align:center;font-weight:600;color:#d97706;">1</td>
+                <td style="text-align:center;"><span class="req-badge-pill req-badge-active-pipeline" style="font-weight:600;">🟡 On Track</span></td>
+                <td style="text-align:center;font-weight:600;color:#0284c7;">04-Sep-2026</td>
+              </tr>
+              <tr>
+                <td><span style="color:#059669;font-weight:600;">Medical Coder</span></td>
+                <td style="text-align:center;">2</td>
+                <td style="text-align:center;font-weight:600;color:#059669;">2</td>
+                <td style="text-align:center;font-weight:600;color:#059669;">0</td>
+                <td style="text-align:center;"><span class="req-badge-pill req-badge-target-met" style="font-weight:600;">🟢 Filled (100%)</span></td>
+                <td style="text-align:center;font-weight:600;color:#059669;">Closed (19-Aug)</td>
+              </tr>
+              <tr>
+                <td><span style="color:#0284c7;font-weight:600;">Clinical Programmer</span></td>
+                <td style="text-align:center;">1</td>
+                <td style="text-align:center;font-weight:600;color:#059669;">1</td>
+                <td style="text-align:center;font-weight:600;color:#059669;">0</td>
+                <td style="text-align:center;"><span class="req-badge-pill req-badge-target-met" style="font-weight:600;">🟢 Filled (100%)</span></td>
+                <td style="text-align:center;font-weight:600;color:#059669;">Closed (12-Aug)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FEATURE MODAL: ONE-CLICK EXECUTIVE OFFER BRIEF & EMAIL DRAFTER ── -->
+<div id="offerBriefModal" class="studio-modal-overlay">
+  <div class="sla-modal-window" style="max-width:760px;">
+    <div class="studio-modal-header">
+      <div class="studio-modal-title" style="display:flex;align-items:center;gap:10px;">
+        <div style="width:34px;height:34px;border-radius:8px;background:rgba(37,99,235,0.14);display:flex;align-items:center;justify-content:center;color:#2563eb;font-size:1.1rem;">
+          <i data-lucide="mail"></i>
+        </div>
+        <div>
+          <h3 style="font-size:1.05rem;font-weight:600;color:var(--text-primary);">Executive Offer Brief &amp; Email Drafter</h3>
+          <p style="font-size:0.72rem;color:var(--text-muted);">Auto-generated offer summary ready to copy for leadership approval &amp; candidate communication</p>
+        </div>
+      </div>
+      <button class="modal-close-btn" id="offerBriefCloseBtn" title="Close Modal (ESC)">&times;</button>
+    </div>
+
+    <div class="studio-modal-body" style="padding:20px;">
+      <div id="offerBriefContent" style="background:var(--bg-surface);border:1px solid var(--border-light);border-radius:var(--radius-sm);padding:18px;font-family:var(--font-family);font-size:0.82rem;line-height:1.6;color:var(--text-primary);">
+        <!-- Injected dynamically by JS -->
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:14px;">
+        <button id="btnCopyOfferBrief" class="btn btn-primary" style="font-size:0.78rem;padding:8px 16px;display:flex;align-items:center;gap:6px;">
+          <i data-lucide="copy"></i> Copy Offer Brief to Clipboard
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FEATURE MODAL: AI TALENT MATCH & SHORTLIST RECOMMENDER ── -->
+<div id="aiRecommenderModal" class="studio-modal-overlay">
+  <div class="sla-modal-window" style="max-width:1080px;">
+    <div class="studio-modal-header">
+      <div class="studio-modal-title" style="display:flex;align-items:center;gap:10px;">
+        <div style="width:34px;height:34px;border-radius:8px;background:rgba(234,179,8,0.16);display:flex;align-items:center;justify-content:center;color:#eab308;font-size:1.1rem;">
+          <i data-lucide="sparkles"></i>
+        </div>
+        <div>
+          <h3 style="font-size:1.05rem;font-weight:600;color:var(--text-primary);">AI Talent Match &amp; Shortlist Recommender</h3>
+          <p style="font-size:0.72rem;color:var(--text-muted);">Smart AI algorithm matching candidate EDC platform skills, notice period, and CTC expectations against role requisitions</p>
+        </div>
+      </div>
+      <button class="modal-close-btn" id="matcherCloseBtn" title="Close Modal (ESC)">&times;</button>
+    </div>
+
+    <div class="studio-modal-body">
+      <!-- Filter Control Bar -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;background:var(--bg-surface);border:1px solid var(--border-light);border-radius:var(--radius-sm);padding:14px;margin-bottom:16px;">
+        <div>
+          <label style="font-size:0.72rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:4px;">Target Role Requisition:</label>
+          <select id="matchRoleSelect" class="form-select" style="width:100%;font-size:0.78rem;padding:6px 10px;border-radius:6px;background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border-light);">
+            <option value="ALL">All 9 Specialized Roles</option>
+            <option value="RAVE Programmer">RAVE Programmer (Medidata)</option>
+            <option value="Data Reviewer">Data Reviewer (Discrepancy Mgmt)</option>
+            <option value="UAT Tester">UAT Tester (Protocol Validation)</option>
+            <option value="Lab Data Manager">Lab Data Manager (eTMF / Central Lab)</option>
+            <option value="Vendor Data Manager">Vendor Data Manager (CRO Oversight)</option>
+            <option value="External Data Manager">External Data Manager (Third-Party Integration)</option>
+            <option value="Report Programmer">Report Programmer (JReview / SAS)</option>
+            <option value="Clinical Programmer">Clinical Programmer (CDISC SDTM)</option>
+            <option value="Medical Coder">Medical Coder (MedDRA / WHODrug)</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:0.72rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:4px;">Hub Location:</label>
+          <select id="matchCitySelect" class="form-select" style="width:100%;font-size:0.78rem;padding:6px 10px;border-radius:6px;background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border-light);">
+            <option value="ALL">All Location Hubs</option>
+            <option value="Bangalore">Bangalore Hub</option>
+            <option value="Hyderabad">Hyderabad Hub</option>
+            <option value="Pune">Pune Hub</option>
+            <option value="Mumbai">Mumbai Hub</option>
+            <option value="Remote">Remote / Pan-India</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:0.72rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:4px;">Max Notice Period:</label>
+          <select id="matchNoticeSelect" class="form-select" style="width:100%;font-size:0.78rem;padding:6px 10px;border-radius:6px;background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border-light);">
+            <option value="ALL">All Availability Windows</option>
+            <option value="15">⚡ Immediate / &le; 15 Days</option>
+            <option value="30">30 Days Notice</option>
+            <option value="60">60 Days Notice (Buyout Eligible)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- AI Recommended Roster Stream -->
+      <div id="aiMatchResultsContainer">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FLOATING AI TALENT ASSISTANT CHATBOT TRIGGER & PANEL ── -->
+<!-- ── AI OFFER RISK & CAMPAIGN BOTTLENECK INTELLIGENCE CENTER MODAL ───── -->
+
+<!-- ── AI AUDIO BRIEFING STUDIO & EXECUTIVE PODCAST MEMO MODAL ───── -->
+<div id="audioStudioModal" class="studio-modal-overlay">
+  <div class="sla-modal-window" style="max-width:960px;">
+    <div class="studio-modal-header">
+      <div class="studio-modal-title" style="display:flex;align-items:center;gap:10px;">
+        <div style="width:34px;height:34px;border-radius:8px;background:rgba(37,99,235,0.16);display:flex;align-items:center;justify-content:center;color:#3b82f6;font-size:1.1rem;">
+          <i data-lucide="volume-2"></i>
+        </div>
+        <div>
+          <h3 style="font-size:1.05rem;font-weight:700;color:var(--text-primary);margin:0;">AI Executive Audio Briefing Studio &amp; Podcast Memo</h3>
+          <p style="font-size:0.72rem;color:var(--text-muted);margin:2px 0 0 0;">Interactive Voice Synthesis, Live Frequency Equalizer, 4 Focus Modes &amp; Transcript Export</p>
+        </div>
+      </div>
+      <button class="modal-close-btn" id="audioCloseBtn" title="Close Audio Studio">&times;</button>
+    </div>
+    <div class="studio-modal-body" id="audioStudioBody" style="padding:18px;max-height:80vh;overflow-y:auto;">
+      <!-- Dynamic Content Injected via JS -->
+    </div>
+  </div>
+</div>
+
+<div id="riskAnalyzerModal" class="studio-modal-overlay">
+  <div class="sla-modal-window" style="max-width:1150px;">
+    <div class="studio-modal-header">
+      <div class="studio-modal-title" style="display:flex;align-items:center;gap:10px;">
+        <div style="width:34px;height:34px;border-radius:8px;background:rgba(239,68,68,0.16);display:flex;align-items:center;justify-content:center;color:#ef4444;font-size:1.1rem;">
+          <i data-lucide="shield-alert"></i>
+        </div>
+        <div>
+          <h3 style="font-size:1.05rem;font-weight:700;color:var(--text-primary);margin:0;">AI Executive Risk &amp; Campaign Bottleneck Intelligence Center</h3>
+          <p style="font-size:0.72rem;color:var(--text-muted);margin:2px 0 0 0;">Predictive Candidate Offer Drop Risk &amp; SLA Overrun Mitigation Command</p>
+        </div>
+      </div>
+      <button class="modal-close-btn" id="riskCloseBtn" title="Close Intelligence Center">&times;</button>
+    </div>
+
+    <div class="studio-modal-body" id="riskAnalyzerBody" style="padding:18px;max-height:80vh;overflow-y:auto;">
+      <!-- Dynamic Content Injected via JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ── EXECUTIVE CANDIDATE DOSSIER & PROFILE INSPECTOR MODAL ───── -->
+<div id="dossierInspectorModal" class="studio-modal-overlay">
+  <div class="sla-modal-window" style="max-width:1160px;">
+    <div class="studio-modal-header">
+      <div class="studio-modal-title" style="display:flex;align-items:center;gap:10px;">
+        <div style="width:34px;height:34px;border-radius:8px;background:rgba(99,102,241,0.16);display:flex;align-items:center;justify-content:center;color:#6366f1;font-size:1.1rem;">
+          <i data-lucide="user-check"></i>
+        </div>
+        <div>
+          <h3 style="font-size:1.05rem;font-weight:700;color:var(--text-primary);margin:0;">Executive Candidate Dossier &amp; Profile Inspector</h3>
+          <p style="font-size:0.72rem;color:var(--text-muted);margin:2px 0 0 0;">Comprehensive Candidate Profiles, Interview Scorecards, EDC Skill Badges &amp; Offer Generation</p>
+        </div>
+      </div>
+      <button class="modal-close-btn" id="dossierInspectorCloseBtn" title="Close Dossier Inspector">&times;</button>
+    </div>
+
+    <div class="studio-modal-body" id="dossierInspectorBody" style="padding:18px;max-height:80vh;overflow-y:auto;">
+      <!-- Dynamic Content Injected via JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ── TALENT MARKET TELEMETRY & HUBS MATRIX MODAL ───── -->
+<div id="talentTelemetryModal" class="studio-modal-overlay">
+  <div class="sla-modal-window" style="max-width:1150px;">
+    <div class="studio-modal-header">
+      <div class="studio-modal-title" style="display:flex;align-items:center;gap:10px;">
+        <div style="width:34px;height:34px;border-radius:8px;background:rgba(14,165,233,0.16);display:flex;align-items:center;justify-content:center;color:#0ea5e9;font-size:1.1rem;">
+          <i data-lucide="bar-chart-3"></i>
+        </div>
+        <div>
+          <h3 style="font-size:1.05rem;font-weight:700;color:var(--text-primary);margin:0;">Talent Market Telemetry &amp; Hubs Matrix</h3>
+          <p style="font-size:0.72rem;color:var(--text-muted);margin:2px 0 0 0;">Unified Market Analytics — Location Heatmaps, Notice Period Horizons &amp; EDC Skill Competencies</p>
+        </div>
+      </div>
+      <button class="modal-close-btn" id="telemetryCloseBtn" title="Close Studio Modal">&times;</button>
+    </div>
+    <div class="studio-modal-body" id="talentTelemetryBody" style="padding:18px;max-height:80vh;overflow-y:auto;">
+      <!-- Dynamic Content Injected via JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ── COMPENSATION & TA BUDGET ROI OPTIMIZER MODAL ───── -->
+<div id="budgetOptimizerModal" class="studio-modal-overlay">
+  <div class="sla-modal-window" style="max-width:1150px;">
+    <div class="studio-modal-header">
+      <div class="studio-modal-title" style="display:flex;align-items:center;gap:10px;">
+        <div style="width:34px;height:34px;border-radius:8px;background:rgba(217,119,6,0.16);display:flex;align-items:center;justify-content:center;color:#d97706;font-size:1.1rem;">
+          <i data-lucide="wallet"></i>
+        </div>
+        <div>
+          <h3 style="font-size:1.05rem;font-weight:700;color:var(--text-primary);margin:0;">Compensation &amp; TA Budget ROI Optimizer</h3>
+          <p style="font-size:0.72rem;color:var(--text-muted);margin:2px 0 0 0;">Salary Bands, In-House Agency Sourcing Savings &amp; Notice Buyout ROI Calculator</p>
+        </div>
+      </div>
+      <button class="modal-close-btn" id="budgetCloseBtn" title="Close Studio Modal">&times;</button>
+    </div>
+    <div class="studio-modal-body" id="budgetOptimizerBody" style="padding:18px;max-height:80vh;overflow-y:auto;">
+      <!-- Dynamic Content Injected via JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ── TIMELINE OVERRUN & DEADLINE EXCEPTION MODAL ───── -->
+<div id="timelineOverrunModal" class="studio-modal-overlay" style="z-index:3500;">
+  <div class="sla-modal-window" style="max-width:1050px;">
+    <div class="studio-modal-header" style="background:rgba(239,68,68,0.08);border-bottom:1px solid rgba(239,68,68,0.25);">
+      <div class="studio-modal-title" style="display:flex;align-items:center;gap:10px;">
+        <div style="width:34px;height:34px;border-radius:8px;background:rgba(239,68,68,0.16);display:flex;align-items:center;justify-content:center;color:#ef4444;font-size:1.1rem;">
+          <i data-lucide="alert-triangle"></i>
+        </div>
+        <div>
+          <h3 id="overrunModalTitle" style="font-size:1.05rem;font-weight:800;color:#ef4444;margin:0;">🚨 Timeline Overrun &amp; Deadline Exception Report</h3>
+          <p class="modal-header-sub" style="margin:2px 0 0 0;">Candidates Crossing Original 15-Sep Deadline (+15 Days Extended)</p>
+        </div>
+      </div>
+      <button class="modal-close-btn" id="overrunCloseBtn" title="Close Modal">&times;</button>
+    </div>
+    <div class="studio-modal-body" id="overrunModalBody" style="padding:18px;max-height:80vh;overflow-y:auto;">
+      <!-- Dynamic Content Injected via JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ── ON-TIME FULFILLMENT MODAL ───── -->
+<div id="timelineOnTimeModal" class="studio-modal-overlay" style="z-index:3500;">
+  <div class="sla-modal-window" style="max-width:1050px;">
+    <div class="studio-modal-header" style="background:rgba(5,150,105,0.08);border-bottom:1px solid rgba(5,150,105,0.25);">
+      <div class="studio-modal-title" style="display:flex;align-items:center;gap:10px;">
+        <div style="width:34px;height:34px;border-radius:8px;background:rgba(5,150,105,0.16);display:flex;align-items:center;justify-content:center;color:#059669;font-size:1.1rem;">
+          <i data-lucide="check-circle-2"></i>
+        </div>
+        <div>
+          <h3 id="onTimeModalTitle" style="font-size:1.05rem;font-weight:800;color:#059669;margin:0;">🟢 On-Time Candidates &amp; Fulfillment Report</h3>
+          <p class="modal-header-sub" style="margin:2px 0 0 0;">Candidates Fulfilling Sourcing Goals On-Time (By 15-Sep-2026)</p>
+        </div>
+      </div>
+      <button class="modal-close-btn" id="onTimeCloseBtn" title="Close Modal">&times;</button>
+    </div>
+    <div class="studio-modal-body" id="onTimeModalBody" style="padding:18px;max-height:80vh;overflow-y:auto;">
+      <!-- Dynamic Content Injected via JS -->
+    </div>
+  </div>
+</div>
+
+  <button id="btnAiChatbotTrigger" class="ai-chatbot-floating-trigger" title="Ask CDM Talent AI Assistant">
+  <i data-lucide="bot"></i>
+  <span class="chatbot-trigger-dot"></span>
+</button>
+
+<div id="aiChatbotPanel" class="ai-chatbot-panel">
+  <div class="chatbot-header">
+    <div class="chatbot-title-box">
+      <div class="chatbot-avatar">
+        <i data-lucide="bot"></i>
+      </div>
+      <div class="chatbot-title-text">
+        <h4>CDM Talent Intelligence AI</h4>
+        <span class="chatbot-status">🟢 Online | 122 Candidates Indexed</span>
+      </div>
+    </div>
+    <div class="chatbot-header-actions">
+      <button class="chatbot-action-btn" id="btnChatClear" title="Clear Chat History"><i data-lucide="trash-2"></i></button>
+      <button class="chatbot-action-btn" id="btnChatClose" title="Close Chatbot">&times;</button>
+    </div>
+  </div>
+
+  <div class="chatbot-suggestions-bar">
+    <button class="chip-suggestion" data-query="Campaign Summary">📊 Summary</button>
+    <button class="chip-suggestion" data-query="Overrun Risk">🚨 Overrun Risk</button>
+    <button class="chip-suggestion" data-query="High Joining Probability">🎯 Joining Prob</button>
+    <button class="chip-suggestion" data-query="Salary & Budget">💰 Salary &amp; Budget</button>
+    <button class="chip-suggestion" data-query="Immediate Joiners">⚡ Immediate Joiners</button>
+    <button class="chip-suggestion" data-query="RAVE Programmers">🛠️ RAVE Programmers</button>
+    <button class="chip-suggestion" data-query="Bangalore Hub">📍 Bangalore Hub</button>
+    <button class="chip-suggestion" data-query="Rejection Reasons">📉 Rejections</button>
+  </div>
+
+  <div class="chatbot-messages-log" id="chatMessagesLog">
+    <!-- Messages injected dynamically by app.js -->
+  </div>
+
+  <div class="chatbot-input-bar">
+    <input type="text" id="chatInput" class="chatbot-input" placeholder="Ask anything about candidates, CTC, roles, SLA..." />
+    <button id="btnChatSend" class="chatbot-send-btn" title="Send Question"><i data-lucide="send"></i></button>
+  </div>
+</div>
+
+<script src="data.js?v=5.0"></script>
+<script src="app.js?v=5.0"></script>
+</body>
+</html>
