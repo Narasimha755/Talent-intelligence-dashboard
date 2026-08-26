@@ -12131,8 +12131,8 @@ function initDashboardApp() {
                 `).join('')}
               </select>
             </div>
-            <button class="btn btn-secondary" onclick="printCandidateOfferMemo('${cand.name}', '${cand.role}', '₹${oLpa} LPA', '${cand.doj || '01-Sep-2026'}')" style="font-size:0.74rem;padding:6px 12px;display:flex;align-items:center;gap:6px;">
-              <i data-lucide="printer"></i> Print / Generate Formal Offer Letter
+            <button class="btn btn-secondary" onclick="window.openCandidateProfileBySno(${cand.sno})" style="font-size:0.74rem;padding:6px 12px;display:flex;align-items:center;gap:6px;">
+              <i data-lucide="user"></i> View Candidate Profile
             </button>
           </div>
 
@@ -12815,9 +12815,10 @@ function initDashboardApp() {
                   • <strong>Milestone:</strong> ${c.onboard === 'Onboarded' ? 'Joined' : c.onboard === 'YTO' ? 'YTO (' + (c.doj || '01-Sep') + ')' : (c.clientFeedback || 'In Evaluation')}
                 </div>
 
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:8px;border-top:1px solid var(--border-subtle);">
-                  <button class="view-dossier-btn" onclick="openCandidateProfileBySno(${c.sno})" style="font-size:0.70rem;padding:4px 8px;">View Dossier</button>
-                  <button class="btn btn-secondary" onclick="printCandidateOfferMemo('${c.name}', '${c.role}', '₹${o > 0 ? (o/100000).toFixed(2) : '12.00'} LPA', '${c.doj || '01-Sep-2026'}')" style="font-size:0.70rem;padding:4px 8px;">Print Offer</button>
+                <div style="margin-top:auto;padding-top:8px;border-top:1px solid var(--border-subtle);">
+                  <button class="btn btn-secondary" onclick="window.openCandidateProfileBySno(${c.sno})" style="font-size:0.72rem;padding:5px 10px;width:100%;display:flex;align-items:center;justify-content:center;gap:6px;">
+                    <i data-lucide="user" style="width:12px;height:12px;"></i> View Candidate Profile
+                  </button>
                 </div>
               </div>
             `;
@@ -13098,7 +13099,7 @@ function initDashboardApp() {
       if (q.includes('shortlist') || q.includes('pending offer') || q.includes('awaiting offer') || q.includes('5 candidate')) {
         const shortList = masterData.filter(d => (d.clientFeedback || '').toLowerCase().includes('shortlist') && (d.status || '').toLowerCase() !== 'offered');
         const shortStr = shortList.map(c => '• **#' + c.sno + ' · ' + c.name + '** — *' + c.role + '* (L1: ' + (c.interviewDate || 'Completed') + ', Feedback: ' + c.clientFeedback + ')').join('\n');
-        return '📋 **Active Offer Shortlist (' + shortList.length + ' Candidates):**\n\nThese candidates have cleared all client evaluations and are awaiting formal package authorization:\n\n' + shortStr + '\n\n💡 **Action:** You can generate formal offer letters for any shortlisted candidate using the **Client Feedback Analytics** or **AI Talent Matcher** tools.';
+        return '📋 **Active Offer Shortlist (' + shortList.length + ' Candidates):**\n\nThese candidates have cleared all client evaluations and are awaiting formal package authorization:\n\n' + shortStr + '\n\n💡 **Action:** You can generate formal offer letters for any shortlisted candidate using the **Client Evaluation & Feedback Analytics** tool.';
       }
 
       // ── 6. COHORT ONBOARDING & JOINING SCHEDULES ──
