@@ -117,9 +117,9 @@
         <span>15-Sep Sourcing Goals &amp; Closure Tracker</span>
       </button>
 
-      <button class="exec-tool-btn matcher-btn" id="btnAiRecommender" title="Instant Search and Filter across all 122 Candidate Records">
-        <i data-lucide="search"></i>
-        <span>Candidate Search &amp; Match Engine</span>
+      <button class="exec-tool-btn report-btn" id="btnExecutiveReport" title="Generate 1-Click C-Suite Executive Briefing Deck &amp; PDF Report" style="background:rgba(79,70,229,0.12);color:#4f46e5;border:1px solid rgba(79,70,229,0.28);">
+        <i data-lucide="file-text"></i>
+        <span>C-Suite Executive Briefing Deck</span>
       </button>
 
       <button class="exec-tool-btn risk-btn" id="btnInterviewAnalytics" title="View Client Interview Feedback, Clearance Rates &amp; Shortlist Offer Actions" style="background:rgba(99,102,241,0.12);color:#6366f1;border:1px solid rgba(99,102,241,0.28);">
@@ -1305,68 +1305,32 @@
   </div>
 </div>
 
-<!-- ── FEATURE MODAL: AI TALENT MATCH & SHORTLIST RECOMMENDER ── -->
-<div id="aiRecommenderModal" class="studio-modal-overlay">
-  <div class="sla-modal-window" style="max-width:1080px;">
-    <div class="studio-modal-header">
+<!-- ── FEATURE 7: C-SUITE EXECUTIVE BRIEFING DECK & PDF REPORT GENERATOR ── -->
+<div id="executiveReportModal" class="studio-modal-overlay">
+  <div class="sla-modal-window" style="max-width:1160px;">
+    <div class="studio-modal-header" style="background:rgba(79,70,229,0.06);border-bottom:1px solid rgba(79,70,229,0.20);">
       <div class="studio-modal-title" style="display:flex;align-items:center;gap:10px;">
-        <div style="width:34px;height:34px;border-radius:8px;background:rgba(234,179,8,0.16);display:flex;align-items:center;justify-content:center;color:#eab308;font-size:1.1rem;">
-          <i data-lucide="sparkles"></i>
+        <div style="width:34px;height:34px;border-radius:8px;background:rgba(79,70,229,0.16);display:flex;align-items:center;justify-content:center;color:#4f46e5;font-size:1.1rem;">
+          <i data-lucide="file-text"></i>
         </div>
         <div>
-          <h3 style="font-size:1.05rem;font-weight:600;color:var(--text-primary);">AI Talent Match &amp; Shortlist Recommender</h3>
-          <p style="font-size:0.72rem;color:var(--text-muted);">Smart AI algorithm matching candidate EDC platform skills, notice period, and CTC expectations against role requisitions</p>
+          <h3 style="font-size:1.05rem;font-weight:700;color:var(--text-primary);margin:0;">C-Suite Executive Briefing Deck &amp; PDF Report</h3>
+          <p style="font-size:0.72rem;color:var(--text-muted);margin:2px 0 0 0;">Publication-Ready Executive Dossier — Campaign Velocity, Budget ROI, Cohort Onboarding &amp; SLA Diagnostics</p>
         </div>
       </div>
-      <button class="modal-close-btn" id="matcherCloseBtn" title="Close Modal (ESC)">&times;</button>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button class="btn btn-primary" onclick="window.printExecutiveReportDoc()" style="font-size:0.74rem;padding:6px 14px;background:#4f46e5;color:#fff;border:none;border-radius:6px;display:flex;align-items:center;gap:6px;cursor:pointer;box-shadow:0 2px 8px rgba(79,70,229,0.3);">
+          <i data-lucide="printer" style="width:14px;height:14px;"></i> Print / Save as PDF
+        </button>
+        <button class="modal-close-btn" id="reportCloseBtn" title="Close Executive Report">&times;</button>
+      </div>
     </div>
 
-    <div class="studio-modal-body">
-      <!-- Filter Control Bar -->
-      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;background:var(--bg-surface);border:1px solid var(--border-light);border-radius:var(--radius-sm);padding:14px;margin-bottom:16px;">
-        <div>
-          <label style="font-size:0.72rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:4px;">Target Role Requisition:</label>
-          <select id="matchRoleSelect" class="form-select" style="width:100%;font-size:0.78rem;padding:6px 10px;border-radius:6px;background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border-light);">
-            <option value="ALL">All 9 Specialized Roles</option>
-            <option value="RAVE Programmer">RAVE Programmer (Medidata)</option>
-            <option value="Data Reviewer">Data Reviewer (Discrepancy Mgmt)</option>
-            <option value="UAT Tester">UAT Tester (Protocol Validation)</option>
-            <option value="Lab Data Manager">Lab Data Manager (eTMF / Central Lab)</option>
-            <option value="Vendor Data Manager">Vendor Data Manager (CRO Oversight)</option>
-            <option value="External Data Manager">External Data Manager (Third-Party Integration)</option>
-            <option value="Report Programmer">Report Programmer (JReview / SAS)</option>
-            <option value="Clinical Programmer">Clinical Programmer (CDISC SDTM)</option>
-            <option value="Medical Coder">Medical Coder (MedDRA / WHODrug)</option>
-          </select>
-        </div>
-        <div>
-          <label style="font-size:0.72rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:4px;">Hub Location:</label>
-          <select id="matchCitySelect" class="form-select" style="width:100%;font-size:0.78rem;padding:6px 10px;border-radius:6px;background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border-light);">
-            <option value="ALL">All Location Hubs</option>
-            <option value="Bangalore">Bangalore Hub</option>
-            <option value="Hyderabad">Hyderabad Hub</option>
-            <option value="Pune">Pune Hub</option>
-            <option value="Mumbai">Mumbai Hub</option>
-            <option value="Remote">Remote / Pan-India</option>
-          </select>
-        </div>
-        <div>
-          <label style="font-size:0.72rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:4px;">Max Notice Period:</label>
-          <select id="matchNoticeSelect" class="form-select" style="width:100%;font-size:0.78rem;padding:6px 10px;border-radius:6px;background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border-light);">
-            <option value="ALL">All Availability Windows</option>
-            <option value="15">⚡ Immediate / &le; 15 Days</option>
-            <option value="30">30 Days Notice</option>
-            <option value="60">60 Days Notice (Buyout Eligible)</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- AI Recommended Roster Stream -->
-      <div id="aiMatchResultsContainer">
-        <!-- Rendered dynamically by app.js -->
-      </div>
+    <div class="studio-modal-body" id="executiveReportModalBody" style="padding:20px;max-height:80vh;overflow-y:auto;">
+      <!-- Dynamic Content Injected via JS -->
     </div>
   </div>
+</div>
 </div>
 
 <!-- ── FLOATING AI TALENT ASSISTANT CHATBOT TRIGGER & PANEL ── -->
