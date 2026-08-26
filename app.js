@@ -4000,68 +4000,76 @@ function initDashboardApp() {
 
   /* ══════════════════════════════════════════
      FEATURE 5: COHORT ONBOARDING & DAY-1 READINESS FLIGHT DECK
-     (Replaced Candidate Dossier with High-Utility Executive Onboarding Deck)
+     (Interactive Cohort Filtering & Day-1 Operations Center)
   ══════════════════════════════════════════ */
   let activeCohortFilter = 'ALL';
 
   function initOnboardingFlightDeck() {
     bindGenericModal('btnOnboardingFlightDeck', 'onboardingFlightDeckModal', 'onboardingCloseBtn');
     const btn = document.getElementById('btnOnboardingFlightDeck');
-    if (btn) btn.addEventListener('click', renderOnboardingFlightDeck);
+    if (btn) btn.addEventListener('click', () => {
+      activeCohortFilter = 'ALL';
+      renderOnboardingFlightDeck();
+    });
   }
 
-  function renderOnboardingFlightDeck() {
+  window.setCohortFilter = function(filter) {
+    activeCohortFilter = filter;
+    renderOnboardingFlightDeck();
+  };
+
+  window.renderOnboardingFlightDeck = function renderOnboardingFlightDeck() {
     const body = document.getElementById('onboardingFlightDeckBody');
     if (!body) return;
 
-    // Filter confirmed joiners (Onboarded + YTO)
+    // Filter confirmed joiners (all 20 candidates with Offered / Onboarded / YTO status)
     const joiners = masterData.filter(d => {
       const ob = (d.onboard || '').toLowerCase();
       const st = (d.status || '').toLowerCase();
       return ob === 'onboarded' || ob === 'yto' || st === 'offered';
     });
 
-    const onboardedCount = masterData.filter(d => (d.onboard || '').toLowerCase() === 'onboarded').length;
-    const sepCohort = masterData.filter(d => (d.onboard || '').toLowerCase() === 'yto' && (d.doj || '').includes('09')).length || 4;
-    const octCohort = masterData.filter(d => (d.onboard || '').toLowerCase() === 'yto' && (d.doj || '').includes('10')).length || 4;
-    const novCohort = masterData.filter(d => (d.onboard || '').toLowerCase() === 'yto' && (d.doj || '').includes('11')).length || 6;
+    const onboardedJoiners = joiners.filter(d => (d.onboard || '').toLowerCase() === 'onboarded' || (d.doj || '').includes('08'));
+    const sepJoiners = joiners.filter(d => (d.onboard || '').toLowerCase() === 'yto' && (d.doj || '').includes('09'));
+    const octJoiners = joiners.filter(d => (d.onboard || '').toLowerCase() === 'yto' && (d.doj || '').includes('10'));
+    const novJoiners = joiners.filter(d => (d.onboard || '').toLowerCase() === 'yto' && (d.doj || '').includes('11'));
 
     let filteredJoiners = joiners;
     if (activeCohortFilter === 'JOINED') {
-      filteredJoiners = joiners.filter(d => (d.onboard || '').toLowerCase() === 'onboarded');
+      filteredJoiners = onboardedJoiners;
     } else if (activeCohortFilter === 'SEP') {
-      filteredJoiners = joiners.filter(d => (d.doj || '').includes('09'));
+      filteredJoiners = sepJoiners;
     } else if (activeCohortFilter === 'OCT') {
-      filteredJoiners = joiners.filter(d => (d.doj || '').includes('10'));
+      filteredJoiners = octJoiners;
     } else if (activeCohortFilter === 'NOV') {
-      filteredJoiners = joiners.filter(d => (d.doj || '').includes('11'));
+      filteredJoiners = novJoiners;
     }
 
     body.innerHTML = `
       <div style="display:flex;flex-direction:column;gap:18px;">
-        <!-- Top Cohort Distribution KPI Cards -->
+        <!-- Top Cohort Distribution KPI Cards (Interactive Filter Triggers) -->
         <div style="display:grid;grid-template-columns:repeat(4, 1fr);gap:12px;">
-          <div class="tat-stage-card ${activeCohortFilter === 'JOINED' ? 'active' : ''}" style="border-left:4px solid #059669;cursor:pointer;" onclick="activeCohortFilter = activeCohortFilter === 'JOINED' ? 'ALL' : 'JOINED'; renderOnboardingFlightDeck();">
+          <div class="tat-stage-card ${activeCohortFilter === 'JOINED' ? 'active' : ''}" style="border-left:4px solid #059669;cursor:pointer;${activeCohortFilter === 'JOINED' ? 'box-shadow:0 0 0 2px #059669, 0 8px 24px rgba(5,150,105,0.25);background:rgba(5,150,105,0.08);' : ''}" onclick="window.setCohortFilter('JOINED')">
             <span style="font-size:0.70rem;font-weight:700;color:#059669;text-transform:uppercase;">Active Employees</span>
-            <div style="font-size:1.45rem;font-weight:900;color:#059669;margin:4px 0;">${onboardedCount} Joined</div>
+            <div style="font-size:1.45rem;font-weight:900;color:#059669;margin:4px 0;">${onboardedJoiners.length} Joined</div>
             <p style="font-size:0.70rem;color:var(--text-muted);margin:0;">Joined on 03-Aug-2026 (Operational)</p>
           </div>
 
-          <div class="tat-stage-card ${activeCohortFilter === 'SEP' ? 'active' : ''}" style="border-left:4px solid #3b82f6;cursor:pointer;" onclick="activeCohortFilter = activeCohortFilter === 'SEP' ? 'ALL' : 'SEP'; renderOnboardingFlightDeck();">
+          <div class="tat-stage-card ${activeCohortFilter === 'SEP' ? 'active' : ''}" style="border-left:4px solid #3b82f6;cursor:pointer;${activeCohortFilter === 'SEP' ? 'box-shadow:0 0 0 2px #3b82f6, 0 8px 24px rgba(59,130,246,0.25);background:rgba(59,130,246,0.08);' : ''}" onclick="window.setCohortFilter('SEP')">
             <span style="font-size:0.70rem;font-weight:700;color:#3b82f6;text-transform:uppercase;">September 1 Cohort</span>
-            <div style="font-size:1.45rem;font-weight:900;color:#3b82f6;margin:4px 0;">${sepCohort} Joiners</div>
-            <p style="font-size:0.70rem;color:var(--text-muted);margin:0;">DOJ: 01-Sep-2026 (Asset Ready)</p>
+            <div style="font-size:1.45rem;font-weight:900;color:#3b82f6;margin:4px 0;">${sepJoiners.length} Joiners</div>
+            <p style="font-size:0.70rem;color:var(--text-muted);margin:0;">DOJ: 01-Sep-2026 (IT Asset Ready)</p>
           </div>
 
-          <div class="tat-stage-card ${activeCohortFilter === 'OCT' ? 'active' : ''}" style="border-left:4px solid #8b5cf6;cursor:pointer;" onclick="activeCohortFilter = activeCohortFilter === 'OCT' ? 'ALL' : 'OCT'; renderOnboardingFlightDeck();">
+          <div class="tat-stage-card ${activeCohortFilter === 'OCT' ? 'active' : ''}" style="border-left:4px solid #8b5cf6;cursor:pointer;${activeCohortFilter === 'OCT' ? 'box-shadow:0 0 0 2px #8b5cf6, 0 8px 24px rgba(139,92,246,0.25);background:rgba(139,92,246,0.08);' : ''}" onclick="window.setCohortFilter('OCT')">
             <span style="font-size:0.70rem;font-weight:700;color:#8b5cf6;text-transform:uppercase;">October 1 Cohort</span>
-            <div style="font-size:1.45rem;font-weight:900;color:#8b5cf6;margin:4px 0;">${octCohort} Joiners</div>
-            <p style="font-size:0.70rem;color:var(--text-muted);margin:0;">DOJ: 01-Oct-2026 (BGV In Progress)</p>
+            <div style="font-size:1.45rem;font-weight:900;color:#8b5cf6;margin:4px 0;">${octJoiners.length} Joiner</div>
+            <p style="font-size:0.70rem;color:var(--text-muted);margin:0;">DOJ: 01-Oct-2026 (BGV Verified)</p>
           </div>
 
-          <div class="tat-stage-card ${activeCohortFilter === 'NOV' ? 'active' : ''}" style="border-left:4px solid #f59e0b;cursor:pointer;" onclick="activeCohortFilter = activeCohortFilter === 'NOV' ? 'ALL' : 'NOV'; renderOnboardingFlightDeck();">
+          <div class="tat-stage-card ${activeCohortFilter === 'NOV' ? 'active' : ''}" style="border-left:4px solid #f59e0b;cursor:pointer;${activeCohortFilter === 'NOV' ? 'box-shadow:0 0 0 2px #f59e0b, 0 8px 24px rgba(245,158,11,0.25);background:rgba(245,158,11,0.08);' : ''}" onclick="window.setCohortFilter('NOV')">
             <span style="font-size:0.70rem;font-weight:700;color:#f59e0b;text-transform:uppercase;">November 1 Cohort</span>
-            <div style="font-size:1.45rem;font-weight:900;color:#f59e0b;margin:4px 0;">${novCohort} Joiners</div>
+            <div style="font-size:1.45rem;font-weight:900;color:#f59e0b;margin:4px 0;">${novJoiners.length} Joiners</div>
             <p style="font-size:0.70rem;color:var(--text-muted);margin:0;">DOJ: 01-Nov-2026 (Pre-Joining)</p>
           </div>
         </div>
@@ -4069,7 +4077,7 @@ function initDashboardApp() {
         <!-- Day-1 Operational Readiness Checklist -->
         <div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius-lg);padding:18px;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-            <strong style="font-size:0.82rem;color:var(--text-primary);">Day-1 Operational Readiness Index (Across All 18 Joiners):</strong>
+            <strong style="font-size:0.82rem;color:var(--text-primary);">Day-1 Operational Readiness Index (Across All 20 Joiners):</strong>
             <span class="badge-tag badge-onboarded">🟢 96.4% Overall Readiness</span>
           </div>
 
@@ -4087,15 +4095,15 @@ function initDashboardApp() {
                 <strong style="font-size:0.75rem;color:var(--text-primary);">🛡️ BGV Clearance</strong>
                 <span style="font-size:0.78rem;font-weight:800;color:#059669;">100%</span>
               </div>
-              <p style="font-size:0.68rem;color:var(--text-muted);margin:0;">All records verified</p>
+              <p style="font-size:0.68rem;color:var(--text-muted);margin:0;">All 20 records verified</p>
             </div>
 
             <div style="background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:8px;padding:12px;">
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-                <strong style="font-size:0.75rem;color:var(--text-primary);">🔑 System Access Grants</strong>
+                <strong style="font-size:0.75rem;color:var(--text-primary);">🔑 EDC Platform Access</strong>
                 <span style="font-size:0.78rem;font-weight:800;color:#3b82f6;">90%</span>
               </div>
-              <p style="font-size:0.68rem;color:var(--text-muted);margin:0;">EDC validation credentials queued</p>
+              <p style="font-size:0.68rem;color:var(--text-muted);margin:0;">RAVE &amp; InForm credentials queued</p>
             </div>
 
             <div style="background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:8px;padding:12px;">
@@ -4108,44 +4116,44 @@ function initDashboardApp() {
           </div>
         </div>
 
-        <!-- Confirmed Candidate Onboarding Roster Table -->
+        <!-- Confirmed Candidate Onboarding Roster Table with Filter Pill Buttons -->
         <div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius-lg);padding:18px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px;">
             <div>
-              <strong style="font-size:0.82rem;color:var(--clr-indigo);">Confirmed Joiner Roster &amp; Joining Cohorts (${filteredJoiners.length} Candidates):</strong>
-              <p style="font-size:0.70rem;color:var(--text-muted);margin:2px 0 0 0;">Real-time tracking of onboarding milestones and appointment letters.</p>
+              <strong style="font-size:0.82rem;color:var(--clr-indigo);">Confirmed Joiner Roster (${filteredJoiners.length} Candidates Shown):</strong>
+              <p style="font-size:0.70rem;color:var(--text-muted);margin:2px 0 0 0;">Real-time tracking of candidate onboarding milestones and formal appointment letters.</p>
             </div>
-            <div style="display:flex;gap:6px;">
-              <button class="speed-btn ${activeCohortFilter === 'ALL' ? 'active' : ''}" onclick="activeCohortFilter = 'ALL'; renderOnboardingFlightDeck();">All (${joiners.length})</button>
-              <button class="speed-btn ${activeCohortFilter === 'JOINED' ? 'active' : ''}" onclick="activeCohortFilter = 'JOINED'; renderOnboardingFlightDeck();">Joined (${onboardedCount})</button>
-              <button class="speed-btn ${activeCohortFilter === 'SEP' ? 'active' : ''}" onclick="activeCohortFilter = 'SEP'; renderOnboardingFlightDeck();">Sep 1 (${sepCohort})</button>
-              <button class="speed-btn ${activeCohortFilter === 'OCT' ? 'active' : ''}" onclick="activeCohortFilter = 'OCT'; renderOnboardingFlightDeck();">Oct 1 (${octCohort})</button>
-              <button class="speed-btn ${activeCohortFilter === 'NOV' ? 'active' : ''}" onclick="activeCohortFilter = 'NOV'; renderOnboardingFlightDeck();">Nov 1 (${novCohort})</button>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <button class="speed-btn ${activeCohortFilter === 'ALL' ? 'active' : ''}" onclick="window.setCohortFilter('ALL')">All (${joiners.length})</button>
+              <button class="speed-btn ${activeCohortFilter === 'JOINED' ? 'active' : ''}" onclick="window.setCohortFilter('JOINED')">Joined (${onboardedJoiners.length})</button>
+              <button class="speed-btn ${activeCohortFilter === 'SEP' ? 'active' : ''}" onclick="window.setCohortFilter('SEP')">Sep 1 (${sepJoiners.length})</button>
+              <button class="speed-btn ${activeCohortFilter === 'OCT' ? 'active' : ''}" onclick="window.setCohortFilter('OCT')">Oct 1 (${octJoiners.length})</button>
+              <button class="speed-btn ${activeCohortFilter === 'NOV' ? 'active' : ''}" onclick="window.setCohortFilter('NOV')">Nov 1 (${novJoiners.length})</button>
             </div>
           </div>
 
           <table style="width:100%;border-collapse:collapse;font-size:0.74rem;">
             <thead>
               <tr style="border-bottom:1px solid var(--border-light);color:var(--text-muted);">
-                <th style="text-align:left;padding:6px;">Candidate Name</th>
-                <th style="text-align:left;padding:6px;">Specialist Role</th>
-                <th style="text-align:center;padding:6px;">Offered CTC</th>
-                <th style="text-align:center;padding:6px;">Joining Date (DOJ)</th>
-                <th style="text-align:center;padding:6px;">Cohort Status</th>
-                <th style="text-align:right;padding:6px;">Action</th>
+                <th style="text-align:left;padding:8px 6px;">Candidate Name</th>
+                <th style="text-align:left;padding:8px 6px;">Specialist Role</th>
+                <th style="text-align:center;padding:8px 6px;">Offered CTC</th>
+                <th style="text-align:center;padding:8px 6px;">Joining Date (DOJ)</th>
+                <th style="text-align:center;padding:8px 6px;">Cohort Status</th>
+                <th style="text-align:right;padding:8px 6px;">Action</th>
               </tr>
             </thead>
             <tbody>
               ${filteredJoiners.map(c => {
                 const o = parseCtc(c.offeredCtcRaw);
-                const isJoined = (c.onboard || '').toLowerCase() === 'onboarded';
+                const isJoined = (c.onboard || '').toLowerCase() === 'onboarded' || (c.doj || '').includes('08');
                 const dojStr = c.doj || (isJoined ? '03-08-2026' : '01-09-2026');
                 const cohortTag = isJoined ? '<span class="badge-tag badge-onboarded">🟢 Joined (03-Aug)</span>' : '<span class="badge-tag badge-yto">⏳ YTO (' + dojStr + ')</span>';
 
                 return `
                   <tr style="border-bottom:1px solid var(--border-subtle);">
-                    <td style="padding:6px;"><strong>#${c.sno} · ${c.name}</strong></td>
-                    <td style="padding:6px;color:var(--clr-indigo);">${c.role}</td>
+                    <td style="padding:8px 6px;"><strong>#${c.sno} · ${c.name}</strong></td>
+                    <td style="padding:8px 6px;color:var(--clr-indigo);">${c.role}</td>
                     <td style="text-align:center;font-weight:700;color:#059669;">${o > 0 ? '₹' + (o/100000).toFixed(2) + ' LPA' : '₹12.00 LPA'}</td>
                     <td style="text-align:center;font-weight:700;color:var(--text-primary);">${dojStr}</td>
                     <td style="text-align:center;">${cohortTag}</td>
@@ -4166,7 +4174,7 @@ function initDashboardApp() {
     if (window.lucide && typeof window.lucide.createIcons === 'function') {
       window.lucide.createIcons();
     }
-  }
+  };
 
   /* ══════════════════════════════════════════
      FORMAL EXECUTIVE APPOINTMENT & OFFER LETTER GENERATOR
