@@ -901,7 +901,7 @@ function initDashboardApp() {
           <td>${offeredCtcDisplay}</td>
           <td>${hikeStr}</td>
           <td>${milestoneBadge}</td>
-          <td><button class="view-dossier-btn" data-sno="${d.sno}" onclick="event.stopPropagation(); window.openDossierModalBySno(${d.sno});">View Profile</button></td>
+          <td><button class="view-dossier-btn" data-sno="${d.sno}" onclick="event.stopPropagation(); window.openCandidateProfileBySno(${d.sno});">View Profile</button></td>
         </tr>
       `;
     }).join('');
@@ -910,12 +910,12 @@ function initDashboardApp() {
     tbody.onclick = (e) => {
       const tr = e.target.closest('tr');
       if (tr && tr.dataset.sno) {
-        window.openDossierModalBySno(tr.dataset.sno);
+        window.openCandidateProfileBySno(tr.dataset.sno);
       }
     };
   }
 
-  window.openDossierModalBySno = function(sno) {
+  window.openCandidateProfileBySno = function(sno) {
     const cand = masterData.find(c => String(c.sno) === String(sno));
     if (cand) openDossierModal(cand);
   };
@@ -943,6 +943,12 @@ function initDashboardApp() {
       if (e.target === dossierOverlay || e.target.closest('#dossierCloseBtn')) closeDossierModal();
     });
   }
+
+  window.openCandidateProfileBySno = function(sno) {
+    const c = masterData.find(d => String(d.sno) === String(sno));
+    if (c) openDossierModal(c);
+  };
+  window.openDossierModal = openDossierModal;
 
   function openDossierModal(c) {
     if (!dossierOverlay) return;
@@ -4158,8 +4164,8 @@ function initDashboardApp() {
                     <td style="text-align:center;font-weight:700;color:var(--text-primary);">${dojStr}</td>
                     <td style="text-align:center;">${cohortTag}</td>
                     <td style="text-align:right;">
-                      <button class="btn btn-secondary" onclick="printCandidateOfferMemo('${c.name}', '${c.role}', '₹${o > 0 ? (o/100000).toFixed(2) : '12.00'} LPA', '${dojStr}')" style="font-size:0.70rem;padding:3px 8px;">
-                        Print Offer
+                      <button class="btn btn-secondary" onclick="window.openCandidateProfileBySno(${c.sno})" style="font-size:0.70rem;padding:4px 10px;display:flex;align-items:center;gap:4px;cursor:pointer;">
+                        <i data-lucide="user" style="width:12px;height:12px;"></i> View Profile
                       </button>
                     </td>
                   </tr>
@@ -4615,7 +4621,7 @@ function initDashboardApp() {
                 </div>
 
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:8px;border-top:1px solid var(--border-subtle);">
-                  <button class="view-dossier-btn" onclick="openDossierModalBySno(${c.sno})" style="font-size:0.70rem;padding:4px 8px;">View Dossier</button>
+                  <button class="view-dossier-btn" onclick="openCandidateProfileBySno(${c.sno})" style="font-size:0.70rem;padding:4px 8px;">View Dossier</button>
                   <button class="btn btn-secondary" onclick="printCandidateOfferMemo('${c.name}', '${c.role}', '₹${o > 0 ? (o/100000).toFixed(2) : '12.00'} LPA', '${c.doj || '01-Sep-2026'}')" style="font-size:0.70rem;padding:4px 8px;">Print Offer</button>
                 </div>
               </div>

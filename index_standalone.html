@@ -4756,45 +4756,45 @@ html, body, .app-layout, .topbar, .kpi-box, .chart-card, .table-card, .btn, .sea
     <div class="exec-tools-group">
       <span class="exec-tools-label"><i data-lucide="sparkles"></i> <strong>Executive Suite:</strong></span>
       
-      <button class="exec-tool-btn audio-btn" id="btnVoiceBriefing" title="Play AI Executive Audio Summary Briefing">
+      <button class="exec-tool-btn audio-btn" id="btnVoiceBriefing" title="Play Executive Audio Summary Briefing">
         <i data-lucide="volume-2"></i>
-        <span>AI Audio Briefing</span>
+        <span>Executive Audio Briefing</span>
         <span class="audio-wave-pulse" id="audioWavePulse" style="display:none;"></span>
       </button>
 
-      <button class="exec-tool-btn sla-btn" id="btnSlaRadar" title="View Candidate Interview Speed & Turnaround SLA Velocity">
+      <button class="exec-tool-btn sla-btn" id="btnSlaRadar" title="View Interview Turnaround Speed &amp; SLA Benchmarks">
         <i data-lucide="zap"></i>
-        <span>SLA Radar Velocity</span>
+        <span>Interview Speed &amp; SLA Radar</span>
       </button>
 
-      <button class="exec-tool-btn geo-btn" id="btnTalentTelemetry" title="View Consolidated Talent Market Telemetry &amp; Hubs Matrix (Geo, Notice &amp; Skills)" style="background:rgba(14,165,233,0.12);color:#0ea5e9;border:1px solid rgba(14,165,233,0.28);">
+      <button class="exec-tool-btn geo-btn" id="btnTalentTelemetry" title="View Candidate Pool Distribution by 9 Roles &amp; Functional Streams" style="background:rgba(14,165,233,0.12);color:#0ea5e9;border:1px solid rgba(14,165,233,0.28);">
         <i data-lucide="bar-chart-3"></i>
-        <span>Talent Telemetry &amp; Hubs</span>
+        <span>Talent Pool &amp; Role Breakdown</span>
       </button>
 
-      <button class="exec-tool-btn budget-btn" id="btnBudgetOptimizer" title="View Compensation &amp; TA Budget ROI Optimizer (Agency Savings &amp; Buyout ROI)" style="background:rgba(217,119,6,0.12);color:#d97706;border:1px solid rgba(217,119,6,0.28);">
+      <button class="exec-tool-btn budget-btn" id="btnBudgetOptimizer" title="View Candidate Compensation Packages, Hike % &amp; Agency Sourcing Cost Savings" style="background:rgba(217,119,6,0.12);color:#d97706;border:1px solid rgba(217,119,6,0.28);">
         <i data-lucide="wallet"></i>
-        <span>Budget &amp; ROI Optimizer</span>
+        <span>Compensation &amp; Sourcing Savings</span>
       </button>
 
-      <button class="exec-tool-btn onboarding-btn" id="btnOnboardingFlightDeck" title="View Cohort Onboarding &amp; Day-1 Readiness Flight Deck" style="background:rgba(16,185,129,0.12);color:#059669;border:1px solid rgba(16,185,129,0.28);">
+      <button class="exec-tool-btn onboarding-btn" id="btnOnboardingFlightDeck" title="View September, October &amp; November Cohort Joining Timelines and Asset Readiness" style="background:rgba(16,185,129,0.12);color:#059669;border:1px solid rgba(16,185,129,0.28);">
         <i data-lucide="calendar-check-2"></i>
-        <span>Cohort Onboarding Flight Deck</span>
+        <span>Cohort Onboarding &amp; Joining Tracker</span>
       </button>
 
-      <button class="exec-tool-btn forecast-btn" id="btnTimeToFill" title="View Predictive Time-to-Fill &amp; Role Closure Forecast">
+      <button class="exec-tool-btn forecast-btn" id="btnTimeToFill" title="View 15-Sep Sourcing Goals, Filled Positions &amp; Role Closure Progress">
         <i data-lucide="trending-up"></i>
-        <span>Time-to-Fill Forecast</span>
+        <span>15-Sep Sourcing Goals &amp; Closure Tracker</span>
       </button>
 
-      <button class="exec-tool-btn matcher-btn" id="btnAiRecommender" title="AI Talent Match &amp; Shortlist Recommender">
-        <i data-lucide="sparkles"></i>
-        <span>AI Talent Matcher</span>
+      <button class="exec-tool-btn matcher-btn" id="btnAiRecommender" title="Instant Search and Filter across all 122 Candidate Records">
+        <i data-lucide="search"></i>
+        <span>Candidate Search &amp; Match Engine</span>
       </button>
 
-      <button class="exec-tool-btn risk-btn" id="btnInterviewAnalytics" title="View Client Interview &amp; Evaluation Feedback Intelligence Center" style="background:rgba(99,102,241,0.12);color:#6366f1;border:1px solid rgba(99,102,241,0.28);">
+      <button class="exec-tool-btn risk-btn" id="btnInterviewAnalytics" title="View Client Interview Feedback, Clearance Rates &amp; Shortlist Offer Actions" style="background:rgba(99,102,241,0.12);color:#6366f1;border:1px solid rgba(99,102,241,0.28);">
         <i data-lucide="award"></i>
-        <span>Client Feedback &amp; Interview Analytics</span>
+        <span>Client Evaluation &amp; Feedback Analytics</span>
       </button>
     </div>
   </div>
@@ -9096,7 +9096,7 @@ function initDashboardApp() {
           <td>${offeredCtcDisplay}</td>
           <td>${hikeStr}</td>
           <td>${milestoneBadge}</td>
-          <td><button class="view-dossier-btn" data-sno="${d.sno}" onclick="event.stopPropagation(); window.openDossierModalBySno(${d.sno});">View Profile</button></td>
+          <td><button class="view-dossier-btn" data-sno="${d.sno}" onclick="event.stopPropagation(); window.openCandidateProfileBySno(${d.sno});">View Profile</button></td>
         </tr>
       `;
     }).join('');
@@ -9105,12 +9105,12 @@ function initDashboardApp() {
     tbody.onclick = (e) => {
       const tr = e.target.closest('tr');
       if (tr && tr.dataset.sno) {
-        window.openDossierModalBySno(tr.dataset.sno);
+        window.openCandidateProfileBySno(tr.dataset.sno);
       }
     };
   }
 
-  window.openDossierModalBySno = function(sno) {
+  window.openCandidateProfileBySno = function(sno) {
     const cand = masterData.find(c => String(c.sno) === String(sno));
     if (cand) openDossierModal(cand);
   };
@@ -9138,6 +9138,12 @@ function initDashboardApp() {
       if (e.target === dossierOverlay || e.target.closest('#dossierCloseBtn')) closeDossierModal();
     });
   }
+
+  window.openCandidateProfileBySno = function(sno) {
+    const c = masterData.find(d => String(d.sno) === String(sno));
+    if (c) openDossierModal(c);
+  };
+  window.openDossierModal = openDossierModal;
 
   function openDossierModal(c) {
     if (!dossierOverlay) return;
@@ -12353,8 +12359,8 @@ function initDashboardApp() {
                     <td style="text-align:center;font-weight:700;color:var(--text-primary);">${dojStr}</td>
                     <td style="text-align:center;">${cohortTag}</td>
                     <td style="text-align:right;">
-                      <button class="btn btn-secondary" onclick="printCandidateOfferMemo('${c.name}', '${c.role}', '₹${o > 0 ? (o/100000).toFixed(2) : '12.00'} LPA', '${dojStr}')" style="font-size:0.70rem;padding:3px 8px;">
-                        Print Offer
+                      <button class="btn btn-secondary" onclick="window.openCandidateProfileBySno(${c.sno})" style="font-size:0.70rem;padding:4px 10px;display:flex;align-items:center;gap:4px;cursor:pointer;">
+                        <i data-lucide="user" style="width:12px;height:12px;"></i> View Profile
                       </button>
                     </td>
                   </tr>
@@ -12810,7 +12816,7 @@ function initDashboardApp() {
                 </div>
 
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:8px;border-top:1px solid var(--border-subtle);">
-                  <button class="view-dossier-btn" onclick="openDossierModalBySno(${c.sno})" style="font-size:0.70rem;padding:4px 8px;">View Dossier</button>
+                  <button class="view-dossier-btn" onclick="openCandidateProfileBySno(${c.sno})" style="font-size:0.70rem;padding:4px 8px;">View Dossier</button>
                   <button class="btn btn-secondary" onclick="printCandidateOfferMemo('${c.name}', '${c.role}', '₹${o > 0 ? (o/100000).toFixed(2) : '12.00'} LPA', '${c.doj || '01-Sep-2026'}')" style="font-size:0.70rem;padding:4px 8px;">Print Offer</button>
                 </div>
               </div>
