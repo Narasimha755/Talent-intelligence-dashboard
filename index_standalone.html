@@ -12341,7 +12341,6 @@ function initDashboardApp() {
                 <th style="text-align:center;padding:8px 6px;">Offered CTC</th>
                 <th style="text-align:center;padding:8px 6px;">Joining Date (DOJ)</th>
                 <th style="text-align:center;padding:8px 6px;">Cohort Status</th>
-                <th style="text-align:right;padding:8px 6px;">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -12358,11 +12357,6 @@ function initDashboardApp() {
                     <td style="text-align:center;font-weight:700;color:#059669;">${o > 0 ? '₹' + (o/100000).toFixed(2) + ' LPA' : '₹12.00 LPA'}</td>
                     <td style="text-align:center;font-weight:700;color:var(--text-primary);">${dojStr}</td>
                     <td style="text-align:center;">${cohortTag}</td>
-                    <td style="text-align:right;">
-                      <button class="btn btn-secondary" onclick="window.openCandidateProfileBySno(${c.sno})" style="font-size:0.70rem;padding:4px 10px;display:flex;align-items:center;gap:4px;cursor:pointer;">
-                        <i data-lucide="user" style="width:12px;height:12px;"></i> View Profile
-                      </button>
-                    </td>
                   </tr>
                 `;
               }).join('')}
