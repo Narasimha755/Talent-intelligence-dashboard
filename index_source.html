@@ -107,9 +107,9 @@
         <span>Budget &amp; ROI Optimizer</span>
       </button>
 
-      <button class="exec-tool-btn dossier-btn" id="btnCandidateDossier" title="View Executive Candidate Dossier &amp; Profile Inspector" style="background:rgba(99,102,241,0.12);color:#6366f1;border:1px solid rgba(99,102,241,0.28);">
-        <i data-lucide="user-check"></i>
-        <span>Candidate Dossier Inspector</span>
+      <button class="exec-tool-btn onboarding-btn" id="btnOnboardingFlightDeck" title="View Cohort Onboarding &amp; Day-1 Readiness Flight Deck" style="background:rgba(16,185,129,0.12);color:#059669;border:1px solid rgba(16,185,129,0.28);">
+        <i data-lucide="calendar-check-2"></i>
+        <span>Cohort Onboarding Flight Deck</span>
       </button>
 
       <button class="exec-tool-btn forecast-btn" id="btnTimeToFill" title="View Predictive Time-to-Fill &amp; Role Closure Forecast">
@@ -1415,22 +1415,22 @@
 </div>
 
 <!-- ── EXECUTIVE CANDIDATE DOSSIER & PROFILE INSPECTOR MODAL ───── -->
-<div id="dossierInspectorModal" class="studio-modal-overlay">
+<!-- ── COHORT ONBOARDING & DAY-1 READINESS FLIGHT DECK MODAL ───── -->
+<div id="onboardingFlightDeckModal" class="studio-modal-overlay">
   <div class="sla-modal-window" style="max-width:1160px;">
     <div class="studio-modal-header">
       <div class="studio-modal-title" style="display:flex;align-items:center;gap:10px;">
-        <div style="width:34px;height:34px;border-radius:8px;background:rgba(99,102,241,0.16);display:flex;align-items:center;justify-content:center;color:#6366f1;font-size:1.1rem;">
-          <i data-lucide="user-check"></i>
+        <div style="width:34px;height:34px;border-radius:8px;background:rgba(16,185,129,0.16);display:flex;align-items:center;justify-content:center;color:#059669;font-size:1.1rem;">
+          <i data-lucide="calendar-check-2"></i>
         </div>
         <div>
-          <h3 style="font-size:1.05rem;font-weight:700;color:var(--text-primary);margin:0;">Executive Candidate Dossier &amp; Profile Inspector</h3>
-          <p style="font-size:0.72rem;color:var(--text-muted);margin:2px 0 0 0;">Comprehensive Candidate Profiles, Interview Scorecards, EDC Skill Badges &amp; Offer Generation</p>
+          <h3 style="font-size:1.05rem;font-weight:700;color:var(--text-primary);margin:0;">Cohort Onboarding &amp; Day-1 Readiness Flight Deck</h3>
+          <p style="font-size:0.72rem;color:var(--text-muted);margin:2px 0 0 0;">September, October &amp; November Cohort Joining Timelines, Pre-Joining Engagement &amp; Asset Readiness</p>
         </div>
       </div>
-      <button class="modal-close-btn" id="dossierInspectorCloseBtn" title="Close Dossier Inspector">&times;</button>
+      <button class="modal-close-btn" id="onboardingCloseBtn" title="Close Onboarding Flight Deck">&times;</button>
     </div>
-
-    <div class="studio-modal-body" id="dossierInspectorBody" style="padding:18px;max-height:80vh;overflow-y:auto;">
+    <div class="studio-modal-body" id="onboardingFlightDeckBody" style="padding:18px;max-height:80vh;overflow-y:auto;">
       <!-- Dynamic Content Injected via JS -->
     </div>
   </div>
