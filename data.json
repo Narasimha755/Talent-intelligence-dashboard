@@ -219,7 +219,7 @@
     "status": "Offered",
     "offeredCtcRaw": "770000",
     "doj": "01-11-2026",
-    "onboard": "",
+    "onboard": "YTO",
     "skillGroup": "CDM",
     "roleSelected": ""
   },
@@ -377,9 +377,9 @@
     "clientFeedback": "Offer Shortlisted",
     "presentCtcRaw": "",
     "status": "Offered",
-    "offeredCtcRaw": "",
+    "offeredCtcRaw": "1450000",
     "doj": "01-09-2026",
-    "onboard": "",
+    "onboard": "YTO",
     "skillGroup": "CDM",
     "roleSelected": ""
   },
@@ -440,10 +440,10 @@
     "interview2": "Completed",
     "clientFeedback": "Offer Shortlisted",
     "presentCtcRaw": "",
-    "status": "Offer Shortlisted",
-    "offeredCtcRaw": "",
-    "doj": "",
-    "onboard": "",
+    "status": "Offered",
+    "offeredCtcRaw": "780000",
+    "doj": "01-11-2026",
+    "onboard": "YTO",
     "skillGroup": "CDM",
     "roleSelected": ""
   },
@@ -475,7 +475,7 @@
     "status": "Offered",
     "offeredCtcRaw": "780000",
     "doj": "01-09-2026",
-    "onboard": "",
+    "onboard": "YTO",
     "skillGroup": "CDM",
     "roleSelected": ""
   },
@@ -507,7 +507,7 @@
     "status": "Offered",
     "offeredCtcRaw": "1200000",
     "doj": "01-11-2026",
-    "onboard": "",
+    "onboard": "YTO",
     "skillGroup": "CDM",
     "roleSelected": ""
   },

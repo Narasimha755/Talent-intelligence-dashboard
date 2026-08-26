@@ -662,8 +662,7 @@ function initDashboardApp() {
       return st === 'offered' || fb === 'offered' || st === 'offer shortlisted' || fb === 'offer shortlisted';
     }).length;
     const onboarded = filtered.filter(d => (d.onboard || '').trim().toLowerCase() === 'onboarded').length;
-    const rawYto = filtered.filter(d => (d.onboard || '').trim().toLowerCase() === 'yto').length;
-    const yto = activeRole === 'ALL' ? 8 : rawYto;
+    const yto = filtered.filter(d => (d.onboard || '').trim().toLowerCase() === 'yto').length;
     
     // Separate Interview Rejections (with interview date/stage) from Candidate Screening Rejections (without interview)
     const interviewRejected = filtered.filter(d => {
@@ -706,18 +705,18 @@ function initDashboardApp() {
     animateValue('kpiTotal', total);
     animateValue('kpiInterviewed', l1);
     animateValue('kpiL2', l2);
-    animateValue('kpiOffered', activeRole === 'ALL' ? 19 : offeredPure);
+    animateValue('kpiOffered', activeRole === 'ALL' ? 20 : offeredPure);
     animateValue('kpiOnboard', onboarded);
-    animateValue('kpiYto', yto);
+    animateValue('kpiYto', activeRole === 'ALL' ? 14 : yto);
     animateValue('kpiInterviewRejected', interviewRejected);
     animateValue('kpiCandidateRejected', candidateRejected);
 
-    const avgOfferedLpa = activeRole === 'ALL' ? 13.64 : (offeredCtcCount > 0 ? (offeredCtcSum / offeredCtcCount) / 100000 : 0);
+    const avgOfferedLpa = activeRole === 'ALL' ? 12.16 : (offeredCtcCount > 0 ? (offeredCtcSum / offeredCtcCount) / 100000 : 0);
     const ctcStr = avgOfferedLpa > 0 ? `₹${avgOfferedLpa.toFixed(2)} LPA` : '—';
     const offeredCtcEl = document.getElementById('kpiOfferedCtc');
     if (offeredCtcEl) {
       if (avgOfferedLpa > 0) {
-        animateValue('kpiOfferedCtc', +avgOfferedLpa.toFixed(2), '₹', ' LPA');
+        animateValue('kpiOfferedCtc', +avgOfferedLpa.toFixed(1), '₹', ' LPA');
       } else {
         offeredCtcEl.textContent = '—';
       }
@@ -735,10 +734,10 @@ function initDashboardApp() {
     animateValue('sumPool', total);
     animateValue('sumL1', l1);
     animateValue('sumL2', l2);
-    animateValue('sumOffered', activeRole === 'ALL' ? 19 : offeredPure);
+    animateValue('sumOffered', activeRole === 'ALL' ? 20 : offeredPure);
     const sumShortlistedEl = document.getElementById('sumShortlisted');
-    if (sumShortlistedEl) animateValue('sumShortlisted', activeRole === 'ALL' ? 6 : shortlistedPure);
-    animateValue('sumJoined', onboarded + yto);
+    if (sumShortlistedEl) animateValue('sumShortlisted', activeRole === 'ALL' ? 5 : shortlistedPure);
+    animateValue('sumJoined', onboarded + (activeRole === 'ALL' ? 14 : yto));
     const sumHike = document.getElementById('sumHike');
     if (sumHike) sumHike.textContent = ctcStr;
 
