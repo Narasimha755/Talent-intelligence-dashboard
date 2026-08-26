@@ -11365,7 +11365,8 @@ function initDashboardApp() {
   }
 
   /* ══════════════════════════════════════════
-     FEATURE 1: AI AUDIO BRIEFING STUDIO & PODCAST MEMO (V3)
+     FEATURE 1: AI AUDIO BRIEFING STUDIO & PODCAST MEMO (HIGH-PRECISION V4)
+     (Sentence-by-Sentence Queue, Real-Time Teleprompter Sync & Precision Timers)
   ══════════════════════════════════════════ */
   let currentUtterance = null;
   let isSpeaking = false;
@@ -11374,13 +11375,18 @@ function initDashboardApp() {
   let audioAnimFrame = null;
   let audioTimerInterval = null;
   let audioCurrentSeconds = 0;
-  let audioTotalSeconds = 75;
+  let audioTotalSeconds = 60;
   let currentSentenceIndex = 0;
+  let sentenceStartElapsed = 0;
+  let sentenceStartTime = 0;
 
   function initVoiceBriefing() {
     bindGenericModal('btnVoiceBriefing', 'audioStudioModal', 'audioCloseBtn');
     const btn = document.getElementById('btnVoiceBriefing');
-    if (btn) btn.addEventListener('click', () => renderAudioStudio());
+    if (btn) btn.addEventListener('click', () => {
+      calculateAudioTimings();
+      renderAudioStudio();
+    });
   }
 
   function getAudioBriefingScript(mode) {
@@ -11388,8 +11394,10 @@ function initDashboardApp() {
     const l1 = masterData.filter(d => Boolean(d.interviewDate && d.interviewDate.trim() && d.interviewDate !== '-')).length;
     const l2 = masterData.filter(d => (d.interview2 || '').trim().toLowerCase() === 'completed').length;
     const offered = masterData.filter(d => (d.status || '').toLowerCase() === 'offered').length;
-    const joined = masterData.filter(d => (d.onboard || '').toLowerCase() === 'onboarded').length;
-    const yto = masterData.filter(d => (d.onboard || '').toLowerCase() === 'yto').length;
+    const joined = masterData.filter(d => (d.onboard || '').toLowerCase() === 'onboarded' || (d.doj || '').includes('08')).length;
+    const sepCount = masterData.filter(d => (d.onboard || '').toLowerCase() === 'yto' && (d.doj || '').includes('09')).length;
+    const octCount = masterData.filter(d => (d.onboard || '').toLowerCase() === 'yto' && (d.doj || '').includes('10')).length;
+    const novCount = masterData.filter(d => (d.onboard || '').toLowerCase() === 'yto' && (d.doj || '').includes('11')).length;
 
     let ctcSum = 0; let ctcCount = 0;
     masterData.forEach(d => {
@@ -11398,70 +11406,91 @@ function initDashboardApp() {
     });
     const avgCtc = ctcCount > 0 ? (ctcSum / ctcCount) / 100000 : 12.16;
     const totalPayrollCr = (ctcSum / 10000000).toFixed(2);
+    const agencySavings = (ctcSum * 0.0833 / 100000).toFixed(1);
 
     if (mode === 'blitz') {
       return {
         title: 'Executive 60-Second C-Suite Blitz',
         sentences: [
-          `Good day, Executive Leadership. Here is your sixty-second talent intelligence briefing on the Clinical Data Management hiring campaign.`,
-          `Our total active candidate pool stands strong at ${total} professionals across all nine specialized data management disciplines.`,
-          `Fifty-one candidates have completed Level-1 technical screenings, and twenty-nine have successfully cleared client Level-2 evaluations.`,
-          `To date, twenty formal offer releases are confirmed, backed by five shortlisted candidates awaiting package sign-off.`,
-          `Four candidates have already onboarded into active operations, with fourteen confirmed joiners slated for the September and October cohorts.`,
-          `Total committed payroll stands at rupees ${totalPayrollCr} Crores with an average offered package of rupees ${avgCtc.toFixed(2)} Lakhs per annum.`,
-          `Overall campaign delivery remains on track for full requisition completion ahead of the September fifteenth milestone.`
+          'Good day, Executive Leadership. Here is your sixty-second talent intelligence briefing on the Clinical Data Management hiring campaign.',
+          'Our total talent pool stands at ' + total + ' verified candidates across nine specialized clinical disciplines.',
+          'Fifty-one candidates have completed Level-1 technical screenings, and twenty-nine have cleared client Level-2 evaluations with a seventy-eight percent pass rate.',
+          'To date, twenty formal offer releases are confirmed, supported by five shortlisted candidates ready for immediate package release.',
+          'Four candidates have onboarded into active operations, with eleven confirmed joiners slated for the September cohort, one for October, and four for November.',
+          'Total committed annual payroll is rupees ' + totalPayrollCr + ' Crores with an average offered package of rupees ' + avgCtc.toFixed(2) + ' Lakhs per annum.',
+          'Direct in-house sourcing has avoided twenty-two point four Lakh rupees in third-party agency headhunting fees.',
+          'Overall campaign delivery remains on track for full requisition closure by September twelfth, three days ahead of deadline.'
         ]
       };
     } else if (mode === 'risk') {
       return {
-        title: 'Client Feedback & Pipeline Intelligence',
+        title: 'Client Feedback & Interview Analytics Briefing',
         sentences: [
-          `Client Evaluation and Feedback Briefing activated.`,
-          `Our Level-1 to Level-2 interview pass rate is strong at seventy-eight point four percent across all clinical streams.`,
-          `Twenty candidates have received formal offer releases with enthusiastic client feedback.`,
-          `Five candidates are in the final shortlist stage, including Dr. Aniket Somnath Deore and Jitendra Chauhan for Immediate October start dates.`,
-          `Sixteen candidates did not clear client evaluations, while two candidate drops occurred due to location preferences.`,
-          `Recommendation: Expedite offer releases for the five shortlisted candidates to achieve one hundred percent sourcing goal fulfillment.`
+          'Client Evaluation and Interview Analytics briefing initialized.',
+          'Technical screening velocity is strong, achieving a seventy-eight point four percent clearance rate at client Level-2 interviews.',
+          'Twenty candidates have received formal offer releases backed by positive client endorsements across all nine specialist streams.',
+          'Five high-caliber candidates are currently shortlisted, including Dr. Aniket Somnath Deore and Jitendra Chauhan, ready for package authorization.',
+          'Sixteen candidates were rejected due to technical or custom function protocol gaps, while two candidate drops occurred due to location preferences.',
+          'Recommendation: Authorize immediate offer releases for all five shortlisted candidates to guarantee one hundred percent pipeline delivery.'
         ]
       };
     } else if (mode === 'budget') {
       return {
-        title: 'Compensation & TA Budget ROI Audit',
+        title: 'Compensation & TA Budget Sourcing Savings',
         sentences: [
-          `Compensation and TA Budget ROI Audit in progress.`,
-          `The average salary increase across all released offers is precisely thirty-four point two percent against candidate current compensation.`,
-          `Direct internal sourcing has avoided third-party staffing agency commission fees totaling twenty-two point four Lakh rupees.`,
-          `Committed annual payroll stands at rupees ${totalPayrollCr} Crores, maintaining healthy budget surplus headroom.`,
-          `Individual offer packages range from seven point seven Lakhs to twenty-one Lakhs per annum for Lead RAVE Programmers.`
+          'Compensation and TA Sourcing Cost-Avoidance Audit in progress.',
+          'The average salary hike across all released offers is thirty-four point two percent against candidate prior compensation.',
+          'Direct in-house talent acquisition has successfully saved rupees ' + agencySavings + ' Lakhs in avoided headhunting recruitment commissions.',
+          'Total committed annual payroll across twenty offers is rupees ' + totalPayrollCr + ' Crores, maintaining healthy budget surplus headroom.',
+          'Individual packages range from seven point seven Lakhs to twenty-one Lakhs per annum for Lead Medidata RAVE Programmers.'
         ]
       };
     } else {
       return {
-        title: 'SLA Turnaround Velocity & Sourcing Runway',
+        title: 'SLA Turnaround Velocity & 15-Sep Delivery Forecast',
         sentences: [
-          `SLA Turnaround Velocity Report initialized.`,
-          `Average time from initial sourcing to Level-1 screening is four point two days, beating the five-day industry standard by sixteen percent.`,
-          `Client Level-2 evaluation turnaround averages five point eight days across all nine specialist streams.`,
-          `Overall SLA compliance is rated at ninety-four point two percent on-target.`,
-          `Current burn rate projects full campaign completion by September twelfth, three calendar days ahead of the contracted deadline.`
+          'SLA Turnaround Velocity and Delivery Runway report active.',
+          'Average time from sourcing to Level-1 screening is four point two days, beating the five-day industry standard by sixteen percent.',
+          'Client Level-2 interview turnaround averages five point eight days across all clinical streams.',
+          'Overall campaign SLA compliance stands at ninety-four point two percent on-target.',
+          'Current hiring velocity projects complete campaign fulfillment by September twelfth, three calendar days ahead of the September fifteenth deadline.'
         ]
       };
     }
   }
 
+  // High-precision word-based timing calculation
+  function calculateAudioTimings() {
+    const data = getAudioBriefingScript(activeAudioMode);
+    // Standard natural TTS speech rate is ~150 words per minute at 1.0x speed
+    const wordsPerSec = (150 * audioPlaybackSpeed) / 60;
+    
+    let cumulative = 0;
+    data.sentenceDurations = data.sentences.map(s => {
+      const words = s.split(/\s+/).filter(Boolean).length;
+      // Minimum duration 2.5s per sentence to account for natural pauses
+      const dur = Math.max(2.5, words / wordsPerSec);
+      const start = cumulative;
+      cumulative += dur;
+      return { words, dur, start, end: cumulative };
+    });
+
+    audioTotalSeconds = Math.max(15, Math.round(cumulative));
+  }
+
   function formatAudioTime(sec) {
-    const m = Math.floor(sec / 60);
-    const s = Math.floor(sec % 60);
-    return `${m}:${s < 10 ? '0' : ''}${s}`;
+    const sInt = Math.max(0, Math.floor(sec));
+    const m = Math.floor(sInt / 60);
+    const s = sInt % 60;
+    return m + ':' + (s < 10 ? '0' : '') + s;
   }
 
   function renderAudioStudio() {
     const body = document.getElementById('audioStudioBody');
     if (!body) return;
 
+    calculateAudioTimings();
     const data = getAudioBriefingScript(activeAudioMode);
-    const allWords = data.sentences.join(' ').split(/\s+/).length;
-    audioTotalSeconds = Math.max(20, Math.round((allWords / (135 * audioPlaybackSpeed)) * 60));
 
     body.innerHTML = `
       <div class="audio-studio-container">
@@ -11500,7 +11529,7 @@ function initDashboardApp() {
           <div class="audio-scrubber-container">
             <div style="display:flex;justify-content:space-between;align-items:center;">
               <strong style="font-size:0.80rem;color:var(--text-primary);"><span id="audioStudioTitle">${data.title}</span></strong>
-              <span class="audio-status-tag" style="font-size:0.70rem;font-weight:700;color:var(--clr-emerald);" id="audioStatusTag">● ${isSpeaking ? 'Playing Voice Stream' : 'Ready'}</span>
+              <span class="audio-status-tag" style="font-size:0.70rem;font-weight:700;color:var(--clr-emerald);" id="audioStatusTag">● ${isSpeaking ? 'Playing Voice Stream (' + audioPlaybackSpeed + 'x)' : 'Ready'}</span>
             </div>
             <input type="range" class="audio-scrubber" id="audioScrubber" min="0" max="100" value="${Math.min(100, (audioCurrentSeconds / audioTotalSeconds) * 100)}" oninput="seekAudioPlayback(this.value)" />
             <div class="audio-time-row">
@@ -11526,11 +11555,11 @@ function initDashboardApp() {
             <span style="font-size:0.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">
               🎙️ Live Synchronized Teleprompter Subtitles:
             </span>
-            <span style="font-size:0.70rem;color:var(--clr-indigo);font-weight:600;">${data.sentences.length} Paragraphs</span>
+            <span style="font-size:0.70rem;color:var(--clr-indigo);font-weight:600;">${data.sentences.length} Key Takeaways</span>
           </div>
           <div class="teleprompter-box" id="teleprompterLog">
             ${data.sentences.map((s, idx) => `
-              <p class="teleprompter-sentence ${idx === currentSentenceIndex && isSpeaking ? 'active' : ''}" id="teleSent_${idx}" style="margin-bottom:8px;">${s}</p>
+              <p class="teleprompter-sentence ${idx === currentSentenceIndex && isSpeaking ? 'active' : ''}" id="teleSent_${idx}" style="margin-bottom:8px;cursor:pointer;" onclick="seekToSentence(${idx})">${s}</p>
             `).join('')}
           </div>
         </div>
@@ -11553,38 +11582,83 @@ function initDashboardApp() {
 
   window.setAudioPlaybackSpeed = function(spd) {
     audioPlaybackSpeed = spd;
+    calculateAudioTimings();
+    
     if (isSpeaking) {
-      stopStudioAudio();
-      renderAudioStudio();
-      startSpeakingFromSentence(currentSentenceIndex);
+      // Restart current sentence speech with new rate immediately
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+      playSentenceAt(currentSentenceIndex);
     } else {
       renderAudioStudio();
     }
   };
 
   window.seekAudioPlayback = function(percent) {
+    calculateAudioTimings();
     const data = getAudioBriefingScript(activeAudioMode);
-    audioCurrentSeconds = (percent / 100) * audioTotalSeconds;
-    const targetIdx = Math.min(data.sentences.length - 1, Math.floor((percent / 100) * data.sentences.length));
+    const targetSec = (percent / 100) * audioTotalSeconds;
+    audioCurrentSeconds = targetSec;
+
+    // Find matching sentence index
+    let targetIdx = 0;
+    for (let i = 0; i < data.sentenceDurations.length; i++) {
+      if (targetSec >= data.sentenceDurations[i].start && targetSec <= data.sentenceDurations[i].end) {
+        targetIdx = i;
+        break;
+      }
+    }
+
     currentSentenceIndex = targetIdx;
-    
-    const timeCurr = document.getElementById('audioTimeCurrent');
-    if (timeCurr) timeCurr.textContent = formatAudioTime(audioCurrentSeconds);
+    updateTeleprompterHighlight(targetIdx);
 
     if (isSpeaking) {
-      stopStudioAudio();
-      startSpeakingFromSentence(targetIdx);
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+      playSentenceAt(targetIdx);
     } else {
-      document.querySelectorAll('.teleprompter-sentence').forEach(el => el.classList.remove('active'));
-      const el = document.getElementById(`teleSent_${targetIdx}`);
-      if (el) el.classList.add('active');
+      const timeCurr = document.getElementById('audioTimeCurrent');
+      if (timeCurr) timeCurr.textContent = formatAudioTime(audioCurrentSeconds);
     }
   };
+
+  window.seekToSentence = function(idx) {
+    calculateAudioTimings();
+    const data = getAudioBriefingScript(activeAudioMode);
+    if (idx >= data.sentenceDurations.length) return;
+    
+    currentSentenceIndex = idx;
+    audioCurrentSeconds = data.sentenceDurations[idx].start;
+    updateTeleprompterHighlight(idx);
+
+    if (isSpeaking) {
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+      playSentenceAt(idx);
+    } else {
+      const scrubber = document.getElementById('audioScrubber');
+      if (scrubber) scrubber.value = Math.min(100, (audioCurrentSeconds / audioTotalSeconds) * 100);
+      const timeCurr = document.getElementById('audioTimeCurrent');
+      if (timeCurr) timeCurr.textContent = formatAudioTime(audioCurrentSeconds);
+    }
+  };
+
+  function updateTeleprompterHighlight(idx) {
+    document.querySelectorAll('.teleprompter-sentence').forEach(el => el.classList.remove('active'));
+    const el = document.getElementById('teleSent_' + idx);
+    if (el) {
+      el.classList.add('active');
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
 
   function stopStudioAudio() {
     if (audioTimerInterval) { clearInterval(audioTimerInterval); audioTimerInterval = null; }
     if (window.speechSynthesis) { window.speechSynthesis.cancel(); }
     isSpeaking = false;
+    
+    const statusTag = document.getElementById('audioStatusTag');
+    if (statusTag) statusTag.innerHTML = '● Ready';
+    const playBtn = document.getElementById('btnStudioPlay');
+    if (playBtn) playBtn.innerHTML = '<i data-lucide="play"></i>';
+    if (window.lucide) lucide.createIcons();
   }
 
   window.toggleStudioAudioPlayback = function() {
@@ -11595,77 +11669,76 @@ function initDashboardApp() {
 
     if (isSpeaking) {
       stopStudioAudio();
-      renderAudioStudio();
       return;
     }
 
-    startSpeakingFromSentence(currentSentenceIndex);
+    calculateAudioTimings();
+    playSentenceAt(currentSentenceIndex);
   };
 
-  function startSpeakingFromSentence(startIndex) {
+  // High-precision sequential sentence audio synthesis
+  function playSentenceAt(index) {
+    calculateAudioTimings();
     const data = getAudioBriefingScript(activeAudioMode);
-    if (startIndex >= data.sentences.length) { startIndex = 0; audioCurrentSeconds = 0; }
-    currentSentenceIndex = startIndex;
+    
+    if (index >= data.sentences.length) {
+      stopStudioAudio();
+      audioCurrentSeconds = 0;
+      currentSentenceIndex = 0;
+      updateTeleprompterHighlight(0);
+      const scrubber = document.getElementById('audioScrubber');
+      if (scrubber) scrubber.value = 0;
+      const timeCurr = document.getElementById('audioTimeCurrent');
+      if (timeCurr) timeCurr.textContent = formatAudioTime(0);
+      return;
+    }
 
-    const remainingSentences = data.sentences.slice(startIndex);
-    const fullText = remainingSentences.join(' ');
+    currentSentenceIndex = index;
+    isSpeaking = true;
+    sentenceStartElapsed = data.sentenceDurations[index].start;
+    sentenceStartTime = Date.now();
 
-    currentUtterance = new SpeechSynthesisUtterance(fullText);
+    updateTeleprompterHighlight(index);
+
+    const statusTag = document.getElementById('audioStatusTag');
+    if (statusTag) statusTag.innerHTML = '● Streaming Voice Audio (' + audioPlaybackSpeed + 'x)';
+    const playBtn = document.getElementById('btnStudioPlay');
+    if (playBtn) playBtn.innerHTML = '<i data-lucide="pause"></i>';
+    if (window.lucide) lucide.createIcons();
+
+    // Start precision high-frequency timer
+    if (audioTimerInterval) clearInterval(audioTimerInterval);
+    audioTimerInterval = setInterval(() => {
+      if (!isSpeaking) return;
+      const elapsedInSec = (Date.now() - sentenceStartTime) / 1000;
+      audioCurrentSeconds = Math.min(audioTotalSeconds, sentenceStartElapsed + elapsedInSec);
+
+      const scrubber = document.getElementById('audioScrubber');
+      if (scrubber) scrubber.value = Math.min(100, (audioCurrentSeconds / audioTotalSeconds) * 100);
+
+      const timeCurr = document.getElementById('audioTimeCurrent');
+      if (timeCurr) timeCurr.textContent = formatAudioTime(audioCurrentSeconds);
+    }, 100);
+
+    const sentenceText = data.sentences[index];
+    currentUtterance = new SpeechSynthesisUtterance(sentenceText);
     currentUtterance.rate = audioPlaybackSpeed;
-    currentUtterance.pitch = 1.05;
+    currentUtterance.pitch = 1.02;
 
     const voices = window.speechSynthesis.getVoices();
     const naturalVoice = voices.find(v => (v.name.includes('Natural') || v.name.includes('Neural') || v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('David')) && v.lang.startsWith('en')) || voices.find(v => v.lang.startsWith('en'));
     if (naturalVoice) currentUtterance.voice = naturalVoice;
 
-    let relativeIdx = 0;
-    currentUtterance.onstart = () => {
-      isSpeaking = true;
-      const statusTag = document.getElementById('audioStatusTag');
-      if (statusTag) statusTag.innerHTML = '● Streaming Voice Audio';
-      const playBtn = document.getElementById('btnStudioPlay');
-      if (playBtn) playBtn.innerHTML = '<i data-lucide="pause"></i>';
-      if (window.lucide) lucide.createIcons();
-
-      // Start reliable UI timer
-      if (audioTimerInterval) clearInterval(audioTimerInterval);
-      audioTimerInterval = setInterval(() => {
-        if (!isSpeaking) return;
-        audioCurrentSeconds += 0.25;
-        if (audioCurrentSeconds > audioTotalSeconds) audioCurrentSeconds = audioTotalSeconds;
-        
-        const scrubber = document.getElementById('audioScrubber');
-        if (scrubber) scrubber.value = Math.min(100, (audioCurrentSeconds / audioTotalSeconds) * 100);
-        
-        const timeCurr = document.getElementById('audioTimeCurrent');
-        if (timeCurr) timeCurr.textContent = formatAudioTime(audioCurrentSeconds);
-      }, 250);
-    };
-
-    currentUtterance.onboundary = (event) => {
-      if (event.name === 'sentence') {
-        const activeIdx = startIndex + relativeIdx;
-        currentSentenceIndex = activeIdx;
-        document.querySelectorAll('.teleprompter-sentence').forEach(el => el.classList.remove('active'));
-        const el = document.getElementById(`teleSent_${activeIdx}`);
-        if (el) {
-          el.classList.add('active');
-          el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-        relativeIdx++;
-      }
-    };
-
     currentUtterance.onend = () => {
-      stopStudioAudio();
-      audioCurrentSeconds = 0;
-      currentSentenceIndex = 0;
-      renderAudioStudio();
+      if (!isSpeaking) return;
+      // Advance smoothly to next sentence in queue
+      playSentenceAt(index + 1);
     };
 
-    currentUtterance.onerror = () => {
-      stopStudioAudio();
-      renderAudioStudio();
+    currentUtterance.onerror = (err) => {
+      console.warn('Speech error on sentence ' + index + ':', err);
+      if (!isSpeaking) return;
+      playSentenceAt(index + 1);
     };
 
     window.speechSynthesis.speak(currentUtterance);
@@ -11673,13 +11746,13 @@ function initDashboardApp() {
 
   window.downloadAudioTranscript = function() {
     const data = getAudioBriefingScript(activeAudioMode);
-    const md = `# CDM Talent Intelligence — Executive Audio Briefing Memo\n\n**Briefing Focus:** ${data.title}\n**Generated Date:** ${new Date().toLocaleDateString('en-US', { dateStyle: 'full' })}\n\n---\n\n## Executive Transcript:\n\n${data.sentences.map(s => `> "${s}"`).join('\n\n')}\n\n---\n*CDM Executive Command Center · Clinical Data Management Operations*`;
+    const md = '# CDM Talent Intelligence — Executive Audio Briefing Memo\n\n**Briefing Focus:** ' + data.title + '\n**Generated Date:** ' + new Date().toLocaleDateString('en-US', { dateStyle: 'full' }) + '\n\n---\n\n## Executive Transcript:\n\n' + data.sentences.map(s => '> "' + s + '"').join('\n\n') + '\n\n---\n*CDM Executive Command Center · Clinical Data Management Operations*';
     
     const blob = new Blob([md], { type: 'text/markdown;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `CDM_Executive_Audio_Briefing_${activeAudioMode.toUpperCase()}.md`;
+    link.download = 'CDM_Executive_Audio_Briefing_' + activeAudioMode.toUpperCase() + '.md';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -11719,8 +11792,7 @@ function initDashboardApp() {
     }
     draw();
   }
-
-  /* ══════════════════════════════════════════
+/* ══════════════════════════════════════════
      FEATURE 2: SLA RADAR & TURNAROUND VELOCITY (ALL 9 ROLES FROM DATA)
   ══════════════════════════════════════════ */
   function initSlaRadar() {
