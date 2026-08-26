@@ -814,28 +814,46 @@ function initDashboardApp() {
 
       // Status Badge
       let badgeClass = 'badge-pipeline';
-      let statusText = d.status || d.clientFeedback || 'Pipeline';
-      const stLower = statusText.toLowerCase();
-      if (stLower.includes('offered')) {
+      let statusText = d.status || d.clientFeedback || 'Sourced Pool';
+      const stLower = (d.status || '').toLowerCase().trim();
+      const fbLower = (d.clientFeedback || '').toLowerCase().trim();
+      const obLower = (d.onboard || '').toLowerCase().trim();
+
+      if (stLower === 'offered' || fbLower === 'offered') {
         badgeClass = 'badge-offered';
         statusText = 'Offered';
-      } else if (stLower.includes('shortlisted')) {
+      } else if (stLower.includes('shortlist') || fbLower.includes('shortlist')) {
         badgeClass = 'badge-shortlist';
         statusText = 'Shortlisted';
-      } else if (stLower.includes('reject') || stLower.includes('drop') || stLower.includes('no show')) {
+      } else if (stLower.includes('reject') || fbLower.includes('reject')) {
         badgeClass = 'badge-rejected';
         statusText = 'Rejected';
-      } else if (stLower.includes('waiting') || stLower.includes('scheduled')) {
+      } else if (stLower.includes('drop') || fbLower.includes('drop') || stLower.includes('no show') || fbLower.includes('no show')) {
+        badgeClass = 'badge-rejected';
+        statusText = 'Candidate Drop';
+      } else if (stLower.includes('waiting') || fbLower.includes('waiting') || stLower.includes('scheduled')) {
         badgeClass = 'badge-waiting';
-        statusText = 'In Review';
+        statusText = 'In Evaluation';
       }
 
-      // Milestone
-      let milestoneBadge = `<span class="badge-tag badge-pipeline">Pipeline</span>`;
-      if ((d.onboard || '').trim().toLowerCase() === 'onboarded') {
-        milestoneBadge = `<span class="badge-tag badge-onboarded">Joined (${d.doj || 'Aug'})</span>`;
-      } else if ((d.onboard || '').trim().toLowerCase() === 'yto') {
-        milestoneBadge = `<span class="badge-tag badge-yto">YTO (${d.doj || 'Sep 1'})</span>`;
+      // Milestone Badges
+      let milestoneBadge = `<span class="badge-tag badge-pipeline">Awaiting L1</span>`;
+      if (obLower === 'onboarded') {
+        milestoneBadge = `<span class="badge-tag badge-onboarded">Joined (${d.doj || 'Aug 3'})</span>`;
+      } else if (obLower === 'yto' || stLower === 'offered') {
+        milestoneBadge = `<span class="badge-tag badge-yto">YTO (${d.doj || '01-Sep'})</span>`;
+      } else if (stLower.includes('shortlist') || fbLower.includes('shortlist')) {
+        milestoneBadge = `<span class="badge-tag badge-shortlist">Offer Shortlisted</span>`;
+      } else if (stLower.includes('reject') || fbLower.includes('reject')) {
+        milestoneBadge = `<span class="badge-tag badge-rejected">Screened Out</span>`;
+      } else if (stLower.includes('drop') || fbLower.includes('drop') || stLower.includes('no show')) {
+        milestoneBadge = `<span class="badge-tag badge-rejected">Drop / No Show</span>`;
+      } else if (stLower.includes('waiting') || fbLower.includes('waiting') || stLower.includes('scheduled')) {
+        milestoneBadge = `<span class="badge-tag badge-waiting">In Evaluation</span>`;
+      } else if ((d.interview2 || '').toLowerCase() === 'completed') {
+        milestoneBadge = `<span class="badge-tag badge-shortlist">L2 Cleared</span>`;
+      } else if (d.interviewDate && d.interviewDate.trim() && d.interviewDate !== '-') {
+        milestoneBadge = `<span class="badge-tag badge-waiting">L1 Scheduled (${d.interviewDate})</span>`;
       }
 
       let offeredCtcDisplay = '<span style="color:var(--text-muted)">—</span>';

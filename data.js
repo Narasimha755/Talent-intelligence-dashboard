@@ -235,7 +235,7 @@ const recruitmentData = [
     "status": "Offered",
     "offeredCtcRaw": "1000000",
     "doj": "01-09-2026",
-    "onboard": "",
+    "onboard": "YTO",
     "skillGroup": "CDM",
     "roleSelected": ""
   },
@@ -459,7 +459,7 @@ const recruitmentData = [
     "status": "Offered",
     "offeredCtcRaw": "780000",
     "doj": "01-11-2026",
-    "onboard": "",
+    "onboard": "YTO",
     "skillGroup": "CDM",
     "roleSelected": ""
   },
