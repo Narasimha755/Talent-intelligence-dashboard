@@ -833,9 +833,23 @@ function initDashboardApp() {
       // Milestone
       let milestoneBadge = `<span class="badge-tag badge-pipeline">Pipeline</span>`;
       if ((d.onboard || '').trim().toLowerCase() === 'onboarded') {
-        milestoneBadge = `<span class="badge-tag badge-onboarded">Joined (Aug)</span>`;
+        milestoneBadge = `<span class="badge-tag badge-onboarded">Joined (${d.doj || 'Aug'})</span>`;
       } else if ((d.onboard || '').trim().toLowerCase() === 'yto') {
-        milestoneBadge = `<span class="badge-tag badge-yto">YTO (Sep 1)</span>`;
+        milestoneBadge = `<span class="badge-tag badge-yto">YTO (${d.doj || 'Sep 1'})</span>`;
+      }
+
+      let offeredCtcDisplay = '<span style="color:var(--text-muted)">—</span>';
+      if (o > 0) {
+        offeredCtcDisplay = `<span style="color:var(--clr-emerald);font-weight:700;">₹${(o / 100000).toFixed(2)} LPA</span>`;
+      } else if (d.offeredCtcRaw) {
+        offeredCtcDisplay = `<span style="color:var(--clr-emerald);font-weight:700;">${d.offeredCtcRaw}</span>`;
+      }
+
+      let presentCtcDisplay = '<span style="color:var(--text-muted)">—</span>';
+      if (p > 0) {
+        presentCtcDisplay = `<span style="color:var(--text-secondary);font-weight:600;">₹${(p / 100000).toFixed(2)} LPA</span>`;
+      } else if (d.presentCtcRaw) {
+        presentCtcDisplay = `<span style="color:var(--text-secondary);font-weight:600;">${d.presentCtcRaw}</span>`;
       }
 
       return `
@@ -847,8 +861,8 @@ function initDashboardApp() {
           <td>${d.interviewDate || '<span style="color:var(--text-muted)">—</span>'}</td>
           <td>${d.interview2 === 'Completed' ? '<span style="color:var(--clr-cyan);font-weight:700;">✓ Completed</span>' : '<span style="color:var(--text-muted)">—</span>'}</td>
           <td><span class="badge-tag ${badgeClass}">${statusText}</span></td>
-          <td>${d.presentCtcRaw ? 'INR ' + d.presentCtcRaw : '<span style="color:var(--text-muted)">—</span>'}</td>
-          <td>${d.offeredCtcRaw ? 'INR ' + d.offeredCtcRaw : '<span style="color:var(--text-muted)">—</span>'}</td>
+          <td>${presentCtcDisplay}</td>
+          <td>${offeredCtcDisplay}</td>
           <td>${hikeStr}</td>
           <td>${milestoneBadge}</td>
           <td><button class="view-dossier-btn" data-sno="${d.sno}" onclick="event.stopPropagation(); window.openDossierModalBySno(${d.sno});">View Profile</button></td>
