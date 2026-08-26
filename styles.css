@@ -4252,7 +4252,8 @@ html {
    ADVANCED EXECUTIVE INTELLIGENCE SUITE V3 & ZERO-LAG THEME FADE
 ══════════════════════════════════════════════════════════════════ */
 
-/* ── Zero-Lag Theme Cross-Fade Transition Layer ── */
+
+/* ── Enhanced Silky Zero-Lag Theme Cross-Fade Transition Layer ── */
 .theme-fade-overlay {
   position: fixed;
   inset: 0;
@@ -4260,12 +4261,24 @@ html {
   opacity: 0;
   pointer-events: none;
   z-index: 999999;
-  transition: opacity 0.24s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.30s cubic-bezier(0.25, 1, 0.5, 1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 .theme-fade-overlay.fading {
-  opacity: 0.88;
+  opacity: 0.95;
   pointer-events: all;
 }
+
+/* Global Fluid Theme Transitions for Buttery-Smooth Color Morphing */
+html, body, .app-layout, .topbar, .kpi-box, .chart-card, .table-card, .btn, .search-box, .sla-modal-window, .summary-bar, .app-sidebar, .nav-pill, .exec-tool-btn, .modal-stats-card, .kpi-data, .status-badge {
+  transition: background-color 0.32s cubic-bezier(0.25, 1, 0.5, 1),
+              background 0.32s cubic-bezier(0.25, 1, 0.5, 1),
+              color 0.28s ease,
+              border-color 0.28s ease,
+              box-shadow 0.32s ease !important;
+}
+
 
 /* ── 1. AI Audio Briefing Studio V3 ── */
 .audio-studio-container {
@@ -4568,5 +4581,47 @@ html {
   .audio-controls-bar {
     flex-direction: column;
     align-items: stretch;
+  }
+}
+
+/* ── Compensation ROI Candidate Inspector Card ── */
+.cand-roi-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: var(--shadow-card);
+}
+.cand-roi-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+.cand-roi-stat-box {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* ── Formal Executive Offer Memo Letter Styling ── */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .printable-offer-letter, .printable-offer-letter * {
+    visibility: visible;
+  }
+  .printable-offer-letter {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
   }
 }
