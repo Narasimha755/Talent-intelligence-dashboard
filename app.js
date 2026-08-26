@@ -622,11 +622,8 @@ function initDashboardApp() {
     });
 
     updateKPIs();
-    if (currentView === 'analytics') {
-      renderAllCharts();
-    } else if (currentView === 'directory') {
-      renderDirectoryTable();
-    }
+    renderAllCharts();
+    renderDirectoryTable();
   }
 
   /* ── Helper to get dataset for a specific card (respecting in-card override) ── */
@@ -783,9 +780,12 @@ function initDashboardApp() {
     const tbody = document.getElementById('directoryTableBody');
     if (!tbody) return;
 
-    let dataset = filtered;
+    let dataset = masterData;
+    if (activeRole !== 'ALL') {
+      dataset = dataset.filter(d => d.role === activeRole);
+    }
     if (dirSearch) {
-      dataset = dataset.filter(d => {
+      dataset = masterData.filter(d => {
         const fnDomain = getFunctionalDomain(d);
         return [d.name, d.role, d.status, d.clientFeedback, d.function, fnDomain, d.onboard, d.interviewDate, d.presentCtcRaw, d.offeredCtcRaw]
           .some(v => (v || '').toLowerCase().includes(dirSearch));
@@ -794,6 +794,8 @@ function initDashboardApp() {
 
     const dirCountEl = document.getElementById('dirFilteredCount');
     if (dirCountEl) dirCountEl.textContent = dataset.length;
+    const dirTotalEl = document.getElementById('dirTotalCount');
+    if (dirTotalEl) dirTotalEl.textContent = masterData.length;
 
     if (dataset.length === 0) {
       tbody.innerHTML = `<tr><td colspan="12" style="text-align:center;padding:36px;color:var(--text-muted);font-weight:600;">No candidates matching criteria.</td></tr>`;
@@ -837,9 +839,9 @@ function initDashboardApp() {
       }
 
       return `
-        <tr data-sno="${d.sno}">
+        <tr data-sno="${d.sno}" style="cursor:pointer;" title="Click row or button to view candidate profile">
           <td><strong>#${d.sno}</strong></td>
-          <td class="cand-name-cell">${d.name}</td>
+          <td class="cand-name-cell"><strong>${d.name}</strong></td>
           <td>${d.role}</td>
           <td><span style="color:var(--clr-indigo);font-weight:600;">${domain}</span></td>
           <td>${d.interviewDate || '<span style="color:var(--text-muted)">—</span>'}</td>
@@ -849,20 +851,24 @@ function initDashboardApp() {
           <td>${d.offeredCtcRaw ? 'INR ' + d.offeredCtcRaw : '<span style="color:var(--text-muted)">—</span>'}</td>
           <td>${hikeStr}</td>
           <td>${milestoneBadge}</td>
-          <td><button class="view-dossier-btn" data-sno="${d.sno}">View Profile</button></td>
+          <td><button class="view-dossier-btn" data-sno="${d.sno}" onclick="event.stopPropagation(); window.openDossierModalBySno(${d.sno});">View Profile</button></td>
         </tr>
       `;
     }).join('');
 
-    // Attach click listeners to rows and buttons
-    tbody.querySelectorAll('tr, .view-dossier-btn').forEach(el => {
-      el.addEventListener('click', e => {
-        const sno = parseInt(el.dataset.sno, 10);
-        const cand = masterData.find(c => c.sno === sno);
-        if (cand) openDossierModal(cand);
-      });
-    });
+    // Table body event delegation for row clicks
+    tbody.onclick = (e) => {
+      const tr = e.target.closest('tr');
+      if (tr && tr.dataset.sno) {
+        window.openDossierModalBySno(tr.dataset.sno);
+      }
+    };
   }
+
+  window.openDossierModalBySno = function(sno) {
+    const cand = masterData.find(c => String(c.sno) === String(sno));
+    if (cand) openDossierModal(cand);
+  };
 
   /* ══════════════════════════════════════════
      14. CANDIDATE TALENT DOSSIER MODAL & 360° STEPPER
@@ -872,28 +878,33 @@ function initDashboardApp() {
   const dossierCopyBtn = document.getElementById('dossierCopyBtn');
   let activeDossierCandidate = null;
 
+  function closeDossierModal() {
+    if (!dossierOverlay) return;
+    dossierOverlay.classList.remove('open');
+    dossierOverlay.style.display = 'none';
+  }
+  window.closeDossierModal = closeDossierModal;
+
   if (dossierCloseBtn) {
     dossierCloseBtn.addEventListener('click', closeDossierModal);
   }
   if (dossierOverlay) {
     dossierOverlay.addEventListener('click', e => {
-      if (e.target === dossierOverlay) closeDossierModal();
+      if (e.target === dossierOverlay || e.target.closest('#dossierCloseBtn')) closeDossierModal();
     });
-  }
-
-  function closeDossierModal() {
-    if (!dossierOverlay) return;
-    dossierOverlay.classList.remove('open');
   }
 
   function openDossierModal(c) {
     if (!dossierOverlay) return;
     activeDossierCandidate = c;
     
-    const initials = c.name.split(' ').map(n => n[0]).filter(Boolean).slice(0, 2).join('').toUpperCase() || 'CD';
-    document.getElementById('dossierAvatar').textContent = initials;
-    document.getElementById('dossierName').textContent = c.name;
-    document.getElementById('dossierRole').textContent = `${c.role} · Candidate Record #${c.sno}`;
+    const initials = (c.name || 'Candidate').split(' ').map(n => n[0]).filter(Boolean).slice(0, 2).join('').toUpperCase() || 'CD';
+    const avatarEl = document.getElementById('dossierAvatar');
+    const nameEl = document.getElementById('dossierName');
+    const roleEl = document.getElementById('dossierRole');
+    if (avatarEl) avatarEl.textContent = initials;
+    if (nameEl) nameEl.textContent = c.name;
+    if (roleEl) roleEl.textContent = `${c.role} · Candidate Record #${c.sno}`;
 
     const domain = getFunctionalDomain(c);
     const p = parseCtc(c.presentCtcRaw);
@@ -942,69 +953,77 @@ function initDashboardApp() {
     `;
 
     const bodyEl = document.getElementById('dossierBody');
-    bodyEl.innerHTML = `
-      ${stepperHtml}
-      <div class="dossier-grid">
-        <div class="dossier-field">
-          <span class="dossier-label">Functional Domain</span>
-          <span class="dossier-value" style="color:var(--clr-indigo)">${domain}</span>
+    if (bodyEl) {
+      bodyEl.innerHTML = `
+        ${stepperHtml}
+        <div class="dossier-grid">
+          <div class="dossier-field">
+            <span class="dossier-label">Functional Domain</span>
+            <span class="dossier-value" style="color:var(--clr-indigo)">${domain}</span>
+          </div>
+          <div class="dossier-field">
+            <span class="dossier-label">Specialist Role</span>
+            <span class="dossier-value">${c.role}</span>
+          </div>
+          <div class="dossier-field">
+            <span class="dossier-label">Round 1 (L1) Interview Date</span>
+            <span class="dossier-value" style="color:${c.interviewDate ? PALETTE.indigo : 'inherit'}">${c.interviewDate || 'Not Scheduled'}</span>
+          </div>
+          <div class="dossier-field">
+            <span class="dossier-label">Client Round 2 (L2)</span>
+            <span class="dossier-value" style="color:${c.interview2 === 'Completed' ? PALETTE.cyan : 'inherit'}">
+              ${c.interview2 ? '✓ ' + c.interview2 : 'Pending Evaluation'}
+            </span>
+          </div>
+          <div class="dossier-field">
+            <span class="dossier-label">Evaluation Feedback</span>
+            <span class="dossier-value">${c.clientFeedback || 'No notes filed'}</span>
+          </div>
+          <div class="dossier-field">
+            <span class="dossier-label">Pipeline Status</span>
+            <span class="dossier-value" style="color:${c.status === 'Offered' ? PALETTE.emerald : 'inherit'}">
+              ${c.status || 'Active Pipeline'}
+            </span>
+          </div>
+          <div class="dossier-field">
+            <span class="dossier-label">Present Compensation</span>
+            <span class="dossier-value">${c.presentCtcRaw ? 'INR ' + c.presentCtcRaw : 'Confidential / Not Specified'}</span>
+          </div>
+          <div class="dossier-field">
+            <span class="dossier-label">Offered Compensation</span>
+            <span class="dossier-value" style="color:var(--clr-emerald);font-weight:800;">${c.offeredCtcRaw ? 'INR ' + c.offeredCtcRaw : 'No Offer Package Extended'}</span>
+          </div>
+          <div class="dossier-field" style="grid-column: span 2;">
+            <span class="dossier-label">Salary Hike Diagnostic</span>
+            <span class="dossier-value" style="color:${p > 0 && o > 0 ? PALETTE.emerald : 'inherit'};font-weight:700;">${hikeText}</span>
+          </div>
+          <div class="dossier-field">
+            <span class="dossier-label">Date of Joining (DOJ)</span>
+            <span class="dossier-value">${c.doj || 'Not Scheduled'}</span>
+          </div>
+          <div class="dossier-field">
+            <span class="dossier-label">Onboarding Readiness</span>
+            <span class="dossier-value" style="color:${c.onboard === 'Onboarded' ? PALETTE.teal : c.onboard === 'YTO' ? PALETTE.orange : 'inherit'};font-weight:700;">
+              ${c.onboard === 'Onboarded' ? '✓ Joined Active CDM Operations' : c.onboard === 'YTO' ? '⏳ Confirmed Sep 1 Cohort' : 'Pending Milestone'}
+            </span>
+          </div>
+          <div class="dossier-field" style="grid-column: span 2;">
+            <span class="dossier-label">Skill Group Classification</span>
+            <span class="dossier-value">${c.skillGroup || 'CDM Generalist'}</span>
+          </div>
         </div>
-        <div class="dossier-field">
-          <span class="dossier-label">Specialist Role</span>
-          <span class="dossier-value">${c.role}</span>
-        </div>
-        <div class="dossier-field">
-          <span class="dossier-label">Round 1 (L1) Interview Date</span>
-          <span class="dossier-value" style="color:${c.interviewDate ? PALETTE.indigo : 'inherit'}">${c.interviewDate || 'Not Scheduled'}</span>
-        </div>
-        <div class="dossier-field">
-          <span class="dossier-label">Client Round 2 (L2)</span>
-          <span class="dossier-value" style="color:${c.interview2 === 'Completed' ? PALETTE.cyan : 'inherit'}">
-            ${c.interview2 ? '✓ ' + c.interview2 : 'Pending Evaluation'}
-          </span>
-        </div>
-        <div class="dossier-field">
-          <span class="dossier-label">Evaluation Feedback</span>
-          <span class="dossier-value">${c.clientFeedback || 'No notes filed'}</span>
-        </div>
-        <div class="dossier-field">
-          <span class="dossier-label">Pipeline Status</span>
-          <span class="dossier-value" style="color:${c.status === 'Offered' ? PALETTE.emerald : 'inherit'}">
-            ${c.status || 'Active Pipeline'}
-          </span>
-        </div>
-        <div class="dossier-field">
-          <span class="dossier-label">Present Compensation</span>
-          <span class="dossier-value">${c.presentCtcRaw ? 'INR ' + c.presentCtcRaw : 'Confidential / Not Specified'}</span>
-        </div>
-        <div class="dossier-field">
-          <span class="dossier-label">Offered Compensation</span>
-          <span class="dossier-value" style="color:var(--clr-emerald);font-weight:800;">${c.offeredCtcRaw ? 'INR ' + c.offeredCtcRaw : 'No Offer Package Extended'}</span>
-        </div>
-        <div class="dossier-field" style="grid-column: span 2;">
-          <span class="dossier-label">Salary Hike Diagnostic</span>
-          <span class="dossier-value" style="color:${p > 0 && o > 0 ? PALETTE.emerald : 'inherit'};font-weight:700;">${hikeText}</span>
-        </div>
-        <div class="dossier-field">
-          <span class="dossier-label">Date of Joining (DOJ)</span>
-          <span class="dossier-value">${c.doj || 'Not Scheduled'}</span>
-        </div>
-        <div class="dossier-field">
-          <span class="dossier-label">Onboarding Readiness</span>
-          <span class="dossier-value" style="color:${c.onboard === 'Onboarded' ? PALETTE.teal : c.onboard === 'YTO' ? PALETTE.orange : 'inherit'};font-weight:700;">
-            ${c.onboard === 'Onboarded' ? '✓ Joined Active CDM Operations' : c.onboard === 'YTO' ? '⏳ Confirmed Sep 1 Cohort' : 'Pending Milestone'}
-          </span>
-        </div>
-        <div class="dossier-field" style="grid-column: span 2;">
-          <span class="dossier-label">Skill Group Classification</span>
-          <span class="dossier-value">${c.skillGroup || 'CDM Generalist'}</span>
-        </div>
-      </div>
-    `;
+      `;
+    }
 
-    dossierOverlay.classList.add('open');
-    lucide.createIcons();
+    dossierOverlay.style.display = 'flex';
+    setTimeout(() => {
+      dossierOverlay.classList.add('open');
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+      }
+    }, 10);
   }
+  window.openDossierModal = openDossierModal;
 
   if (dossierCopyBtn) {
     dossierCopyBtn.addEventListener('click', () => {
@@ -1918,14 +1937,42 @@ function initDashboardApp() {
     return results;
   }
 
+  // Live Paste Textarea Input Listener for instant feedback
+  if (pasteDataInput) {
+    pasteDataInput.addEventListener('input', () => {
+      const txt = pasteDataInput.value.trim();
+      let hint = document.getElementById('pasteHintBadge');
+      if (!hint) {
+        hint = document.createElement('div');
+        hint.id = 'pasteHintBadge';
+        hint.style.marginTop = '6px';
+        hint.style.fontSize = '0.78rem';
+        hint.style.fontWeight = '600';
+        if (pasteDataInput.parentNode) pasteDataInput.parentNode.appendChild(hint);
+      }
+      
+      if (txt) {
+        uploadedDataset = null; // Prioritize the user's latest pasted text!
+        const parsed = parsePastedRows(txt);
+        if (parsed.length > 0) {
+          hint.innerHTML = `<span style="color:var(--clr-emerald)">✓ ${parsed.length} candidate rows detected & ready to apply!</span>`;
+        } else {
+          hint.innerHTML = `<span style="color:var(--clr-rose)">⚠️ Paste tabular rows (copied from Excel with columns/tabs)</span>`;
+        }
+      } else {
+        hint.innerHTML = '';
+      }
+    });
+  }
+
   // Apply Imported Dataset
   if (applyImportBtn) {
     applyImportBtn.addEventListener('click', () => {
       let newRecords = [];
-      if (uploadedDataset && uploadedDataset.length > 0) {
-        newRecords = uploadedDataset.map(normalizeRecord);
-      } else if (pasteDataInput && pasteDataInput.value.trim()) {
+      if (pasteDataInput && pasteDataInput.value.trim()) {
         newRecords = parsePastedRows(pasteDataInput.value.trim()).map(normalizeRecord);
+      } else if (uploadedDataset && uploadedDataset.length > 0) {
+        newRecords = uploadedDataset.map(normalizeRecord);
       }
 
       if (newRecords.length === 0) {
@@ -1945,27 +1992,33 @@ function initDashboardApp() {
       }
 
       window.masterData = masterData;
+      window.recruitmentData = masterData;
+      filtered = masterData;
 
       // Reset all role filters to 'ALL' and clear search
       activeRole = 'ALL';
       activeSearch = '';
+      dirSearch = '';
       cardRoleOverrides = {};
 
       const searchInput = document.getElementById('searchCandidateInput');
       if (searchInput) searchInput.value = '';
+      const dirInput = document.getElementById('dirSearchInput');
+      if (dirInput) dirInput.value = '';
 
-      // Rebuild All Selectors, Filters, and Rerender All Dashboard Charts
+      // Rebuild All Selectors, Filters, and Rerender All Dashboard Charts & Directory Table
       rebuildRoleSelectors();
       applyGlobalFilters();
       if (typeof window.renderAllCharts === 'function') {
         window.renderAllCharts();
       }
+      renderDirectoryTable();
 
       closeImportModal();
 
       setTimeout(() => {
         alert(`✅ Success! Dashboard updated. Total active candidate pool is now ${masterData.length} candidates.`);
-      }, 220);
+      }, 100);
     });
   }
 
@@ -3923,7 +3976,7 @@ function initDashboardApp() {
   let dossierRoleFilter = 'ALL';
 
   function initDossierInspector() {
-    bindGenericModal('btnCandidateDossier', 'dossierInspectorModal', 'dossierCloseBtn');
+    bindGenericModal('btnCandidateDossier', 'dossierInspectorModal', 'dossierInspectorCloseBtn');
     const btn = document.getElementById('btnCandidateDossier');
     if (btn) btn.addEventListener('click', renderDossierInspector);
   }
