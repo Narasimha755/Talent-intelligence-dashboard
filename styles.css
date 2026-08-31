@@ -2509,37 +2509,39 @@ html {
 }
 
 /* ── 11. Dedicated Print / PDF Styles ── */
-/* ── 11. Dedicated Dashboard & Graphs PDF Export Engine (Zero Blank Pages) ── */
+/* ── 11. Dedicated Dashboard & Graphs PDF Export Engine (100% Rendered PDF) ── */
 @page {
-  size: landscape;
-  margin: 6mm 8mm;
+  size: A4 landscape;
+  margin: 8mm 10mm;
 }
 
 @media print {
-  *, *::before, *::after {
-    background-color: transparent !important;
-    color: #000000 !important;
-    box-shadow: none !important;
-    text-shadow: none !important;
-  }
-
   html, body {
     background: #ffffff !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+    background-attachment: scroll !important;
     color: #0f172a !important;
-    font-size: 8.5pt !important;
+    font-size: 8pt !important;
     width: 100% !important;
     min-width: 100% !important;
+    max-width: 100% !important;
     height: auto !important;
     min-height: auto !important;
+    max-height: none !important;
     overflow: visible !important;
+    overflow-x: visible !important;
+    overflow-y: visible !important;
     margin: 0 !important;
     padding: 0 !important;
-    display: block !important;
     position: static !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
-  /* Hide interactive overlay elements, modals, and toolbars */
+  /* Completely remove overlays, fixed canvas, buttons and floating elements */
   #bgParticleCanvas,
+  #themeFadeOverlay,
   .topbar-actions,
   .filter-strip,
   .maximize-btn,
@@ -2551,10 +2553,15 @@ html {
   #chatWidget,
   .studio-modal-overlay,
   .pulse-dot,
-  #themeFadeOverlay,
-  .audio-wave-pulse {
+  .audio-wave-pulse,
+  .clear-btn {
     display: none !important;
     visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
+    position: absolute !important;
+    left: -9999px !important;
   }
 
   .app-shell {
@@ -2565,6 +2572,10 @@ html {
     display: block !important;
     position: static !important;
     overflow: visible !important;
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+    height: auto !important;
+    max-height: none !important;
   }
 
   /* Topbar in PDF */
@@ -2576,10 +2587,14 @@ html {
     display: flex !important;
     justify-content: space-between !important;
     align-items: center !important;
+    position: static !important;
+  }
+  .brand-group {
+    display: flex !important;
   }
   .brand-logo-img {
-    height: 42px !important;
-    max-height: 42px !important;
+    height: 40px !important;
+    max-height: 40px !important;
     display: block !important;
   }
   .logo-dark {
@@ -2597,6 +2612,7 @@ html {
     border-radius: 4px !important;
     padding: 4px 8px !important;
     margin-bottom: 6px !important;
+    position: static !important;
   }
   .summary-banner-content {
     display: flex !important;
@@ -2621,22 +2637,26 @@ html {
     display: block !important;
     position: static !important;
     width: 100% !important;
+    height: auto !important;
     overflow: visible !important;
+    opacity: 1 !important;
+    visibility: visible !important;
   }
-  #viewDirectory:not(.active) {
+  #viewDirectory {
     display: none !important;
   }
-  #viewAnalytics:not(.active) {
-    display: none !important;
+  #viewAnalytics {
+    display: block !important;
   }
 
   /* 9 KPI Scorecards in PDF */
   .kpi-grid {
     display: grid !important;
     grid-template-columns: repeat(9, 1fr) !important;
-    gap: 5px !important;
+    gap: 4px !important;
     width: 100% !important;
     margin-bottom: 8px !important;
+    position: static !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
   }
@@ -2650,7 +2670,7 @@ html {
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
-    min-height: 48px !important;
+    min-height: 44px !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
   }
@@ -2658,13 +2678,13 @@ html {
     display: none !important;
   }
   .kpi-number {
-    font-size: 1.05rem !important;
+    font-size: 1.0rem !important;
     font-weight: 800 !important;
     color: #0f172a !important;
     line-height: 1.1 !important;
   }
   .kpi-name {
-    font-size: 0.55rem !important;
+    font-size: 0.52rem !important;
     color: #475569 !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
@@ -2676,6 +2696,7 @@ html {
     grid-template-columns: repeat(3, 1fr) !important;
     gap: 8px !important;
     width: 100% !important;
+    position: static !important;
   }
   .chart-card {
     display: flex !important;
@@ -2686,7 +2707,8 @@ html {
     page-break-inside: avoid !important;
     break-inside: avoid !important;
     padding: 8px !important;
-    min-height: 190px !important;
+    min-height: 180px !important;
+    position: static !important;
   }
   .card-header {
     border-bottom: 1px solid #e2e8f0 !important;
@@ -2696,39 +2718,41 @@ html {
     justify-content: space-between !important;
   }
   .card-heading {
-    font-size: 0.76rem !important;
+    font-size: 0.74rem !important;
     font-weight: 700 !important;
     color: #0f172a !important;
   }
   .card-subtitle {
-    font-size: 0.60rem !important;
+    font-size: 0.58rem !important;
     color: #64748b !important;
   }
   .chart-content {
     display: block !important;
     background: #ffffff !important;
     padding: 0 !important;
-    height: 160px !important;
-    min-height: 160px !important;
+    height: 150px !important;
+    min-height: 150px !important;
     position: relative !important;
   }
   canvas {
     display: block !important;
     width: 100% !important;
     max-width: 100% !important;
-    height: 150px !important;
-    max-height: 150px !important;
+    height: 140px !important;
+    max-height: 140px !important;
     background: #ffffff !important;
+    visibility: visible !important;
+    opacity: 1 !important;
   }
 
-  /* Table styling in PDF (Requisitions / Directory) */
+  /* Table styling in PDF (Requisitions / Timelines) */
   table {
     width: 100% !important;
     border-collapse: collapse !important;
   }
   th, td {
-    padding: 3px 4px !important;
-    font-size: 0.62rem !important;
+    padding: 2px 4px !important;
+    font-size: 0.60rem !important;
     border-bottom: 1px solid #e2e8f0 !important;
     color: #0f172a !important;
   }
