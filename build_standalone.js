@@ -26,15 +26,10 @@ standalone = standalone.replace('<meta name="viewport"', `${noCacheMeta}\n  <met
 
 
 // Inline logo images as base64 data URIs
-if (fs.existsSync(path.join(dir, 'logo-dark.png'))) {
-  const darkB64 = fs.readFileSync(path.join(dir, 'logo-dark.png')).toString('base64');
-  standalone = standalone.replace('src="logo-dark.png"', `src="data:image/png;base64,${darkB64}"`);
+if (fs.existsSync(path.join(dir, 'logo.png'))) {
+  const logoB64 = fs.readFileSync(path.join(dir, 'logo.png')).toString('base64');
+  standalone = standalone.replace('src="logo.png"', `src="data:image/png;base64,${logoB64}"`);
 }
-if (fs.existsSync(path.join(dir, 'logo-light.png'))) {
-  const lightB64 = fs.readFileSync(path.join(dir, 'logo-light.png')).toString('base64');
-  standalone = standalone.replace('src="logo-light.png"', `src="data:image/png;base64,${lightB64}"`);
-}
-
 // Inline CSS
 standalone = standalone.replace(/<link\s+rel="stylesheet"\s+href="styles\.css[^"]*">/gi, () => `<style>\n${css}\n</style>`);
 
