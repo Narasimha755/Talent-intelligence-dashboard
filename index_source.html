@@ -24,61 +24,10 @@
   <!-- ── 1. EXECUTIVE COMMAND TOPBAR WITH VIEW SWITCHER ─────── -->
   <header class="topbar">
     <div class="brand-group" title="RI8FIT - Click. Match. Hire.">
-      <img src="logo-dark.png" class="brand-logo-img logo-dark" alt="RI8FIT Logo (Dark)" style="height:54px!important;max-height:58px!important;width:auto!important;max-width:220px!important;object-fit:contain!important;" />
-      <img src="logo-light.png" class="brand-logo-img logo-light" alt="RI8FIT Logo (Light)" style="height:54px!important;max-height:58px!important;width:auto!important;max-width:220px!important;object-fit:contain!important;" />
-    </div>
-
-    <!-- View Switcher Tabs (2 Clean Dedicated Tabs) -->
-    <nav class="view-nav-group" id="viewNavGroup">
-      <button class="view-nav-btn active" data-view="analytics" title="6-Graph Analytics Matrix">
-        <i data-lucide="layout-grid"></i>
-        <span>Analytics Matrix</span>
-      </button>
-      <button class="view-nav-btn" data-view="directory" title="Interactive Candidate Directory & Dossiers">
-        <i data-lucide="users"></i>
-        <span>Candidate Directory</span>
-        <span class="nav-count-badge" id="navDirCount">122</span>
-      </button>
-    </nav>
-
-    <div class="topbar-actions">
-
-      <div class="status-indicator">
-        <span class="pulse-dot"></span>
-        <span class="status-text"><strong id="totalHeaderCount">122</strong> Candidates</span>
+      <div class="brand-logo-wrapper">
+        <img src="logo.png" class="brand-logo-img" alt="RI8FIT Logo" />
       </div>
-      <button id="importExcelBtn" class="theme-btn highlight-btn" title="Import new candidates from Excel/CSV file or live update dataset">
-        <i data-lucide="file-up"></i>
-        <span>Import / Update</span>
-      </button>
-      <button id="printBriefBtn" class="theme-btn" title="Export Dashboard as PDF / Print Document">
-        <i data-lucide="file-down"></i>
-        <span>Export PDF</span>
-      </button>
-      <button id="themeToggleBtn" class="theme-btn" title="Toggle Light/Dark Theme">
-        <i data-lucide="moon"></i>
-        <span>Theme</span>
-      </button>
-      <button id="exportCsvBtn" class="primary-btn" title="Export Current Dataset to CSV">
-        <i data-lucide="download"></i>
-        <span>Export CSV</span>
-      </button>
     </div>
-  </header>
-
-  
-
-  <!-- ── EXECUTIVE AT-A-GLANCE SUMMARY BANNER ──────────────── -->
-  <div class="executive-summary-banner" id="execSummaryBanner">
-    <div class="summary-pill"><i data-lucide="sparkles"></i> <strong>Recruitment Pipeline Intelligence:</strong></div>
-    <div class="summary-stat-item"><span class="stat-dot dot-indigo"></span> Total Sourced: <strong id="sumPool">122</strong></div>
-    <div class="summary-stat-item"><span class="stat-dot dot-cyan"></span> L1 Technical: <strong id="sumL1">51</strong></div>
-    <div class="summary-stat-item"><span class="stat-dot dot-purple"></span> L2 Client: <strong id="sumL2">29</strong></div>
-    <div class="summary-stat-item"><span class="stat-dot dot-emerald"></span> Offers Released: <strong id="sumOffered">20</strong></div>
-    <div class="summary-stat-item"><span class="stat-dot dot-cyan"></span> Offer Shortlisted: <strong id="sumShortlisted">5</strong></div>
-    <div class="summary-stat-item"><span class="stat-dot dot-teal"></span> Onboarded/YTO: <strong id="sumJoined">18</strong></div>
-    <div class="summary-stat-item" id="bannerCtcItem" style="cursor:pointer;" title="Click for Executive Compensation & Budget Analytics"><span class="stat-dot dot-gold"></span> Avg Offered CTC: <strong id="sumHike">₹12.16 LPA</strong> <i data-lucide="external-link" style="width:10px;height:10px;display:inline-block;vertical-align:middle;margin-left:2px;opacity:0.7;"></i></div>
-  </div>
 
   <!-- ── EXECUTIVE ADVANCED TOOLBAR SUITE (7 FEATURE BUTTONS) ── -->
   <div class="executive-tools-bar" id="execToolsBar">
