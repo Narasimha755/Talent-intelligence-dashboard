@@ -386,29 +386,44 @@ function initDashboardApp() {
   /* ══════════════════════════════════════════
      6. EXPORT AS PDF & THEME TOGGLE
   ══════════════════════════════════════════ */
-      /* ── 1-Click Direct Dashboard & Graphs PDF Exporter ── */
+        /* ── 1-Click Direct Dashboard & Graphs PDF Exporter ── */
   const printBtn = document.getElementById('printBtn') || document.getElementById('printBriefBtn');
   if (printBtn) {
     printBtn.addEventListener('click', () => {
-      // Close any open popups/modals so the clean full dashboard with all graphs is converted to PDF
+      // 1. Close any open popups/modals so the clean dashboard is printed
       document.querySelectorAll('.studio-modal-overlay.open').forEach(m => {
         m.classList.remove('open');
         m.style.display = 'none';
       });
 
-      // Resize all active Chart.js graphs to ensure crisp high-resolution rasterization
+      // 2. Ensure Analytics Matrix is active if not already
+      const viewAnalytics = document.getElementById('viewAnalytics');
+      const viewDir = document.getElementById('viewDirectory');
+      if (viewAnalytics && viewDir && viewAnalytics.style.display === 'none') {
+        // If user was in directory, switch back to analytics matrix for graphs PDF
+        viewAnalytics.style.display = 'block';
+        viewAnalytics.classList.add('active');
+        viewDir.style.display = 'none';
+        viewDir.classList.remove('active');
+        document.querySelectorAll('.view-nav-btn').forEach(b => {
+          b.classList.toggle('active', b.dataset.view === 'analytics');
+        });
+      }
+
+      // 3. Force instant render of all Chart.js instances with zero animation
       if (typeof Chart !== 'undefined' && Chart.instances) {
         Object.values(Chart.instances).forEach(chart => {
-          if (chart && typeof chart.resize === 'function') {
+          if (chart) {
             chart.resize();
+            chart.update('none');
           }
         });
       }
 
-      // Launch formatted browser Print / Save as PDF dialog directly
+      // 4. Launch browser print dialog with full content ready
       setTimeout(() => {
         window.print();
-      }, 120);
+      }, 150);
     });
   }
 

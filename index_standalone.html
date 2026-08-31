@@ -59,25 +59,25 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
 ══════════════════════════════════════════════════════════════════ */
 
 :root {
-  /* Ultra-Clean Executive Dark Theme */
-  --bg-app: #0b0f19;
-  --bg-app-gradient: radial-gradient(1200px 700px at 50% -120px, rgba(37, 99, 235, 0.12), transparent 70%),
-                     radial-gradient(900px 500px at 100% 100%, rgba(13, 148, 136, 0.08), transparent 60%),
-                     #0b0f19;
+  /* Ultra-Clean Executive Dark Theme (Mapped precisely to #001122 Logo Palette) */
+  --bg-app: #001122;
+  --bg-app-gradient: radial-gradient(1200px 700px at 50% -120px, rgba(0, 229, 255, 0.08), transparent 70%),
+                     radial-gradient(900px 500px at 100% 100%, rgba(0, 196, 159, 0.06), transparent 60%),
+                     #001122;
                      
-  --bg-card: rgba(17, 24, 39, 0.90);
-  --bg-card-hover: rgba(24, 34, 53, 0.96);
-  --bg-surface: #0f172a;
-  --bg-input: rgba(15, 23, 42, 0.85);
+  --bg-card: rgba(2, 22, 44, 0.88);
+  --bg-card-hover: rgba(3, 31, 61, 0.96);
+  --bg-surface: #011830;
+  --bg-input: rgba(1, 20, 40, 0.90);
 
-  --border: rgba(255, 255, 255, 0.09);
-  --border-light: rgba(255, 255, 255, 0.16);
-  --border-focus: #3b82f6;
-  --border-subtle: rgba(255, 255, 255, 0.04);
+  --border: rgba(0, 229, 255, 0.12);
+  --border-light: rgba(0, 229, 255, 0.22);
+  --border-focus: #00e5ff;
+  --border-subtle: rgba(255, 255, 255, 0.05);
 
   --text-primary: #f8fafc;
   --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
+  --text-muted: #8fa0b5;
 
   /* Bespoke Architectural Editorial Color Palette (Non-Standard VIBGYOR) */
   --clr-primary: #1e3a8a;     /* Obsidian Midnight Cobalt */
@@ -2564,20 +2564,33 @@ html {
 }
 
 /* ── 11. Dedicated Print / PDF Styles ── */
-/* ── 11. Dedicated Dashboard & Graphs PDF Export Engine ── */
+/* ── 11. Dedicated Dashboard & Graphs PDF Export Engine (Zero Blank Pages) ── */
 @page {
   size: landscape;
   margin: 6mm 8mm;
 }
 
 @media print {
+  *, *::before, *::after {
+    background-color: transparent !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
   html, body {
     background: #ffffff !important;
     color: #0f172a !important;
-    font-size: 9pt !important;
+    font-size: 8.5pt !important;
     width: 100% !important;
+    min-width: 100% !important;
     height: auto !important;
+    min-height: auto !important;
     overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+    position: static !important;
   }
 
   /* Hide interactive overlay elements, modals, and toolbars */
@@ -2593,7 +2606,8 @@ html {
   #chatWidget,
   .studio-modal-overlay,
   .pulse-dot,
-  #themeFadeOverlay {
+  #themeFadeOverlay,
+  .audio-wave-pulse {
     display: none !important;
     visibility: hidden !important;
   }
@@ -2603,19 +2617,24 @@ html {
     margin: 0 !important;
     max-width: 100% !important;
     width: 100% !important;
-    gap: 8px !important;
+    display: block !important;
+    position: static !important;
+    overflow: visible !important;
   }
 
   /* Topbar in PDF */
   .topbar {
     background: #ffffff !important;
-    border-bottom: 2px solid #e2e8f0 !important;
-    padding: 6px 0 !important;
-    box-shadow: none !important;
+    border-bottom: 2px solid #cbd5e1 !important;
+    padding: 4px 0 !important;
+    margin-bottom: 6px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
   }
   .brand-logo-img {
-    height: 48px !important;
-    max-height: 48px !important;
+    height: 42px !important;
+    max-height: 42px !important;
     display: block !important;
   }
   .logo-dark {
@@ -2627,14 +2646,21 @@ html {
 
   /* Executive Summary Banner in PDF */
   .executive-summary-banner {
+    display: block !important;
     background: #f8fafc !important;
     border: 1px solid #cbd5e1 !important;
-    border-radius: 6px !important;
+    border-radius: 4px !important;
     padding: 4px 8px !important;
-    box-shadow: none !important;
+    margin-bottom: 6px !important;
+  }
+  .summary-banner-content {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
   }
   .summary-badge-title {
     color: #1e40af !important;
+    font-weight: 800 !important;
   }
   .summary-chip strong {
     color: #0f172a !important;
@@ -2645,34 +2671,55 @@ html {
     display: none !important;
   }
 
+  /* View Containers */
+  .app-view-container {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    overflow: visible !important;
+  }
+  #viewDirectory:not(.active) {
+    display: none !important;
+  }
+  #viewAnalytics:not(.active) {
+    display: none !important;
+  }
+
   /* 9 KPI Scorecards in PDF */
   .kpi-grid {
     display: grid !important;
     grid-template-columns: repeat(9, 1fr) !important;
-    gap: 6px !important;
+    gap: 5px !important;
     width: 100% !important;
-    margin-bottom: 6px !important;
+    margin-bottom: 8px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
   .kpi-box {
-    background: #ffffff !important;
+    background: #f8fafc !important;
     border: 1px solid #cbd5e1 !important;
-    border-radius: 6px !important;
-    padding: 6px 4px !important;
-    box-shadow: none !important;
+    border-radius: 4px !important;
+    padding: 4px 2px !important;
     text-align: center !important;
-    break-inside: avoid !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 48px !important;
     page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
   .kpi-icon {
     display: none !important;
   }
   .kpi-number {
-    font-size: 1.1rem !important;
+    font-size: 1.05rem !important;
     font-weight: 800 !important;
     color: #0f172a !important;
+    line-height: 1.1 !important;
   }
   .kpi-name {
-    font-size: 0.58rem !important;
+    font-size: 0.55rem !important;
     color: #475569 !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
@@ -2682,56 +2729,63 @@ html {
   .dashboard-matrix {
     display: grid !important;
     grid-template-columns: repeat(3, 1fr) !important;
-    gap: 10px !important;
+    gap: 8px !important;
     width: 100% !important;
   }
   .chart-card {
+    display: flex !important;
+    flex-direction: column !important;
     background: #ffffff !important;
     border: 1px solid #cbd5e1 !important;
-    border-radius: 8px !important;
-    box-shadow: none !important;
-    break-inside: avoid !important;
+    border-radius: 6px !important;
     page-break-inside: avoid !important;
-    padding: 10px !important;
-    min-height: 220px !important;
+    break-inside: avoid !important;
+    padding: 8px !important;
+    min-height: 190px !important;
   }
   .card-header {
     border-bottom: 1px solid #e2e8f0 !important;
-    padding-bottom: 6px !important;
-    margin-bottom: 8px !important;
+    padding-bottom: 4px !important;
+    margin-bottom: 6px !important;
+    display: flex !important;
+    justify-content: space-between !important;
   }
   .card-heading {
-    font-size: 0.80rem !important;
+    font-size: 0.76rem !important;
+    font-weight: 700 !important;
     color: #0f172a !important;
   }
   .card-subtitle {
-    font-size: 0.62rem !important;
+    font-size: 0.60rem !important;
     color: #64748b !important;
   }
   .chart-content {
+    display: block !important;
     background: #ffffff !important;
-    padding: 4px 0 !important;
+    padding: 0 !important;
+    height: 160px !important;
+    min-height: 160px !important;
+    position: relative !important;
   }
   canvas {
+    display: block !important;
+    width: 100% !important;
     max-width: 100% !important;
-    max-height: 180px !important;
+    height: 150px !important;
+    max-height: 150px !important;
     background: #ffffff !important;
   }
 
-  /* Directory view if active */
-  .directory-card {
-    background: #ffffff !important;
-    border: 1px solid #cbd5e1 !important;
-    box-shadow: none !important;
-    break-inside: auto !important;
+  /* Table styling in PDF (Requisitions / Directory) */
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
   }
-  .dir-search-wrap {
-    display: none !important;
-  }
-  .directory-table th, .directory-table td {
-    padding: 4px 6px !important;
-    font-size: 0.65rem !important;
+  th, td {
+    padding: 3px 4px !important;
+    font-size: 0.62rem !important;
     border-bottom: 1px solid #e2e8f0 !important;
+    color: #0f172a !important;
   }
 }
 
@@ -5333,7 +5387,7 @@ html, body, .app-layout, .topbar, .kpi-box, .chart-card, .table-card, .btn, .sea
         </button>
         <div style="display:flex;gap:10px;">
           <button id="cancelImportBtn" class="theme-btn">Cancel</button>
-          <button id="applyImportBtn" class="primary-btn">
+          <button id="applyImportBtn" class="theme-btn">
             <i data-lucide="check-circle"></i> Apply &amp; Refresh Dashboard
           </button>
         </div>
@@ -8771,29 +8825,44 @@ function initDashboardApp() {
   /* ══════════════════════════════════════════
      6. EXPORT AS PDF & THEME TOGGLE
   ══════════════════════════════════════════ */
-      /* ── 1-Click Direct Dashboard & Graphs PDF Exporter ── */
+        /* ── 1-Click Direct Dashboard & Graphs PDF Exporter ── */
   const printBtn = document.getElementById('printBtn') || document.getElementById('printBriefBtn');
   if (printBtn) {
     printBtn.addEventListener('click', () => {
-      // Close any open popups/modals so the clean full dashboard with all graphs is converted to PDF
+      // 1. Close any open popups/modals so the clean dashboard is printed
       document.querySelectorAll('.studio-modal-overlay.open').forEach(m => {
         m.classList.remove('open');
         m.style.display = 'none';
       });
 
-      // Resize all active Chart.js graphs to ensure crisp high-resolution rasterization
+      // 2. Ensure Analytics Matrix is active if not already
+      const viewAnalytics = document.getElementById('viewAnalytics');
+      const viewDir = document.getElementById('viewDirectory');
+      if (viewAnalytics && viewDir && viewAnalytics.style.display === 'none') {
+        // If user was in directory, switch back to analytics matrix for graphs PDF
+        viewAnalytics.style.display = 'block';
+        viewAnalytics.classList.add('active');
+        viewDir.style.display = 'none';
+        viewDir.classList.remove('active');
+        document.querySelectorAll('.view-nav-btn').forEach(b => {
+          b.classList.toggle('active', b.dataset.view === 'analytics');
+        });
+      }
+
+      // 3. Force instant render of all Chart.js instances with zero animation
       if (typeof Chart !== 'undefined' && Chart.instances) {
         Object.values(Chart.instances).forEach(chart => {
-          if (chart && typeof chart.resize === 'function') {
+          if (chart) {
             chart.resize();
+            chart.update('none');
           }
         });
       }
 
-      // Launch formatted browser Print / Save as PDF dialog directly
+      // 4. Launch browser print dialog with full content ready
       setTimeout(() => {
         window.print();
-      }, 120);
+      }, 150);
     });
   }
 
