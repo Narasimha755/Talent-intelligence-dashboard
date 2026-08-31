@@ -386,7 +386,7 @@ function initDashboardApp() {
   /* ══════════════════════════════════════════
      6. EXPORT AS PDF & THEME TOGGLE
   ══════════════════════════════════════════ */
-  const printBtn = document.getElementById('printBriefBtn');
+  const printBtn = document.getElementById('printBtn') || document.getElementById('printBriefBtn');
   if (printBtn) {
     printBtn.addEventListener('click', () => {
       window.print();
@@ -409,7 +409,7 @@ function initDashboardApp() {
         document.documentElement.setAttribute('data-theme', nextTheme);
         document.body.setAttribute('data-theme', nextTheme);
         
-        // Direct infallible logo switching
+        // Direct logo display switching
         const logoDark = document.querySelector('.logo-dark');
         const logoLight = document.querySelector('.logo-light');
         if (logoDark && logoLight) {
@@ -1819,7 +1819,7 @@ function initDashboardApp() {
      18. DYNAMIC EXCEL / CSV DATASET IMPORTER
   ══════════════════════════════════════════ */
   const importModal = document.getElementById('importModalOverlay');
-  const importBtn = document.getElementById('importExcelBtn');
+  const importBtn = document.getElementById('dataSyncBtn') || document.getElementById('importExcelBtn');
   const importCloseBtn = document.getElementById('importModalCloseBtn');
   const cancelImportBtn = document.getElementById('cancelImportBtn');
   const fileDropzone = document.getElementById('fileDropzone');
