@@ -386,29 +386,29 @@ function initDashboardApp() {
   /* ══════════════════════════════════════════
      6. EXPORT AS PDF & THEME TOGGLE
   ══════════════════════════════════════════ */
-    /* ── Enhanced 1-Click Executive PDF Exporter ── */
+      /* ── 1-Click Direct Dashboard & Graphs PDF Exporter ── */
   const printBtn = document.getElementById('printBtn') || document.getElementById('printBriefBtn');
   if (printBtn) {
     printBtn.addEventListener('click', () => {
-      // 1. Render latest dynamic data into the Executive Report Deck
-      if (typeof renderExecutiveReport === 'function') {
-        renderExecutiveReport();
+      // Close any open popups/modals so the clean full dashboard with all graphs is converted to PDF
+      document.querySelectorAll('.studio-modal-overlay.open').forEach(m => {
+        m.classList.remove('open');
+        m.style.display = 'none';
+      });
+
+      // Resize all active Chart.js graphs to ensure crisp high-resolution rasterization
+      if (typeof Chart !== 'undefined' && Chart.instances) {
+        Object.values(Chart.instances).forEach(chart => {
+          if (chart && typeof chart.resize === 'function') {
+            chart.resize();
+          }
+        });
       }
-      
-      // 2. Open the Executive Report Deck Modal
-      const reportModal = document.getElementById('executiveReportModal');
-      if (reportModal) {
-        reportModal.style.display = 'flex';
-        setTimeout(() => {
-          reportModal.classList.add('open');
-          // 3. Trigger print dialog smoothly with report ready
-          setTimeout(() => {
-            window.print();
-          }, 250);
-        }, 50);
-      } else {
+
+      // Launch formatted browser Print / Save as PDF dialog directly
+      setTimeout(() => {
         window.print();
-      }
+      }, 120);
     });
   }
 

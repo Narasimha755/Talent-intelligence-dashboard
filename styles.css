@@ -2509,43 +2509,174 @@ html {
 }
 
 /* ── 11. Dedicated Print / PDF Styles ── */
+/* ── 11. Dedicated Dashboard & Graphs PDF Export Engine ── */
+@page {
+  size: landscape;
+  margin: 6mm 8mm;
+}
+
 @media print {
-  body {
+  html, body {
     background: #ffffff !important;
-    color: #000000 !important;
-    font-size: 10pt !important;
+    color: #0f172a !important;
+    font-size: 9pt !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
   }
-  #bgParticleCanvas, .topbar-actions, .filter-strip, .maximize-btn, .view-nav-group, .modal-close-btn, .view-dossier-btn, .card-filter-toolbar, .chat-widget-btn, #themeToggleBtn {
+
+  /* Hide interactive overlay elements, modals, and toolbars */
+  #bgParticleCanvas,
+  .topbar-actions,
+  .filter-strip,
+  .maximize-btn,
+  .view-nav-group,
+  .modal-close-btn,
+  .view-dossier-btn,
+  .card-filter-toolbar,
+  .chat-widget-btn,
+  #chatWidget,
+  .studio-modal-overlay,
+  .pulse-dot,
+  #themeFadeOverlay {
     display: none !important;
+    visibility: hidden !important;
   }
+
   .app-shell {
     padding: 0 !important;
     margin: 0 !important;
     max-width: 100% !important;
     width: 100% !important;
+    gap: 8px !important;
   }
-  .chart-card, .kpi-box, .directory-card, .executive-tools-bar, .executive-summary-banner {
-    box-shadow: none !important;
-    border: 1px solid #d1d5db !important;
-    break-inside: avoid;
+
+  /* Topbar in PDF */
+  .topbar {
     background: #ffffff !important;
-    page-break-inside: avoid;
-  }
-  .kpi-number, .card-heading, .dir-heading {
-    color: #000000 !important;
-  }
-  /* If executive report modal is open during print, print report full page */
-  #executiveReportModal.open {
-    position: static !important;
-    display: block !important;
-    background: none !important;
-    padding: 0 !important;
-  }
-  #executiveReportModal.open .executive-report-window {
+    border-bottom: 2px solid #e2e8f0 !important;
+    padding: 6px 0 !important;
     box-shadow: none !important;
-    border: none !important;
-    max-width: 100% !important;
+  }
+  .brand-logo-img {
+    height: 48px !important;
+    max-height: 48px !important;
+    display: block !important;
+  }
+  .logo-dark {
+    display: none !important;
+  }
+  .logo-light {
+    display: block !important;
+  }
+
+  /* Executive Summary Banner in PDF */
+  .executive-summary-banner {
+    background: #f8fafc !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 6px !important;
+    padding: 4px 8px !important;
+    box-shadow: none !important;
+  }
+  .summary-badge-title {
+    color: #1e40af !important;
+  }
+  .summary-chip strong {
+    color: #0f172a !important;
+  }
+
+  /* Executive Toolbar in PDF */
+  .executive-tools-bar {
+    display: none !important;
+  }
+
+  /* 9 KPI Scorecards in PDF */
+  .kpi-grid {
+    display: grid !important;
+    grid-template-columns: repeat(9, 1fr) !important;
+    gap: 6px !important;
     width: 100% !important;
+    margin-bottom: 6px !important;
+  }
+  .kpi-box {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 6px !important;
+    padding: 6px 4px !important;
+    box-shadow: none !important;
+    text-align: center !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+  .kpi-icon {
+    display: none !important;
+  }
+  .kpi-number {
+    font-size: 1.1rem !important;
+    font-weight: 800 !important;
+    color: #0f172a !important;
+  }
+  .kpi-name {
+    font-size: 0.58rem !important;
+    color: #475569 !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+  }
+
+  /* 3x2 Analytics Matrix in PDF */
+  .dashboard-matrix {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+  .chart-card {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    padding: 10px !important;
+    min-height: 220px !important;
+  }
+  .card-header {
+    border-bottom: 1px solid #e2e8f0 !important;
+    padding-bottom: 6px !important;
+    margin-bottom: 8px !important;
+  }
+  .card-heading {
+    font-size: 0.80rem !important;
+    color: #0f172a !important;
+  }
+  .card-subtitle {
+    font-size: 0.62rem !important;
+    color: #64748b !important;
+  }
+  .chart-content {
+    background: #ffffff !important;
+    padding: 4px 0 !important;
+  }
+  canvas {
+    max-width: 100% !important;
+    max-height: 180px !important;
+    background: #ffffff !important;
+  }
+
+  /* Directory view if active */
+  .directory-card {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: none !important;
+    break-inside: auto !important;
+  }
+  .dir-search-wrap {
+    display: none !important;
+  }
+  .directory-table th, .directory-table td {
+    padding: 4px 6px !important;
+    font-size: 0.65rem !important;
+    border-bottom: 1px solid #e2e8f0 !important;
   }
 }
 
