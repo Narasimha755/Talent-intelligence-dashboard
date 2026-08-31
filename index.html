@@ -524,55 +524,132 @@ body[data-theme="light"] .logo-light {
   background: rgba(0, 0, 0, 0.06);
 }
 
-/* ── Executive Summary Banner ── */
+/* ── Executive Pipeline Intelligence Grid (Sleek Micro-Cards) ── */
 .executive-summary-banner {
   display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  box-shadow: var(--shadow-card);
+  animation: fadeInUp 0.28s ease both;
+  width: 100%;
+}
+
+.summary-banner-top {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 10px;
-  background: rgba(37, 99, 235, 0.05);
-  border: 1px solid rgba(37, 99, 235, 0.16);
-  border-radius: var(--radius-sm);
-  padding: 4px 10px;
-  font-size: 0.70rem;
-  color: var(--text-secondary);
-  animation: fadeInUp 0.32s ease both;
+  gap: 8px;
 }
-[data-theme="dark"] .executive-summary-banner {
-  background: rgba(37, 99, 235, 0.08);
-  border-color: rgba(59, 130, 246, 0.2);
-}
-.summary-pill {
+
+.summary-badge-title {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  color: #2563eb;
+  gap: 6px;
+  font-size: 0.76rem;
   font-weight: 700;
+  color: var(--accent-cyan);
   text-transform: uppercase;
-  letter-spacing: 0.03em;
-  font-size: 0.67rem;
+  letter-spacing: 0.05em;
 }
-[data-theme="dark"] .summary-pill { color: #60a5fa; }
-.summary-pill i { width: 12px; height: 12px; }
-.summary-stat-item {
+
+.summary-badge-title i {
+  width: 14px;
+  height: 14px;
+}
+
+.summary-live-tag {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-muted);
 }
-.summary-stat-item strong {
+
+.summary-grid-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
+  width: 100%;
+}
+
+.summary-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-card-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  transition: all var(--transition-fast);
+  cursor: default;
+}
+
+.summary-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+  border-color: rgba(0, 229, 255, 0.35);
+}
+
+.summary-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.summary-card-icon i {
+  width: 14px;
+  height: 14px;
+}
+
+.summary-card-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.summary-card-label {
+  font-size: 0.64rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.summary-card-val {
+  font-size: 0.88rem;
+  font-weight: 800;
   color: var(--text-primary);
+  line-height: 1.1;
+  font-family: var(--font-family-mono, monospace);
 }
-.stat-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
+
+/* Micro-card accent themes */
+.card-total .summary-card-icon { background: rgba(99, 102, 241, 0.12); color: #6366f1; }
+.card-l1 .summary-card-icon { background: rgba(14, 165, 233, 0.12); color: #0ea5e9; }
+.card-l2 .summary-card-icon { background: rgba(168, 85, 247, 0.12); color: #a855f7; }
+.card-offered .summary-card-icon { background: rgba(16, 185, 129, 0.12); color: #10b981; }
+.card-shortlist .summary-card-icon { background: rgba(6, 182, 212, 0.12); color: #06b6d4; }
+.card-onboard .summary-card-icon { background: rgba(20, 184, 166, 0.12); color: #14b8a6; }
+.card-ctc .summary-card-icon { background: rgba(245, 158, 11, 0.12); color: #f59e0b; }
+
+[data-theme="dark"] .summary-card {
+  background: rgba(15, 23, 42, 0.45);
 }
-.dot-indigo  { background: #4f46e5; }
-.dot-cyan    { background: #0284c7; }
-.dot-purple  { background: #6366f1; }
-.dot-emerald { background: #10b981; }
-.dot-teal    { background: #0d9488; }
-.dot-gold    { background: #f59e0b; }
+[data-theme="dark"] .summary-card:hover {
+  background: rgba(15, 23, 42, 0.75);
+}
 
 /* ── App View Containers ── */
 .app-view-container {
@@ -4765,27 +4842,71 @@ html, body, .app-layout, .topbar, .kpi-box, .chart-card, .table-card, .btn, .sea
     </div>
   </header>
 
-  <!-- ── 2. EXECUTIVE PIPELINE INTELLIGENCE SUMMARY BANNER ──── -->
+    <!-- ── 2. EXECUTIVE PIPELINE INTELLIGENCE GRID ──── -->
   <div class="executive-summary-banner" id="execSummaryBanner">
-    <div class="summary-banner-content">
+    <div class="summary-banner-top">
       <div class="summary-badge-title">
         <i data-lucide="activity"></i>
-        <span>Recruitment Pipeline Intelligence:</span>
+        <span>Recruitment Pipeline Intelligence</span>
       </div>
-      <div class="summary-stat-chips" id="summaryStatChips">
-        <span class="summary-chip chip-total">Total Sourced: <strong>122</strong></span>
-        <span class="summary-chip-sep">·</span>
-        <span class="summary-chip chip-l1">L1 Technical: <strong>51</strong></span>
-        <span class="summary-chip-sep">·</span>
-        <span class="summary-chip chip-l2">L2 Client: <strong>29</strong></span>
-        <span class="summary-chip-sep">·</span>
-        <span class="summary-chip chip-offered">Offers Released: <strong>20</strong></span>
-        <span class="summary-chip-sep">·</span>
-        <span class="summary-chip chip-shortlist">Offer Shortlisted: <strong>5</strong></span>
-        <span class="summary-chip-sep">·</span>
-        <span class="summary-chip chip-onboard">Onboarded/YTO: <strong>18</strong></span>
-        <span class="summary-chip-sep">·</span>
-        <span class="summary-chip chip-ctc">Avg Offered CTC: <strong>₹12.16 LPA</strong></span>
+      <span class="summary-live-tag"><span class="pulse-dot"></span> Live Telemetry (122 Verified Records)</span>
+    </div>
+
+    <div class="summary-grid-cards" id="summaryStatChips">
+      <div class="summary-card card-total" title="Total Sourced Talent Pool">
+        <div class="summary-card-icon"><i data-lucide="users"></i></div>
+        <div class="summary-card-text">
+          <span class="summary-card-label">Total Sourced</span>
+          <span class="summary-card-val" id="sumPool">122</span>
+        </div>
+      </div>
+
+      <div class="summary-card card-l1" title="L1 Technical Screening Completed">
+        <div class="summary-card-icon"><i data-lucide="calendar-check"></i></div>
+        <div class="summary-card-text">
+          <span class="summary-card-label">L1 Technical</span>
+          <span class="summary-card-val" id="sumL1">51</span>
+        </div>
+      </div>
+
+      <div class="summary-card card-l2" title="L2 Client Round 2 Cleared">
+        <div class="summary-card-icon"><i data-lucide="badge-check"></i></div>
+        <div class="summary-card-text">
+          <span class="summary-card-label">L2 Client</span>
+          <span class="summary-card-val" id="sumL2">29</span>
+        </div>
+      </div>
+
+      <div class="summary-card card-offered" title="Formal Employment Offers Released">
+        <div class="summary-card-icon"><i data-lucide="check-circle-2"></i></div>
+        <div class="summary-card-text">
+          <span class="summary-card-label">Offers Released</span>
+          <span class="summary-card-val" id="sumOffered">20</span>
+        </div>
+      </div>
+
+      <div class="summary-card card-shortlist" title="Final Offer Shortlisted Candidates">
+        <div class="summary-card-icon"><i data-lucide="award"></i></div>
+        <div class="summary-card-text">
+          <span class="summary-card-label">Offer Shortlisted</span>
+          <span class="summary-card-val" id="sumShortlisted">5</span>
+        </div>
+      </div>
+
+      <div class="summary-card card-onboard" title="Successfully Onboarded + Confirmed Joiners">
+        <div class="summary-card-icon"><i data-lucide="user-check"></i></div>
+        <div class="summary-card-text">
+          <span class="summary-card-label">Onboarded / YTO</span>
+          <span class="summary-card-val" id="sumJoined">18</span>
+        </div>
+      </div>
+
+      <div class="summary-card card-ctc" title="Average Offered Annual CTC">
+        <div class="summary-card-icon"><i data-lucide="trending-up"></i></div>
+        <div class="summary-card-text">
+          <span class="summary-card-label">Avg Offered CTC</span>
+          <span class="summary-card-val" id="sumHike">₹12.16 LPA</span>
+        </div>
       </div>
     </div>
   </div>
