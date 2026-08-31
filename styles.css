@@ -173,27 +173,31 @@ body {
   cursor: default;
 }
 
-.brand-logo-wrapper {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 38px;
-  padding: 3px 12px;
-  border-radius: 8px;
-  background: #061521;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-  cursor: default;
+.brand-logo-img {
+  height: 44px;
+  width: auto;
+  max-width: 140px;
+  object-fit: contain;
+  display: block;
+  border-radius: 6px;
+  transition: transform var(--transition-fast);
 }
-.brand-logo-wrapper:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+
+.brand-logo-img:hover {
+  transform: scale(1.02);
 }
-[data-theme="light"] .brand-logo-wrapper {
-  background: #061521;
-  border: 1px solid rgba(6, 21, 33, 0.25);
-  box-shadow: 0 3px 10px rgba(6, 21, 33, 0.22);
+
+[data-theme="light"] .logo-dark {
+  display: none !important;
+}
+[data-theme="light"] .logo-light {
+  display: block !important;
+}
+[data-theme="dark"] .logo-dark, :not([data-theme="light"]) .logo-dark {
+  display: block !important;
+}
+[data-theme="dark"] .logo-light, :not([data-theme="light"]) .logo-light {
+  display: none !important;
 }
 .brand-logo-img {
   height: 28px;
