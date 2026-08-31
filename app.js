@@ -386,10 +386,29 @@ function initDashboardApp() {
   /* ══════════════════════════════════════════
      6. EXPORT AS PDF & THEME TOGGLE
   ══════════════════════════════════════════ */
+    /* ── Enhanced 1-Click Executive PDF Exporter ── */
   const printBtn = document.getElementById('printBtn') || document.getElementById('printBriefBtn');
   if (printBtn) {
     printBtn.addEventListener('click', () => {
-      window.print();
+      // 1. Render latest dynamic data into the Executive Report Deck
+      if (typeof renderExecutiveReport === 'function') {
+        renderExecutiveReport();
+      }
+      
+      // 2. Open the Executive Report Deck Modal
+      const reportModal = document.getElementById('executiveReportModal');
+      if (reportModal) {
+        reportModal.style.display = 'flex';
+        setTimeout(() => {
+          reportModal.classList.add('open');
+          // 3. Trigger print dialog smoothly with report ready
+          setTimeout(() => {
+            window.print();
+          }, 250);
+        }, 50);
+      } else {
+        window.print();
+      }
     });
   }
 
