@@ -412,14 +412,14 @@
 
       <textarea id="pasteDataInput" class="paste-data-area" placeholder="Paste tab-delimited or comma-delimited rows copied directly from Excel (e.g. S.No, Candidate Name, Function, Role, Interview Date, Round 2, Feedback, Status, Present CTC, Offered CTC, DOJ, Onboard)..."></textarea>
 
-      <div class="import-options-row">
+            <div class="import-options-row">
         <label class="import-mode-label">
-          <input type="radio" name="importMode" value="replace" checked>
-          <span><strong>Replace Entire Dataset</strong> (Overwrites existing data with uploaded file)</span>
+          <input type="radio" name="importMode" value="append" checked>
+          <span><strong>Append New Records</strong> (e.g. Add 10 new candidates to current 122)</span>
         </label>
         <label class="import-mode-label">
-          <input type="radio" name="importMode" value="append">
-          <span><strong>Append New Records</strong> (e.g. Add new candidates to current dataset)</span>
+          <input type="radio" name="importMode" value="replace">
+          <span><strong>Replace Entire Dataset</strong> (Overwrites existing data with uploaded file)</span>
         </label>
       </div>
 
