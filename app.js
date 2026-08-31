@@ -396,8 +396,8 @@ function initDashboardApp() {
   const themeBtn = document.getElementById('themeToggleBtn');
   if (themeBtn) {
     themeBtn.addEventListener('click', () => {
-      const isDark = document.documentElement.dataset.theme === 'dark';
-      const nextTheme = isDark ? 'light' : 'dark';
+      const currentTheme = document.documentElement.getAttribute('data-theme') || document.documentElement.dataset.theme || 'dark';
+      const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
       
       const overlay = document.getElementById('themeFadeOverlay');
       if (overlay) {
@@ -408,6 +408,20 @@ function initDashboardApp() {
         document.documentElement.dataset.theme = nextTheme;
         document.documentElement.setAttribute('data-theme', nextTheme);
         document.body.setAttribute('data-theme', nextTheme);
+        
+        // Direct infallible logo switching
+        const logoDark = document.querySelector('.logo-dark');
+        const logoLight = document.querySelector('.logo-light');
+        if (logoDark && logoLight) {
+          if (nextTheme === 'light') {
+            logoDark.style.setProperty('display', 'none', 'important');
+            logoLight.style.setProperty('display', 'block', 'important');
+          } else {
+            logoDark.style.setProperty('display', 'block', 'important');
+            logoLight.style.setProperty('display', 'none', 'important');
+          }
+        }
+
         const icon = themeBtn.querySelector('i');
         if (icon) icon.setAttribute('data-lucide', nextTheme === 'dark' ? 'sun' : 'moon');
         if (window.lucide && typeof window.lucide.createIcons === 'function') {
