@@ -177,16 +177,16 @@ body {
 }
 
 .brand-logo-img {
-  height: 64px;
+  height: 60px;
   width: auto;
-  max-width: 190px;
+  max-width: 240px;
   object-fit: contain;
   display: block;
   transition: transform var(--transition-fast);
 }
 
 .brand-logo-img:hover {
-  transform: scale(1.02);
+  transform: scale(1.03);
 }
 
 /* Default (Dark Theme) */
