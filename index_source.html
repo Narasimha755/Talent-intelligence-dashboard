@@ -21,13 +21,80 @@
 
 <div class="app-shell">
 
-  <!-- ── 1. EXECUTIVE COMMAND TOPBAR WITH VIEW SWITCHER ─────── -->
+    <!-- ── 1. EXECUTIVE COMMAND TOPBAR WITH VIEW SWITCHER ─────── -->
   <header class="topbar">
     <div class="brand-group" title="RI8FIT - Click. Match. Hire.">
       <div class="brand-logo-wrapper">
         <img src="logo.png" class="brand-logo-img" alt="RI8FIT Logo" style="height:56px!important;max-height:60px!important;width:auto!important;max-width:240px!important;object-fit:contain!important;" />
       </div>
     </div>
+
+    <!-- View Switcher Tabs (2 Clean Dedicated Tabs) -->
+    <nav class="view-nav-group" id="viewNavGroup">
+      <button class="view-nav-btn active" data-view="analytics" title="6-Graph Analytics Matrix">
+        <i data-lucide="layout-grid"></i>
+        <span>Analytics Matrix</span>
+      </button>
+      <button class="view-nav-btn" data-view="directory" title="Interactive Candidate Directory &amp; Dossiers">
+        <i data-lucide="users"></i>
+        <span>Candidate Directory</span>
+        <span class="nav-count-badge" id="navDirCount">122</span>
+      </button>
+    </nav>
+
+    <!-- Topbar Actions & Global Controls -->
+    <div class="topbar-actions">
+      <span class="live-counter-badge" id="liveCounterBadge">
+        <span class="pulse-dot"></span>
+        <span id="counterText">122 Candidates</span>
+      </span>
+
+      <button class="action-btn import-btn" id="dataSyncBtn" title="Import &amp; Synchronize New Excel / CSV Dataset">
+        <i data-lucide="upload-cloud"></i>
+        <span>Import / Update</span>
+      </button>
+
+      <button class="action-btn print-btn" id="printBtn" title="Export Formatted Executive A4 PDF Report">
+        <i data-lucide="printer"></i>
+        <span>Export PDF</span>
+      </button>
+
+      <button class="action-btn theme-btn" id="themeToggleBtn" title="Toggle Light / Dark Executive Theme">
+        <i data-lucide="sun"></i>
+        <span>Theme</span>
+      </button>
+
+      <button class="action-btn export-btn" id="exportCsvBtn" title="Export Current Filtered Candidate Records (CSV)">
+        <i data-lucide="file-down"></i>
+        <span>Export CSV</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ── 2. EXECUTIVE PIPELINE INTELLIGENCE SUMMARY BANNER ──── -->
+  <div class="executive-summary-banner" id="execSummaryBanner">
+    <div class="summary-banner-content">
+      <div class="summary-badge-title">
+        <i data-lucide="activity"></i>
+        <span>Recruitment Pipeline Intelligence:</span>
+      </div>
+      <div class="summary-stat-chips" id="summaryStatChips">
+        <span class="summary-chip chip-total">Total Sourced: <strong>122</strong></span>
+        <span class="summary-chip-sep">·</span>
+        <span class="summary-chip chip-l1">L1 Technical: <strong>51</strong></span>
+        <span class="summary-chip-sep">·</span>
+        <span class="summary-chip chip-l2">L2 Client: <strong>29</strong></span>
+        <span class="summary-chip-sep">·</span>
+        <span class="summary-chip chip-offered">Offers Released: <strong>20</strong></span>
+        <span class="summary-chip-sep">·</span>
+        <span class="summary-chip chip-shortlist">Offer Shortlisted: <strong>5</strong></span>
+        <span class="summary-chip-sep">·</span>
+        <span class="summary-chip chip-onboard">Onboarded/YTO: <strong>18</strong></span>
+        <span class="summary-chip-sep">·</span>
+        <span class="summary-chip chip-ctc">Avg Offered CTC: <strong>₹12.16 LPA</strong></span>
+      </div>
+    </div>
+  </div>
 
   <!-- ── EXECUTIVE ADVANCED TOOLBAR SUITE (7 FEATURE BUTTONS) ── -->
   <div class="executive-tools-bar" id="execToolsBar">
