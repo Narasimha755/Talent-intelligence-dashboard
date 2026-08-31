@@ -165,6 +165,31 @@ body {
   transform: translateZ(0);
 }
 
+
+.brand-logo-img {
+  height: 38px;
+  width: auto;
+  max-width: 140px;
+  object-fit: contain;
+  display: block;
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+}
+.brand-logo-img:hover {
+  transform: scale(1.02);
+}
+[data-theme="light"] .logo-dark {
+  display: none !important;
+}
+[data-theme="light"] .logo-light {
+  display: block !important;
+}
+[data-theme="dark"] .logo-dark, :not([data-theme="light"]) .logo-dark {
+  display: block !important;
+}
+[data-theme="dark"] .logo-light, :not([data-theme="light"]) .logo-light {
+  display: none !important;
+}
+
 .brand-group {
   display: flex;
   align-items: center;
