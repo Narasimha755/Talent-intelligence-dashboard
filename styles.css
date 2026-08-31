@@ -173,30 +173,30 @@ body {
   cursor: default;
 }
 
-.brand-ri8fit-svg {
+.brand-logo-img {
   height: 38px;
   width: auto;
+  max-width: 150px;
+  object-fit: contain;
   display: block;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.15));
-  transition: transform var(--transition-fast), filter var(--transition-fast);
+  transition: transform var(--transition-fast);
 }
 
-.brand-ri8fit-svg:hover {
+.brand-logo-img:hover {
   transform: scale(1.02);
 }
 
-/* In Dark Theme: White text */
-.ri8-text {
-  fill: #ffffff;
-  transition: fill 0.3s ease;
+[data-theme="light"] .logo-dark {
+  display: none !important;
 }
-
-/* In Light Theme: Bold Deep Slate text for 100% crisp, sharp legibility */
-[data-theme="light"] .ri8-text {
-  fill: #0f172a;
+[data-theme="light"] .logo-light {
+  display: block !important;
 }
-[data-theme="light"] .brand-ri8fit-svg {
-  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.08));
+[data-theme="dark"] .logo-dark, :not([data-theme="light"]) .logo-dark {
+  display: block !important;
+}
+[data-theme="dark"] .logo-light, :not([data-theme="light"]) .logo-light {
+  display: none !important;
 }
 
 .brand-group {
