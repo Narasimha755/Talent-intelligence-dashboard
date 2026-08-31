@@ -3624,7 +3624,7 @@ html {
   display: flex;
   align-items: center;
   gap: 5px;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   width: 100%;
 }
 .exec-tools-label {
