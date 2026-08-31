@@ -153,12 +153,12 @@ body {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 14px;
   background: var(--bg-card);
   backdrop-filter: blur(20px);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: 8px 20px;
+  padding: 6px 18px;
   box-shadow: var(--shadow-card);
   animation: fadeInUp 0.25s ease both;
   position: relative;
@@ -171,25 +171,25 @@ body {
 .brand-group {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   cursor: default;
   flex-shrink: 0;
-  min-width: 220px;
+  min-width: 180px;
 }
 
 .brand-logo-img {
-  height: 84px !important;
-  max-height: 90px !important;
+  height: 64px !important;
+  max-height: 68px !important;
   width: auto !important;
-  max-width: 320px !important;
+  max-width: 240px !important;
   object-fit: contain !important;
   display: block;
-  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.12));
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.08));
   transition: transform var(--transition-fast), filter var(--transition-fast);
 }
 
 .brand-logo-img:hover {
-  transform: scale(1.03);
+  transform: scale(1.02);
 }
 
 /* Default (Dark Theme) */
