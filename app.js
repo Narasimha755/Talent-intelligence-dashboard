@@ -406,6 +406,8 @@ function initDashboardApp() {
       
       setTimeout(() => {
         document.documentElement.dataset.theme = nextTheme;
+        document.documentElement.setAttribute('data-theme', nextTheme);
+        document.body.setAttribute('data-theme', nextTheme);
         const icon = themeBtn.querySelector('i');
         if (icon) icon.setAttribute('data-lucide', nextTheme === 'dark' ? 'sun' : 'moon');
         if (window.lucide && typeof window.lucide.createIcons === 'function') {

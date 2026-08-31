@@ -221,20 +221,22 @@ body {
 }
 
 
+
+/* ── Brand Logo Dual-Theme Switcher ── */
 .brand-group {
   display: flex;
   align-items: center;
   gap: 8px;
   cursor: default;
+  flex-shrink: 0;
 }
 
 .brand-logo-img {
-  height: 44px;
+  height: 46px;
   width: auto;
   max-width: 140px;
   object-fit: contain;
   display: block;
-  border-radius: 6px;
   transition: transform var(--transition-fast);
 }
 
@@ -242,18 +244,27 @@ body {
   transform: scale(1.02);
 }
 
-[data-theme="light"] .logo-dark {
-  display: none !important;
-}
-[data-theme="light"] .logo-light {
+/* Default (Dark Theme) */
+.logo-dark {
   display: block !important;
 }
-[data-theme="dark"] .logo-dark, :not([data-theme="light"]) .logo-dark {
-  display: block !important;
-}
-[data-theme="dark"] .logo-light, :not([data-theme="light"]) .logo-light {
+.logo-light {
   display: none !important;
 }
+
+/* Light Theme Active on html or body */
+[data-theme="light"] .logo-dark,
+html[data-theme="light"] .logo-dark,
+body[data-theme="light"] .logo-dark {
+  display: none !important;
+}
+
+[data-theme="light"] .logo-light,
+html[data-theme="light"] .logo-light,
+body[data-theme="light"] .logo-light {
+  display: block !important;
+}
+
 .brand-logo-img {
   height: 28px;
   width: auto;
@@ -3682,9 +3693,14 @@ html {
 .exec-tools-group {
   display: flex;
   align-items: center;
-  gap: 5px;
-  flex-wrap: wrap;
+  gap: 6px;
+  flex-wrap: nowrap;
   width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.exec-tools-group::-webkit-scrollbar {
+  display: none;
 }
 .exec-tools-label {
   font-size: 0.68rem;
@@ -8607,6 +8623,8 @@ function initDashboardApp() {
       
       setTimeout(() => {
         document.documentElement.dataset.theme = nextTheme;
+        document.documentElement.setAttribute('data-theme', nextTheme);
+        document.body.setAttribute('data-theme', nextTheme);
         const icon = themeBtn.querySelector('i');
         if (icon) icon.setAttribute('data-lucide', nextTheme === 'dark' ? 'sun' : 'moon');
         if (window.lucide && typeof window.lucide.createIcons === 'function') {
