@@ -72,50 +72,64 @@
 
 
 
-  <!-- ── EXECUTIVE ADVANCED TOOLBAR SUITE (7 FEATURE BUTTONS) ── -->
+    <!-- ── EXECUTIVE ADVANCED TOOLBAR SUITE (8 STRATEGIC MODULES IN NEAT 4x2 ORDER) ── -->
   <div class="executive-tools-bar" id="execToolsBar">
-    <div class="exec-tools-group">
-      <span class="exec-tools-label"><i data-lucide="sparkles"></i> <strong>Executive Suite:</strong></span>
-      
+    <div class="exec-tools-header">
+      <div class="exec-tools-label">
+        <i data-lucide="sparkles"></i>
+        <span>Executive Strategic Suite</span>
+      </div>
+      <span class="exec-tools-badge">8 Intelligence Modules</span>
+    </div>
+
+    <div class="exec-tools-grid">
+      <!-- 1. C-Suite Executive Briefing Deck -->
+      <button class="exec-tool-btn report-btn" id="btnExecutiveReport" title="Generate 1-Click C-Suite Executive Briefing Deck & PDF Report">
+        <span class="exec-btn-icon"><i data-lucide="file-text"></i></span>
+        <span class="exec-btn-text">Executive Briefing Deck</span>
+      </button>
+
+      <!-- 2. Executive Audio Briefing -->
       <button class="exec-tool-btn audio-btn" id="btnVoiceBriefing" title="Play Executive Audio Summary Briefing">
-        <i data-lucide="volume-2"></i>
-        <span>Executive Audio Briefing</span>
+        <span class="exec-btn-icon"><i data-lucide="volume-2"></i></span>
+        <span class="exec-btn-text">Audio Briefing Studio</span>
         <span class="audio-wave-pulse" id="audioWavePulse" style="display:none;"></span>
       </button>
 
-      <button class="exec-tool-btn sla-btn" id="btnSlaRadar" title="View Interview Turnaround Speed &amp; SLA Benchmarks">
-        <i data-lucide="zap"></i>
-        <span>Interview Speed &amp; SLA Radar</span>
+      <!-- 3. 15-Sep Sourcing Goals & Closure Tracker -->
+      <button class="exec-tool-btn forecast-btn" id="btnTimeToFill" title="View 15-Sep Sourcing Goals, Filled Positions & Role Closure Progress">
+        <span class="exec-btn-icon"><i data-lucide="target"></i></span>
+        <span class="exec-btn-text">15-Sep Goals & Closure</span>
       </button>
 
-      <button class="exec-tool-btn geo-btn" id="btnTalentTelemetry" title="View Candidate Pool Distribution by 9 Roles &amp; Functional Streams" style="background:rgba(14,165,233,0.12);color:#0ea5e9;border:1px solid rgba(14,165,233,0.28);">
-        <i data-lucide="bar-chart-3"></i>
-        <span>Talent Pool &amp; Role Breakdown</span>
+      <!-- 4. Interview Speed & SLA Radar -->
+      <button class="exec-tool-btn sla-btn" id="btnSlaRadar" title="View Interview Turnaround Speed & SLA Benchmarks">
+        <span class="exec-btn-icon"><i data-lucide="zap"></i></span>
+        <span class="exec-btn-text">Interview Speed & SLA</span>
       </button>
 
-      <button class="exec-tool-btn budget-btn" id="btnBudgetOptimizer" title="View Candidate Compensation Packages, Hike % &amp; Agency Sourcing Cost Savings" style="background:rgba(217,119,6,0.12);color:#d97706;border:1px solid rgba(217,119,6,0.28);">
-        <i data-lucide="wallet"></i>
-        <span>Compensation &amp; Sourcing Savings</span>
+      <!-- 5. Client Evaluation & Feedback Analytics -->
+      <button class="exec-tool-btn risk-btn" id="btnInterviewAnalytics" title="View Client Interview Feedback, Clearance Rates & Shortlist Offer Actions">
+        <span class="exec-btn-icon"><i data-lucide="award"></i></span>
+        <span class="exec-btn-text">Client Feedback Analytics</span>
       </button>
 
-      <button class="exec-tool-btn onboarding-btn" id="btnOnboardingFlightDeck" title="View September, October &amp; November Cohort Joining Timelines and Asset Readiness" style="background:rgba(16,185,129,0.12);color:#059669;border:1px solid rgba(16,185,129,0.28);">
-        <i data-lucide="calendar-check-2"></i>
-        <span>Cohort Onboarding &amp; Joining Tracker</span>
+      <!-- 6. Talent Pool & Role Breakdown -->
+      <button class="exec-tool-btn geo-btn" id="btnTalentTelemetry" title="View Candidate Pool Distribution by 9 Roles & Functional Streams">
+        <span class="exec-btn-icon"><i data-lucide="bar-chart-3"></i></span>
+        <span class="exec-btn-text">Talent Pool & Roles</span>
       </button>
 
-      <button class="exec-tool-btn forecast-btn" id="btnTimeToFill" title="View 15-Sep Sourcing Goals, Filled Positions &amp; Role Closure Progress">
-        <i data-lucide="trending-up"></i>
-        <span>15-Sep Sourcing Goals &amp; Closure Tracker</span>
+      <!-- 7. Compensation & Sourcing Savings -->
+      <button class="exec-tool-btn budget-btn" id="btnBudgetOptimizer" title="View Candidate Compensation Packages, Hike % & Agency Sourcing Cost Savings">
+        <span class="exec-btn-icon"><i data-lucide="wallet"></i></span>
+        <span class="exec-btn-text">Compensation & Savings</span>
       </button>
 
-      <button class="exec-tool-btn report-btn" id="btnExecutiveReport" title="Generate 1-Click C-Suite Executive Briefing Deck &amp; PDF Report" style="background:rgba(79,70,229,0.12);color:#4f46e5;border:1px solid rgba(79,70,229,0.28);">
-        <i data-lucide="file-text"></i>
-        <span>C-Suite Executive Briefing Deck</span>
-      </button>
-
-      <button class="exec-tool-btn risk-btn" id="btnInterviewAnalytics" title="View Client Interview Feedback, Clearance Rates &amp; Shortlist Offer Actions" style="background:rgba(99,102,241,0.12);color:#6366f1;border:1px solid rgba(99,102,241,0.28);">
-        <i data-lucide="award"></i>
-        <span>Client Evaluation &amp; Feedback Analytics</span>
+      <!-- 8. Cohort Onboarding & Joining Tracker -->
+      <button class="exec-tool-btn onboarding-btn" id="btnOnboardingFlightDeck" title="View September, October & November Cohort Joining Timelines and Asset Readiness">
+        <span class="exec-btn-icon"><i data-lucide="calendar-check-2"></i></span>
+        <span class="exec-btn-text">Cohort Onboarding Tracker</span>
       </button>
     </div>
   </div>
