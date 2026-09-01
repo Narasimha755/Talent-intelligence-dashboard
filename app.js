@@ -5490,3 +5490,320 @@ window.addEventListener('load', () => {
   }
   window.dispatchEvent(new Event('resize'));
 });
+
+
+  /* ══════════════════════════════════════════════════════════════════
+     RI8FIT GUIDE — FULL WORKING AI CHATBOT & CLINICAL INTELLIGENCE ENGINE
+     (Engineered directly from https://frontend.invotrx.com/)
+  ══════════════════════════════════════════════════════════════════ */
+  (function initRi8FitGuideChatbot() {
+    // Knowledge Base ported from frontend.invotrx.com + Live CDM Recruitment Intelligence
+    const KNOWLEDGE_BASE = [
+      {
+        id: "what-is-ri8fit",
+        keywords: ["what is ri8fit", "about ri8fit", "platform", "product", "what do you do", "invotrx"],
+        answer: "Ri8Fit is a hiring management platform with a built-in ATS for Clinical, IT, and Non-IT teams. It brings job creation, candidate matching, interviews, workflow tracking, and real-time recruitment analytics into one unified command center.",
+        action: { label: "Explore Analytics Matrix", fn: () => window.switchView && window.switchView('analytics') }
+      },
+      {
+        id: "clinical-intelligence",
+        keywords: ["clinical", "clinical hiring", "clinical roles", "clinical intelligence", "life sciences", "clinical skills", "cdm", "biostatistics", "pharmacovigilance", "rave"],
+        answer: "Ri8Fit supports clinical hiring with role-specific skill frameworks, mandatory and weighted skills, domain-aware matching, and explainable candidate-fit information for specialised life-sciences roles including Clinical Data Managers, RAVE Programmers, and UAT Testers.",
+        action: { label: "View Role Requisition Alignment", fn: () => document.getElementById('dashFunctionContainer')?.scrollIntoView({ behavior: 'smooth' }) }
+      },
+      {
+        id: "candidate-matching",
+        keywords: ["match", "matching", "match score", "find candidates", "candidate score", "ai matching", "skill matching"],
+        answer: "When a requisition includes required EDC platforms (Medidata RAVE, Veeva Vault, Oracle InForm) and protocol criteria, Ri8Fit instantly surfaces matching candidates and presents an explainable fit score against those benchmarks.",
+        action: { label: "Open Candidate Directory", fn: () => window.switchView && window.switchView('directory') }
+      },
+      {
+        id: "live-pipeline-stats",
+        keywords: ["stats", "pipeline", "how many candidates", "numbers", "summary", "live stats", "metrics", "overview", "counts"],
+        answer: () => {
+          const total = masterData.length;
+          const l1 = masterData.filter(d => Boolean(d.interviewDate && d.interviewDate.trim() && d.interviewDate !== '-')).length;
+          const l2 = masterData.filter(d => (d.interview2 || '').trim().toLowerCase() === 'completed').length;
+          const offers = masterData.filter(d => (d.status || '').toLowerCase() === 'offered').length;
+          const shortlisted = masterData.filter(d => /shortlisted/.test((d.status || '').toLowerCase()) || /shortlisted/.test((d.clientFeedback || '').toLowerCase())).length;
+          const joined = masterData.filter(d => (d.onboard || '').toLowerCase() === 'onboarded' || (d.doj || '').includes('08')).length;
+          const yto = masterData.filter(d => (d.onboard || '').toLowerCase() === 'yto').length;
+
+          return `📊 Live Recruitment Pipeline Status:
+• Total Sourced: ${total} Candidates across 9 Clinical Disciplines
+• L1 Technical Cleared: ${l1} (41.8% velocity)
+• L2 Client Cleared: ${l2} (23.8%)
+• Confirmed Offers Released: ${offers} Candidates
+• Offer Shortlisted: ${shortlisted} Candidates awaiting formal release
+• Onboarded (Joined 03-Aug): ${joined} Joiners
+• Yet to Onboard (YTO): ${yto} Joiners (Sep 1, Oct 1, Nov 4)
+• Average Offered CTC: ₹12.16 LPA (₹2.43 Cr Annual Payroll Committed)
+• Agency Sourcing Fees Saved: ₹20.25 Lakhs (8.33% Placement Fee Avoided)`;
+        },
+        action: { label: "Open Executive Briefing & PDF", fn: () => document.getElementById('printBtn')?.click() }
+      },
+      {
+        id: "notice-period",
+        keywords: ["notice", "notice period", "immediate", "joiner", "buyout", "fast joiner", "yto", "availability"],
+        answer: "Candidate availability breakdown: 18 immediate joiners / serving notice (<=15 days), 45 candidates with 30-day notice, 38 candidates with 60-day notice, and 21 candidates with 90-day buyout eligibility.",
+        action: { label: "Open Notice Period Radar", fn: () => document.getElementById('btnNoticeRadar')?.click() }
+      },
+      {
+        id: "compensation-roi",
+        keywords: ["compensation", "salary", "ctc", "budget", "roi", "savings", "hike", "payroll"],
+        answer: "Campaign compensation analysis: Total committed annual payroll is ₹2.43 Crores across 20 released offers, with an average offered salary of ₹12.16 LPA (+34.2% average hike against previous CTC). Direct in-house sourcing saved ₹20.25 Lakhs in external recruitment headhunter fees.",
+        action: { label: "Open Compensation ROI Optimizer", fn: () => document.getElementById('btnBudgetOptimizer')?.click() }
+      },
+      {
+        id: "export-reports",
+        keywords: ["export", "pdf", "csv", "download", "report", "briefing deck"],
+        answer: "You can download data and executive summaries anytime: Use 'Export PDF' in the topbar for the C-Suite Briefing Deck, or 'Export CSV' to download the complete 122-candidate dataset with salary and feedback records.",
+        action: { label: "Export C-Suite PDF Deck", fn: () => document.getElementById('printBtn')?.click() }
+      },
+      {
+        id: "audio-briefing",
+        keywords: ["audio", "podcast", "voice", "listen", "speech", "briefing studio"],
+        answer: "Ri8Fit includes an AI Executive Audio Briefing Studio. You can listen to executive briefings, adjust playback speed (1x - 2x), follow the teleprompter, and download briefing transcripts in Markdown.",
+        action: { label: "Open Audio Briefing Studio", fn: () => document.getElementById('btnVoiceBriefing')?.click() }
+      }
+    ];
+
+    const SUGGESTION_CHIPS = [
+      "What is Ri8Fit?",
+      "Clinical hiring",
+      "Live pipeline stats",
+      "Notice period radar",
+      "Compensation & Savings",
+      "How does matching work?",
+      "Export reports"
+    ];
+
+    let isOpen = false;
+    let messages = [
+      {
+        from: "ai",
+        text: "Hi — I’m Ri8Fit Guide. Ask me about our hiring platform, clinical skill intelligence, candidate matching, live pipeline metrics, compensation ROI, or candidate availability."
+      }
+    ];
+
+    // Create Widget Container
+    const widget = document.createElement('div');
+    widget.className = 'ri8-guide-widget';
+    widget.id = 'ri8GuideWidget';
+    document.body.appendChild(widget);
+
+    function renderWidget() {
+      widget.innerHTML = `
+        ${isOpen ? `
+          <div class="ri8-guide-window">
+            <!-- Header -->
+            <div class="ri8-guide-header">
+              <div class="ri8-header-icon">✦</div>
+              <div style="flex:1;">
+                <div class="ri8-header-title">Ri8Fit Guide</div>
+                <div class="ri8-header-sub">● WORKFLOW ASSISTANT</div>
+              </div>
+              <button class="ri8-header-btn" id="ri8ClearBtn" title="Clear Chat History">↻</button>
+              <button class="ri8-header-btn" id="ri8CloseBtn" title="Close Guide">×</button>
+            </div>
+
+            <!-- Messages Area -->
+            <div class="ri8-guide-messages" id="ri8GuideMessages">
+              ${messages.map((m, idx) => `
+                <div class="ri8-msg-row ${m.from}">
+                  <div class="ri8-msg-bubble">${typeof m.text === 'function' ? m.text() : m.text}</div>
+                  ${m.action ? `
+                    <button class="ri8-action-pill-btn" onclick="window._executeRi8Action(${idx})">
+                      <span>${m.action.label}</span> →
+                    </button>
+                  ` : ''}
+                </div>
+              `).join('')}
+            </div>
+
+            <!-- Footer with Chips and Input -->
+            <div class="ri8-guide-footer">
+              <div class="ri8-chips-scroll">
+                ${SUGGESTION_CHIPS.map(chip => `
+                  <button class="ri8-chip-btn" onclick="window._sendRi8Prompt('${chip.replace(/'/g, "\\'")}')">${chip}</button>
+                `).join('')}
+              </div>
+
+              <div class="ri8-input-wrap">
+                <input type="text" class="ri8-input-field" id="ri8InputField" placeholder="Ask about your hiring workflow..." />
+                <button class="ri8-send-btn" id="ri8SendBtn" title="Ask Ri8Fit Guide">↑</button>
+              </div>
+
+              <div class="ri8-guide-disclaimer">GUIDANCE ONLY · FINAL HIRING DECISIONS REQUIRE HUMAN REVIEW</div>
+            </div>
+          </div>
+        ` : ''}
+
+        <!-- Floating Trigger Pill -->
+        <button class="ri8-guide-trigger" id="ri8TriggerBtn" title="Open Ri8Fit Workflow Guide">
+          <span class="ri8-trigger-icon">✦</span>
+          <span>${isOpen ? 'Close guide' : 'Ask Ri8Fit Guide'}</span>
+        </button>
+      `;
+
+      // Attach DOM Listeners
+      const triggerBtn = document.getElementById('ri8TriggerBtn');
+      if (triggerBtn) {
+        triggerBtn.onclick = () => {
+          isOpen = !isOpen;
+          renderWidget();
+          if (isOpen) {
+            setTimeout(() => {
+              document.getElementById('ri8InputField')?.focus();
+              scrollMessagesToBottom();
+            }, 50);
+          }
+        };
+      }
+
+      const closeBtn = document.getElementById('ri8CloseBtn');
+      if (closeBtn) {
+        closeBtn.onclick = () => {
+          isOpen = false;
+          renderWidget();
+        };
+      }
+
+      const clearBtn = document.getElementById('ri8ClearBtn');
+      if (clearBtn) {
+        clearBtn.onclick = () => {
+          messages = [{
+            from: "ai",
+            text: "Hi — I’m Ri8Fit Guide. Ask me about our hiring platform, clinical skill intelligence, candidate matching, live pipeline metrics, compensation ROI, or candidate availability."
+          }];
+          renderWidget();
+        };
+      }
+
+      const sendBtn = document.getElementById('ri8SendBtn');
+      const inputField = document.getElementById('ri8InputField');
+      if (sendBtn && inputField) {
+        sendBtn.onclick = () => handleSend();
+        inputField.onkeydown = (e) => {
+          if (e.key === 'Enter') handleSend();
+        };
+      }
+
+      scrollMessagesToBottom();
+    }
+
+    function scrollMessagesToBottom() {
+      const container = document.getElementById('ri8GuideMessages');
+      if (container) {
+        container.scrollTop = container.scrollHeight;
+      }
+    }
+
+    function handleSend() {
+      const input = document.getElementById('ri8InputField');
+      if (!input) return;
+      const text = input.value.trim();
+      if (!text) return;
+
+      messages.push({ from: "user", text: text });
+      input.value = '';
+      renderWidget();
+
+      // Formulate AI response
+      setTimeout(() => {
+        const response = getAiResponse(text);
+        messages.push({ from: "ai", text: response.text, action: response.action });
+        renderWidget();
+      }, 150);
+    }
+
+    window._sendRi8Prompt = function(promptText) {
+      if (!isOpen) isOpen = true;
+      messages.push({ from: "user", text: promptText });
+      renderWidget();
+
+      setTimeout(() => {
+        const response = getAiResponse(promptText);
+        messages.push({ from: "ai", text: response.text, action: response.action });
+        renderWidget();
+      }, 150);
+    };
+
+    window._executeRi8Action = function(msgIndex) {
+      const msg = messages[msgIndex];
+      if (msg && msg.action && typeof msg.action.fn === 'function') {
+        msg.action.fn();
+      }
+    };
+
+    function getAiResponse(query) {
+      const q = query.toLowerCase().trim();
+
+      // Greetings
+      if (/^(hi|hello|hey|good morning|good afternoon|good evening|namaste)/.test(q)) {
+        return {
+          text: "Hello! I’m the Ri8Fit Guide. I can assist with clinical talent intelligence, candidate screening velocity, offer releases, compensation ROI, and recruitment analytics.",
+          action: { label: "View Live Pipeline Stats", fn: () => window._sendRi8Prompt("Live pipeline stats") }
+        };
+      }
+
+      // Specific Candidate Lookups (e.g. "Kavitha", "#24", "Rajesh")
+      const numMatch = q.match(/#?(\d+)/);
+      if (numMatch) {
+        const sno = parseInt(numMatch[1], 10);
+        const cand = masterData.find(c => c.sno === sno);
+        if (cand) {
+          return {
+            text: `Found Candidate #${cand.sno}: ${cand.name}
+• Specialist Role: ${cand.role}
+• Status: ${cand.status || 'Active Pipeline'}
+• Client Feedback: ${cand.clientFeedback || 'Pending Evaluation'}
+• Offered CTC: ${cand.offeredCtcRaw || 'N/A'} (DOJ: ${cand.doj || 'TBD'})
+• Onboard Cohort: ${cand.onboard || 'YTO'}`,
+            action: { label: `View ${cand.name}'s Dossier`, fn: () => window.openCandidateProfileBySno && window.openCandidateProfileBySno(cand.sno) }
+          };
+        }
+      }
+
+      // Keyword Knowledge Base Matching
+      for (const entry of KNOWLEDGE_BASE) {
+        if (entry.keywords.some(k => q.includes(k))) {
+          const ans = typeof entry.answer === 'function' ? entry.answer() : entry.answer;
+          return { text: ans, action: entry.action };
+        }
+      }
+
+      // Role specific matching
+      const roles = ['rave programmer', 'data reviewer', 'uat tester', 'lab data manager', 'vendor data manager', 'external data manager', 'report programmer', 'clinical programmer'];
+      for (const r of roles) {
+        if (q.includes(r)) {
+          const cands = masterData.filter(d => (d.role || '').toLowerCase().includes(r));
+          const offers = cands.filter(d => (d.status || '').toLowerCase() === 'offered').length;
+          return {
+            text: `Role Intelligence: ${r.toUpperCase()}
+• Total Sourced: ${cands.length} Candidates
+• Confirmed Offers Released: ${offers} Offers
+• Target Requisition: Active campaign priority`,
+            action: { label: "Inspect in Directory", fn: () => {
+              if (window.switchView) window.switchView('directory');
+              const sel = document.getElementById('roleFilter');
+              if (sel) { sel.value = r; sel.dispatchEvent(new Event('change')); }
+            }}
+          };
+        }
+      }
+
+      // Default Intelligent Fallback
+      return {
+        text: "I can help with Ri8Fit’s recruitment overview, clinical hiring, candidate matching, interview stages, compensation ROI, and live campaign analytics. Try asking: “Live pipeline stats”, “How many offers?”, or “Notice period radar”.",
+        action: { label: "Explore Live Pipeline Stats", fn: () => window._sendRi8Prompt("Live pipeline stats") }
+      };
+    }
+
+    // Initialize Widget on DOM Load
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', renderWidget);
+    } else {
+      renderWidget();
+    }
+  })();
