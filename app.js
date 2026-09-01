@@ -412,34 +412,24 @@ function initDashboardApp() {
       const currentTheme = document.documentElement.getAttribute('data-theme') || document.documentElement.dataset.theme || 'dark';
       const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
       
-      const executeThemeSwitch = () => {
-        document.documentElement.dataset.theme = nextTheme;
-        document.documentElement.setAttribute('data-theme', nextTheme);
-        document.body.setAttribute('data-theme', nextTheme);
-        
-        // Direct logo display switching
-        const logoDark = document.querySelector('.logo-dark');
-        const logoLight = document.querySelector('.logo-light');
-        if (logoDark && logoLight) {
-          logoDark.style.display = nextTheme === 'dark' ? 'block' : 'none';
-          logoLight.style.display = nextTheme === 'light' ? 'block' : 'none';
-        }
-        
-        localStorage.setItem('cdm_theme', nextTheme);
-        
-        // Re-render charts with appropriate theme colors cleanly
-        renderAllCharts();
-        if (window.lucide && typeof window.lucide.createIcons === 'function') {
-          window.lucide.createIcons();
-        }
-      };
-
-      if (document.startViewTransition) {
-        document.startViewTransition(() => {
-          executeThemeSwitch();
-        });
-      } else {
-        executeThemeSwitch();
+      // Instant 0ms attribute toggle
+      document.documentElement.dataset.theme = nextTheme;
+      document.documentElement.setAttribute('data-theme', nextTheme);
+      document.body.setAttribute('data-theme', nextTheme);
+      localStorage.setItem('cdm_theme', nextTheme);
+      
+      // Instant direct logo display switching
+      const logoDark = document.querySelector('.logo-dark');
+      const logoLight = document.querySelector('.logo-light');
+      if (logoDark && logoLight) {
+        logoDark.style.display = nextTheme === 'dark' ? 'block' : 'none';
+        logoLight.style.display = nextTheme === 'light' ? 'block' : 'none';
+      }
+      
+      // Instant chart redraw with new theme colors
+      renderAllCharts();
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
       }
     });
   }
@@ -5193,9 +5183,8 @@ function initDashboardApp() {
     }
   }
 
-  /* ══════════════════════════════════════════
-     22. ADVANCED AI TALENT INTELLIGENCE & CONVERSATIONAL CHATBOT ENGINE
-     (Supports General Chat, Domain Knowledge & Deep-Dive Dashboard Analytics)
+    /* ══════════════════════════════════════════
+     22. ADVANCED RI8FIT AI ASSISTANT & REAL-TIME TALENT INTELLIGENCE ENGINE
   ══════════════════════════════════════════ */
   function initChatbot() {
     const trigger = document.getElementById('btnAiChatbotTrigger');
@@ -5211,14 +5200,17 @@ function initDashboardApp() {
     trigger.addEventListener('click', () => {
       panel.classList.toggle('open');
       if (panel.classList.contains('open') && log && log.children.length === 0) {
-        appendBotMessage("👋 **Hello! I am your CDM Talent Intelligence AI Assistant.**\n\nI can answer general questions, chat conversationally, or give you deep-dive intelligence on candidates, compensation, SLA turnaround speed, cohort onboarding, and hiring goals.\n\n*Try asking: 'give me a summary', 'who is Kavitha Perumal?', 'show me the September cohort', 'what is the average CTC?', or 'who are the shortlisted candidates?'*");
+        appendBotMessage("👋 **Hello! I am your Ri8Fit AI Assistant.**\n\nI have indexed all **122 candidates**, **9 clinical specialist streams**, offer packages, and live interview records.\n\n*Ask me anything conversationally, or click any suggestion pill below to explore live metrics!*");
+      }
+      if (panel.classList.contains('open') && input) {
+        setTimeout(() => input.focus(), 100);
       }
     });
 
     if (closeBtn) closeBtn.addEventListener('click', () => panel.classList.remove('open'));
     if (clearBtn) clearBtn.addEventListener('click', () => {
       if (log) log.innerHTML = '';
-      appendBotMessage("🧹 **Chat history cleared.** How can I assist you with the CDM recruitment campaign today?");
+      appendBotMessage("🧹 **Chat history cleared.** How can I assist you with your hiring workflow today?");
     });
 
     function sendMessage() {
@@ -5231,7 +5223,7 @@ function initDashboardApp() {
       setTimeout(() => {
         const response = generateBotResponse(text);
         appendBotMessage(response);
-      }, 150);
+      }, 120);
     }
 
     if (sendBtn) sendBtn.addEventListener('click', sendMessage);
@@ -5246,564 +5238,212 @@ function initDashboardApp() {
         const q = chip.dataset.query;
         if (q) {
           appendUserMessage(q);
-          setTimeout(() => appendBotMessage(generateBotResponse(q)), 150);
+          setTimeout(() => appendBotMessage(generateBotResponse(q)), 120);
         }
       });
     });
 
     function appendUserMessage(msg) {
       if (!log) return;
-      const div = document.createElement('div');
-      div.className = 'chat-msg user';
-      div.innerHTML = '<div class="chat-msg-bubble">' + msg + '</div>';
-      log.appendChild(div);
+      const row = document.createElement('div');
+      row.className = 'chat-msg user';
+      row.innerHTML = `<div class="chat-msg-bubble">${escapeHtml(msg)}</div>`;
+      log.appendChild(row);
       log.scrollTop = log.scrollHeight;
     }
 
     function appendBotMessage(msg) {
       if (!log) return;
-      const div = document.createElement('div');
-      div.className = 'chat-msg bot';
-      // Format markdown bold, bullets, newlines
-      const formatted = msg
-        .replace(/\n/g, '<br/>')
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.*?)\*/g, '<em>$1</em>');
-      div.innerHTML = '<div class="chat-msg-bubble">' + formatted + '</div>';
-      log.appendChild(div);
+      const row = document.createElement('div');
+      row.className = 'chat-msg bot';
+      
+      // Parse markdown-like bold and line breaks cleanly
+      let formatted = typeof msg === 'string' ? msg : msg.text;
+      formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>');
+      formatted = formatted.replace(/\n/g, '<br/>');
+
+      let actionHtml = '';
+      if (msg && msg.action) {
+        actionHtml = `<div style="margin-top:8px;"><button class="btn btn-secondary" onclick="window._executeBotAction('${msg.action.id}')" style="font-size:0.72rem;padding:4px 10px;display:inline-flex;align-items:center;gap:5px;cursor:pointer;"><i data-lucide="${msg.action.icon || 'arrow-right'}"></i> <span>${msg.action.label}</span></button></div>`;
+      }
+
+      row.innerHTML = `
+        <div class="chat-avatar-mini"><i data-lucide="bot"></i></div>
+        <div class="chat-msg-bubble">
+          <div>${formatted}</div>
+          ${actionHtml}
+        </div>
+      `;
+      log.appendChild(row);
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+      }
       log.scrollTop = log.scrollHeight;
     }
 
+    window._executeBotAction = function(actionId) {
+      if (actionId === 'directory') {
+        if (window.switchView) window.switchView('directory');
+      } else if (actionId === 'notice') {
+        document.getElementById('btnNoticeRadar')?.click();
+      } else if (actionId === 'pdf') {
+        document.getElementById('printBtn')?.click();
+      } else if (actionId === 'budget') {
+        document.getElementById('btnBudgetOptimizer')?.click();
+      } else if (actionId === 'audio') {
+        document.getElementById('btnVoiceBriefing')?.click();
+      } else if (actionId.startsWith('cand_')) {
+        const sno = parseInt(actionId.split('_')[1], 10);
+        if (window.openCandidateProfileBySno) window.openCandidateProfileBySno(sno);
+      }
+    };
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
     function generateBotResponse(query) {
-      const q = query.trim().toLowerCase();
+      const q = query.toLowerCase().trim();
 
-      // ── 1. GREETINGS & CASUAL GENERAL CONVERSATION ──
-      if (/^(hi|hello|hey|hola|greetings|howdy|yo)(\s+|$|[!?.])/i.test(q)) {
-        return "👋 **Hello! Welcome to the CDM Talent Intelligence Assistant!**\n\nI am your interactive AI pair for this Clinical Data Management hiring campaign.\n\nYou can ask me **anything**:\n• 📊 **Campaign KPIs** (*'give me a summary'*, *'how many offers are released?'*)\n• 👤 **Candidate Profiles** (*'tell me about Kavitha Perumal'*, *'who is candidate #27?'*)\n• 💰 **Compensation & ROI** (*'what is the average CTC?'*, *'how much agency fee was saved?'*)\n• 📅 **Cohort Onboarding** (*'who is joining in September?'*, *'show October joiners'*)\n• ⚡ **SLA Velocity & Delivery** (*'what is the interview speed?'*, *'will we finish by 15-Sep?'*)\n• 🎯 **Shortlist & Feedback** (*'who are the 5 shortlisted candidates?'*, *'why were candidates rejected?'*)\n• 🌐 **General Knowledge** (*'what is CDM?'*, *'what does a RAVE Programmer do?'*)\n\nHow can I help you today?";
+      // Greetings
+      if (/^(hi|hello|hey|good morning|good afternoon|good evening|namaste)\b/.test(q)) {
+        return {
+          text: "Hello! I’m your Ri8Fit AI Assistant. I can assist with clinical talent intelligence, candidate screening velocity, offer releases, compensation ROI, and recruitment analytics.",
+          action: { id: 'directory', label: 'Open Candidate Directory', icon: 'users' }
+        };
       }
 
-      if (q.includes('how are you') || q.includes('how are u') || q.includes("how's it going")) {
-        return "😊 **I'm doing fantastic, thank you for asking!**\n\nAll systems are fully operational across our **122 candidate records** and **9 specialist streams**. How can I assist with your recruitment intelligence today?";
+      // What is Ri8Fit / Product questions
+      if (q.includes('what is ri8fit') || q.includes('about') || q.includes('platform') || q.includes('product')) {
+        return {
+          text: "**Ri8Fit** is an enterprise hiring management platform with built-in ATS intelligence for Clinical, IT, and Non-IT teams. It brings job requisition management, domain-specific candidate matching, interview scheduling, workflow tracking, and real-time analytics into one connected workspace.",
+          action: { id: 'pdf', label: 'View C-Suite Briefing Deck', icon: 'file-text' }
+        };
       }
 
-      if (q.includes('who are you') || q.includes('what are you') || q.includes('your name')) {
-        return "🤖 **I am the CDM Talent Intelligence AI Assistant**, built specifically for this Clinical Data Management hiring campaign.\n\nI have real-time access to the entire **122-candidate database**, interview milestones, compensation packages, SLA turnaround benchmarks, and cohort onboarding flight decks.";
+      // Candidate matching
+      if (q.includes('match') || q.includes('matching') || q.includes('fit score')) {
+        return {
+          text: "**Candidate Matching in Ri8Fit:**\nWhen a requisition specifies mandatory EDC platforms (Medidata RAVE, Veeva Vault, Oracle InForm) and clinical protocol criteria, Ri8Fit automatically calculates an explainable match score for each candidate to accelerate shortlist decisions.",
+          action: { id: 'directory', label: 'Inspect Match Scores in Directory', icon: 'users' }
+        };
       }
 
-      if (q.includes('thank') || q.includes('thanks') || q.includes('appreciate')) {
-        return "🌟 **You're very welcome!** It's my pleasure to assist. Feel free to ask if you need anything else regarding candidate profiles, compensation audits, or onboarding timelines!";
-      }
-
-      if (q.includes('bye') || q.includes('goodbye') || q.includes('see you')) {
-        return "👋 **Goodbye!** Have a wonderful day, and happy hiring! I'll be right here whenever you need recruitment intelligence.";
-      }
-
-      if (q.includes('joke') || q.includes('funny')) {
-        return "😄 **Here's one for the recruitment team:**\n\n*Why did the Data Manager break up with the EDC database?*\n\nBecause there were **too many validation queries** and zero clean closures! 🧪📊";
-      }
-
-      // ── 2. GENERAL CLINICAL DATA MANAGEMENT & DOMAIN KNOWLEDGE ──
-      if (q.includes('what is cdm') || q.includes('clinical data management') || q.includes('explain cdm')) {
-        return "🧪 **What is Clinical Data Management (CDM)?**\n\n**Clinical Data Management (CDM)** is a critical phase in clinical research that ensures data collected from clinical trials is **accurate, complete, reliable, and compliant** with regulatory standards (such as **FDA 21 CFR Part 11**, **GCP**, and **CDISC**).\n\n**Key CDM Functions:**\n1. **CRF / eCRF Design:** Creating data capture forms in EDC systems.\n2. **Database Build & Validation:** Setting up edit checks and UAT testing.\n3. **Data Review & Query Management:** Identifying discrepancies and issuing queries to clinical sites.\n4. **Medical Coding:** Coding adverse events and medications using MedDRA and WHO Drug dictionaries.\n5. **Database Lock & Quality Control:** Finalizing clean datasets for statistical analysis.";
-      }
-
-      if (q.includes('rave') && (q.includes('what is') || q.includes('explain'))) {
-        return "🛠️ **What is Medidata RAVE?**\n\n**Medidata RAVE EDC** is the global gold-standard electronic data capture platform used in clinical trials.\n\n**What RAVE Programmers Do:**\n• Build study databases, configure custom functions (in C# / VB.NET).\n• Program complex edit checks, derivations, and dynamics.\n• Manage data integrations and migrations between trial phases.\n\n*In our campaign, we have **27 RAVE Programmers** sourced, with **3 formal offers** released and **3 shortlisted**.*";
-      }
-
-      if (q.includes('data reviewer') && (q.includes('what is') || q.includes('explain') || q.includes('role'))) {
-        return "📋 **Role of a Clinical Data Reviewer:**\n\nData Reviewers perform clinical consistency checks, protocol deviation reviews, and adverse event reconciliations against clinical study protocols.\n\n*In our campaign, **Data Reviewer** has **23 candidates**, with **7 formal offers** released (including #24 Kavitha Perumal at ₹14.50 LPA and #30 Sompalli Padmavathi at ₹7.80 LPA).*";
-      }
-
-      if (q.includes('medical coder') && (q.includes('what is') || q.includes('explain') || q.includes('role'))) {
-        return "💊 **Role of a Medical Coder:**\n\nMedical Coders translate verbatim clinical trial adverse events and medications into standardized terms using **MedDRA** (Medical Dictionary for Regulatory Activities) and **WHO Drug Dictionary**.\n\n*In our campaign, **Medical Coder** has **2 candidates**, with **1 offer released** (#32 Dr. Jamuna Konapalli at ₹12.00 LPA) and **1 shortlisted** (#31 Dr. Aniket Somnath Deore).*";
-      }
-
-      // ── 3. SPECIFIC CANDIDATE LOOKUPS (Matches ANY candidate by Name or S.No) ──
-      const snoMatch = q.match(/(?:#|candidate\s+|sno\s+|record\s+)(\d+)/i);
-      if (snoMatch) {
-        const sno = parseInt(snoMatch[1], 10);
-        const cand = masterData.find(c => c.sno === sno);
-        if (cand) {
-          const o = parseCtc(cand.offeredCtcRaw);
-          const p = parseCtc(cand.presentCtcRaw);
-          const hike = p > 0 && o > 0 ? (((o - p) / p) * 100).toFixed(1) : (o > 0 ? '34.2' : '—');
-          return '👤 **Candidate #' + cand.sno + ' · ' + cand.name + ':**\n• **Role:** ' + cand.role + '\n• **Present CTC:** ' + (cand.presentCtcRaw ? 'INR ' + cand.presentCtcRaw : 'Confidential') + '\n• **Offered CTC:** ' + (o > 0 ? '₹' + (o/100000).toFixed(2) + ' LPA (+' + hike + '% hike)' : 'Pending Package') + '\n• **Status:** ' + (cand.status || 'Active Pipeline') + '\n• **Level-1 Screening:** ' + (cand.interviewDate || 'Completed') + '\n• **Level-2 Client:** ' + (cand.interview2 || 'Completed') + '\n• **Client Feedback:** ' + (cand.clientFeedback || 'Positive') + '\n• **Date of Joining:** ' + (cand.doj || '01-Sep-2026') + ' (' + (cand.onboard || 'YTO') + ')';
-        }
-      }
-
-      // Check for Candidate Name match
-      const matchedCand = masterData.find(c => c.name && q.includes(c.name.toLowerCase()));
-      if (matchedCand) {
-        const o = parseCtc(matchedCand.offeredCtcRaw);
-        const p = parseCtc(matchedCand.presentCtcRaw);
-        const hike = p > 0 && o > 0 ? (((o - p) / p) * 100).toFixed(1) : (o > 0 ? '34.2' : '—');
-        return '👤 **Candidate #' + matchedCand.sno + ' · ' + matchedCand.name + ':**\n• **Role:** ' + matchedCand.role + '\n• **Present CTC:** ' + (matchedCand.presentCtcRaw ? 'INR ' + matchedCand.presentCtcRaw : 'Confidential') + '\n• **Offered CTC:** ' + (o > 0 ? '₹' + (o/100000).toFixed(2) + ' LPA (+' + hike + '% hike)' : 'Pending Package') + '\n• **Status:** ' + (matchedCand.status || 'Active Pipeline') + '\n• **Level-1 Screening:** ' + (matchedCand.interviewDate || 'Completed') + '\n• **Level-2 Client:** ' + (matchedCand.interview2 || 'Completed') + '\n• **Client Feedback:** ' + (matchedCand.clientFeedback || 'Positive') + '\n• **Date of Joining:** ' + (matchedCand.doj || '01-Sep-2026') + ' (' + (matchedCand.onboard || 'YTO') + ')';
-      }
-
-      // ── 4. CAMPAIGN SUMMARY & TOTAL POOL ──
-      if (q.includes('summary') || q.includes('overview') || q.includes('total pool') || q.includes('dashboard') || q.includes('campaign')) {
+      // Campaign Summary / Overview
+      if (q.includes('summary') || q.includes('overview') || q.includes('metrics') || q.includes('how many candidates') || q.includes('stats')) {
         const total = masterData.length;
         const l1 = masterData.filter(d => Boolean(d.interviewDate && d.interviewDate.trim() && d.interviewDate !== '-')).length;
         const l2 = masterData.filter(d => (d.interview2 || '').trim().toLowerCase() === 'completed').length;
-        const offered = masterData.filter(d => (d.status || '').toLowerCase() === 'offered').length;
-        const joined = masterData.filter(d => (d.onboard || '').toLowerCase() === 'onboarded').length;
+        const offers = masterData.filter(d => (d.status || '').toLowerCase() === 'offered').length;
+        const shortlisted = masterData.filter(d => /shortlisted/.test((d.status || '').toLowerCase()) || /shortlisted/.test((d.clientFeedback || '').toLowerCase())).length;
+        const joined = masterData.filter(d => (d.onboard || '').toLowerCase() === 'onboarded' || (d.doj || '').includes('08')).length;
         const yto = masterData.filter(d => (d.onboard || '').toLowerCase() === 'yto').length;
 
-        let ctcSum = 0; let ctcCount = 0;
-        masterData.forEach(d => {
-          const o = parseCtc(d.offeredCtcRaw);
-          if (o > 0) { ctcSum += o; ctcCount++; }
-        });
-        const avgCtc = ctcCount > 0 ? (ctcSum / ctcCount) / 100000 : 12.16;
-        const totalPayrollCr = (ctcSum / 10000000).toFixed(2);
-        const agencySaved = (ctcSum * 0.0833 / 100000).toFixed(2);
-
-        return '📊 **CDM Recruitment Campaign Executive Overview:**\n\n• **Total Talent Pool:** ' + total + ' Candidates across 9 CDM Streams\n• **Level-1 Screened:** ' + l1 + ' Candidates\n• **Level-2 Client Cleared:** ' + l2 + ' Candidates (78.4% pass rate)\n• **Confirmed Offers Released:** ' + offered + ' Offers (16.4% Conversion)\n• **Active Shortlist:** 5 Candidates (Awaiting package release)\n• **Joined & Active:** ' + joined + ' Employees (03-Aug Cohort)\n• **Yet to Onboard (YTO):** ' + yto + ' Confirmed Joiners (Sep, Oct, Nov)\n• **Average Offered CTC:** ₹' + avgCtc.toFixed(2) + ' LPA\n• **Committed Annual Payroll:** ₹' + totalPayrollCr + ' Crores\n• **Direct Sourcing Agency Savings:** ₹' + agencySaved + ' Lakhs Saved\n• **Campaign Delivery Status:** 100% Pipeline Coverage (Delivery ahead of 15-Sep)';
+        return {
+          text: `📊 **Campaign Executive Summary:**\n• **Total Talent Pool:** ${total} candidates indexed\n• **Level-1 Technical Cleared:** ${l1} candidates (41.8%)\n• **Level-2 Client Cleared:** ${l2} candidates (23.8%)\n• **Confirmed Offers Released:** ${offers} offers (16.4%)\n• **Offer Shortlisted:** ${shortlisted} candidates awaiting final release\n• **Onboarded (Joined 03-Aug):** ${joined} active employees\n• **Yet to Onboard (YTO):** ${yto} candidates (Sep 1, Oct 1, Nov 4)\n• **Average Offered CTC:** ₹12.16 LPA (₹2.43 Cr Annual Payroll)\n• **Agency Cost Avoidance:** ₹20.25 Lakhs in savings`,
+          action: { id: 'pdf', label: 'Export Executive PDF Deck', icon: 'printer' }
+        };
       }
 
-      // ── 5. SHORTLISTED CANDIDATES & PENDING RELEASES ──
-      if (q.includes('shortlist') || q.includes('pending offer') || q.includes('awaiting offer') || q.includes('5 candidate')) {
-        const shortList = masterData.filter(d => (d.clientFeedback || '').toLowerCase().includes('shortlist') && (d.status || '').toLowerCase() !== 'offered');
-        const shortStr = shortList.map(c => '• **#' + c.sno + ' · ' + c.name + '** — *' + c.role + '* (L1: ' + (c.interviewDate || 'Completed') + ', Feedback: ' + c.clientFeedback + ')').join('\n');
-        return '📋 **Active Offer Shortlist (' + shortList.length + ' Candidates):**\n\nThese candidates have cleared all client evaluations and are awaiting formal package authorization:\n\n' + shortStr + '\n\n💡 **Action:** You can generate formal offer letters for any shortlisted candidate using the **Client Evaluation & Feedback Analytics** tool.';
+      // Candidate Lookups (e.g. Kavitha, #24, Rajesh)
+      const numMatch = q.match(/#?(\d+)/);
+      let cand = null;
+      if (numMatch) {
+        cand = masterData.find(c => c.sno === parseInt(numMatch[1], 10));
+      } else {
+        cand = masterData.find(c => (c.name || '').toLowerCase().includes(q));
       }
 
-      // ── 6. COHORT ONBOARDING & JOINING SCHEDULES ──
-      if (q.includes('cohort') || q.includes('onboard') || q.includes('joining') || q.includes('joiner') || q.includes('september') || q.includes('october') || q.includes('november')) {
-        const sepJoiners = masterData.filter(d => (d.onboard || '').toLowerCase() === 'yto' && (d.doj || '').includes('09'));
-        const octJoiners = masterData.filter(d => (d.onboard || '').toLowerCase() === 'yto' && (d.doj || '').includes('10'));
-        const novJoiners = masterData.filter(d => (d.onboard || '').toLowerCase() === 'yto' && (d.doj || '').includes('11'));
-        const joinedActive = masterData.filter(d => (d.onboard || '').toLowerCase() === 'onboarded');
-
-        const joinedStr = joinedActive.map(c => '  - #' + c.sno + ' ' + c.name + ' (' + c.role + ')').join('\n');
-        const sepStr = sepJoiners.map(c => '  - #' + c.sno + ' ' + c.name + ' (' + c.role + ' — ₹' + (parseCtc(c.offeredCtcRaw)/100000).toFixed(2) + ' LPA)').join('\n');
-        const octStr = octJoiners.map(c => '  - #' + c.sno + ' ' + c.name + ' (' + c.role + ' — ₹' + (parseCtc(c.offeredCtcRaw)/100000).toFixed(2) + ' LPA)').join('\n');
-        const novStr = novJoiners.map(c => '  - #' + c.sno + ' ' + c.name + ' (' + c.role + ' — ₹' + (parseCtc(c.offeredCtcRaw)/100000).toFixed(2) + ' LPA)').join('\n');
-
-        return '📅 **Cohort Onboarding & Joining Timelines:**\n\n• 🟢 **Active Employees (Joined 03-Aug):** ' + joinedActive.length + ' Employees\n' + joinedStr + '\n\n• 🔵 **September 1 Cohort (' + sepJoiners.length + ' Joiners):**\n' + sepStr + '\n\n• 🟣 **October 1 Cohort (' + octJoiners.length + ' Joiners):**\n' + octStr + '\n\n• 🟠 **November 1 Cohort (' + novJoiners.length + ' Joiners):**\n' + novStr + '\n\n*Day-1 Asset & BGV Readiness stands at **96.4%** across all cohorts.*';
+      if (cand) {
+        return {
+          text: `👤 **Candidate Dossier — #${cand.sno} · ${cand.name}:**\n• **Specialist Role:** ${cand.role}\n• **Present CTC:** ${cand.presentCtcRaw || 'Confidential'}\n• **Offered CTC:** ${cand.offeredCtcRaw || 'Pending Release'}\n• **Interview Status:** ${cand.status || 'Active Pipeline'}\n• **Client Feedback:** ${cand.clientFeedback || 'Evaluated'}\n• **DOJ / Milestone:** ${cand.doj || '01-Sep-2026'} (${cand.onboard || 'YTO'})`,
+          action: { id: 'cand_' + cand.sno, label: 'Open ' + cand.name + "'s Full Dossier", icon: 'user' }
+        };
       }
 
-      // ── 7. COMPENSATION, SALARY & BUDGET ROI ──
-      if (q.includes('salary') || q.includes('ctc') || q.includes('budget') || q.includes('roi') || q.includes('compensation') || q.includes('saved') || q.includes('agency fee')) {
-        let ctcSum = 0; let ctcCount = 0;
-        masterData.forEach(d => {
-          const off = parseCtc(d.offeredCtcRaw);
-          if (off > 0) { ctcSum += off; ctcCount++; }
-        });
-        const totalPayrollCr = (ctcSum / 10000000).toFixed(2);
-        const agencySaved = (ctcSum * 0.0833 / 100000).toFixed(2);
-        const avgOfferedLpa = ctcCount > 0 ? ((ctcSum / ctcCount) / 100000).toFixed(2) : '12.16';
-
-        return '💰 **Compensation & TA Budget ROI Intelligence:**\n\n• **Total Committed Annual Payroll:** ₹' + totalPayrollCr + ' Crores across 20 offers\n• **Average Offered CTC:** ₹' + avgOfferedLpa + ' LPA\n• **Average Salary Hike:** +34.2% against candidate previous compensation\n• **Direct In-House Sourcing Savings:** **₹' + agencySaved + ' Lakhs Saved**\n  *(Calculated by avoiding 8.33% external search firm headhunter commission fees!)*\n• **Highest Offered Package:** ₹21.00 LPA (Lead RAVE Programmer)\n• **Lowest Offered Package:** ₹7.70 LPA (Vendor Data Manager)';
+      // Notice Period & Fast Joiners
+      if (q.includes('notice') || q.includes('immediate') || q.includes('fast joiner') || q.includes('buyout')) {
+        return {
+          text: `⚡ **Notice Period & Availability Analysis:**\n• **Immediate / Serving Notice (<=15 Days):** 18 Candidates (6 offers released)\n• **30-Day Notice (Standard SLA):** 45 Candidates (11 offers released)\n• **60-Day Notice (Negotiable Buyout):** 38 Candidates\n• **90-Day Notice (Senior Specialist):** 21 Candidates with buyout approval`,
+          action: { id: 'notice', label: 'Open Notice Period Radar', icon: 'clock' }
+        };
       }
 
-      // ── 8. SLA TURNAROUND VELOCITY & SPEED ──
-      if (q.includes('sla') || q.includes('speed') || q.includes('turnaround') || q.includes('velocity') || q.includes('tat')) {
-        return "⚡ **SLA Turnaround Velocity Intelligence (94.2% On-Target):**\n\n• **1. Sourcing ➔ Level-1 Screening:** **4.2 Days** *(Benchmark: 5.0d · 🟢 -16% faster)*\n• **2. Level-1 ➔ Level-2 Client Interview:** **5.8 Days** *(Benchmark: 7.0d · 🟢 -17% faster)*\n• **3. Level-2 ➔ Offer Letter Release:** **3.1 Days** *(Benchmark: 4.0d · 🟢 -22% faster)*\n• **4. Offer ➔ Day-1 Onboarding:** **28.4 Days** *(Benchmark: 30.0d · 🟢 -5% faster)*\n\n*All 9 CDM specialist roles maintain high-velocity execution, outperforming standard biopharma hiring benchmarks.*";
+      // Salary, CTC, Budget ROI
+      if (q.includes('salary') || q.includes('ctc') || q.includes('budget') || q.includes('roi') || q.includes('payroll') || q.includes('hike')) {
+        return {
+          text: `💰 **Compensation & Sourcing ROI Breakdown:**\n• **Total Annual Committed Payroll:** ₹2.43 Crores\n• **Average Offered CTC:** ₹12.16 LPA (Range: ₹8.50 LPA to ₹18.00 LPA)\n• **Average Salary Hike:** +34.2% against previous salary base\n• **Direct In-House Sourcing Savings:** ₹20.25 Lakhs (8.33% external search fee saved)`,
+          action: { id: 'budget', label: 'Open Compensation ROI Optimizer', icon: 'wallet' }
+        };
       }
 
-      // ── 9. ROLE LOOKUPS (e.g. "RAVE Programmers", "Data Reviewers", "UAT Testers") ──
-      const roles = [...new Set(masterData.map(d => d.role).filter(Boolean))];
-      const matchedRole = roles.find(r => q.includes(r.toLowerCase()));
-      if (matchedRole) {
-        const cands = masterData.filter(d => d.role === matchedRole);
-        const offered = cands.filter(d => (d.status || '').toLowerCase() === 'offered');
-        const short = cands.filter(d => (d.clientFeedback || '').toLowerCase().includes('shortlist') && (d.status || '').toLowerCase() !== 'offered');
-        const offerStr = offered.map(c => '  - #' + c.sno + ' ' + c.name + ' (Offered CTC: ₹' + (parseCtc(c.offeredCtcRaw)/100000).toFixed(2) + ' LPA, DOJ: ' + (c.doj || '01-Sep') + ')').join('\n');
-
-        return '🛠️ **' + matchedRole + ' Discipline Overview:**\n\n• **Total Sourced in Pool:** ' + cands.length + ' Candidates\n• **Offers Released:** ' + offered.length + ' Confirmed Offers\n• **Active Shortlist:** ' + short.length + ' Candidates\n• **Key Offer Holders:**\n' + (offerStr || '  - None released yet');
+      // Audio Studio / Voice
+      if (q.includes('audio') || q.includes('podcast') || q.includes('voice') || q.includes('listen')) {
+        return {
+          text: `🎙️ **AI Executive Audio Briefing Studio:**\nListen to publication-grade synthesized briefings on your campaign. Features 4 focus modes (60s C-Suite Blitz, SLA Speed, Compensation ROI, Client Feedback), frequency equalizer, speed multipliers (1x to 2x), and Markdown memo export.`,
+          action: { id: 'audio', label: 'Open Audio Briefing Studio', icon: 'volume-2' }
+        };
       }
 
-      // ── 10. CLIENT FEEDBACK & REJECTIONS ──
-      if (q.includes('reject') || q.includes('feedback') || q.includes('drop') || q.includes('failure') || q.includes('no show')) {
-        return "📉 **Client Evaluation Feedback & Rejection Diagnostics:**\n\n• **Level-1 to Level-2 Pass Rate:** **78.4%** Clearance Rate\n• **Confirmed Offers Released:** **20 Candidates** (Positive client endorsement)\n• **Offer Shortlist:** **5 Candidates** (Awaiting package release)\n• **Client Rejections:** **16 Candidates** *(Primary reasons: CDISC/EDC custom function gap, protocol validation mismatch)*\n• **Candidate Drops / No-Shows:** **2 Candidates** *(Location preference / competing offer)*";
+      // Exporting Reports
+      if (q.includes('export') || q.includes('download') || q.includes('pdf') || q.includes('csv')) {
+        return {
+          text: `📄 **Export Options Available:**\n1. **Executive PDF Report:** Publication-grade C-Suite briefing deck with executive tables, KPI scorecards, and signatures.\n2. **Master CSV Export:** Complete tabular dataset of all 122 candidates with CTC and feedback history.\n3. **Download CSV Template:** Standardized format for batch updating candidates.`,
+          action: { id: 'pdf', label: 'Print / Save as PDF Deck', icon: 'printer' }
+        };
       }
 
-      // ── 11. TIMELINE & 15-SEP SOURCING DELIVERY FORECAST ──
-      if (q.includes('forecast') || q.includes('deadline') || q.includes('15-sep') || q.includes('time to fill') || q.includes('finish')) {
-        return "🎯 **Campaign Sourcing Goals & 15-Sep Delivery Forecast:**\n\n• **Target Delivery Deadline:** **September 15, 2026** (19 Days Remaining)\n• **Total Target Sourcing Goal:** 20 Key Positions\n• **Confirmed Hires (Offered/Joined):** **16 of 20 Positions (80% Fulfilled)**\n• **Pipeline Coverage:** **100%** (5 shortlisted candidates ready for release)\n• **Projected Campaign Completion:** **September 12, 2026 (3 Days Ahead of Deadline!)**";
-      }
-
-      // ── 12. FALLBACK SMART SEARCH ACROSS ALL 122 CANDIDATES ──
-      const searchMatches = masterData.filter(d => {
-        const str = (d.name + ' ' + d.role + ' ' + d.status + ' ' + d.clientFeedback + ' ' + d.presentCtcRaw + ' ' + d.offeredCtcRaw + ' ' + d.doj + ' ' + d.onboard).toLowerCase();
-        return q.split(/\s+/).some(term => term.length > 2 && str.includes(term));
-      });
-
-      if (searchMatches.length > 0) {
-        const matchStr = searchMatches.slice(0, 5).map(c => {
-          const o = parseCtc(c.offeredCtcRaw);
-          return '• **#' + c.sno + ' · ' + c.name + '** (' + c.role + ') — Status: *' + (c.status || 'Pipeline') + '*, Offered: ' + (o > 0 ? '₹' + (o/100000).toFixed(2) + ' LPA' : 'Pending') + ', DOJ: ' + (c.doj || '01-Sep-2026');
-        }).join('\n');
-        return '🔍 **I found ' + searchMatches.length + ' matching candidate record' + (searchMatches.length > 1 ? 's' : '') + ' for \'' + query + '\':**\n\n' + matchStr + '\n\n*You can also open the **AI Talent Matcher** or **Candidate Directory** above for complete search filters.*';
-      }
-
-      // Generic helpful fallback
-      return "🤖 I searched our **122 candidate records** and campaign telemetry.\n\nYou can ask me about:\n• **Campaign Metrics:** *'summary'*, *'salary & budget'*, *'SLA speed'*, *'15-Sep forecast'*\n• **Candidate Details:** *'Kavitha Perumal'*, *'#24'*, *'Sridevi Huli'*, *'RAVE Programmers'*\n• **Cohorts & Joiners:** *'September cohort'*, *'October joiners'*, *'shortlist'*\n• **General Knowledge:** *'what is CDM?'*, *'what is Medidata RAVE?'*";
+      return {
+        text: "I can provide deep intelligence on Ri8Fit's hiring workflow, 122 clinical candidates, candidate matching, interview stages, compensation ROI, and live campaign analytics. Try asking: *'give me a summary'*, *'who are the fast joiners?'*, or *'what is the average CTC?'*",
+        action: { id: 'directory', label: 'Browse Candidate Directory', icon: 'users' }
+      };
     }
   }
 
-  /* ══════════════════════════════════════════
-     29. TIMELINE OVERRUN & ON-TIME MODAL DIALOGS
-  ══════════════════════════════════════════ */
-  function initTimelineModals() {
-    bindGenericModal('overrunCloseBtn', 'timelineOverrunModal', 'overrunCloseBtn');
-    bindGenericModal('onTimeCloseBtn', 'timelineOnTimeModal', 'onTimeCloseBtn');
+
+  /* ── Wire 6 Dashboard Cards to Next-Gen Deep Analytics Modals ── */
+  function initCardDeepModalPortals() {
+    const cardModalMap = [
+      { id: 'btnExpandFunnel', modal: 'slaRadarModal', close: 'slaCloseBtn' },
+      { id: 'btnExpandStatus', modal: 'interviewAnalyticsModal', close: 'interviewAnalyticsCloseBtn' },
+      { id: 'btnExpandReq', modal: 'timeToFillModal', close: 'forecastCloseBtn' },
+      { id: 'btnExpandRole', modal: 'skillMatrixModal', close: 'skillCloseBtn' },
+      { id: 'btnExpandOnboard', modal: 'onboardingFlightDeckModal', close: 'onboardingCloseBtn' },
+      { id: 'btnExpandTimeline', modal: 'timelineOverrunModal', close: 'overrunCloseBtn' }
+    ];
+
+    cardModalMap.forEach(item => {
+      const btn = document.getElementById(item.id);
+      if (btn) {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const modal = document.getElementById(item.modal);
+          if (modal) {
+            modal.classList.add('open');
+            if (window.lucide && typeof window.lucide.createIcons === 'function') {
+              window.lucide.createIcons();
+            }
+          }
+        });
+      }
+      const close = document.getElementById(item.close);
+      if (close) {
+        close.addEventListener('click', () => {
+          document.getElementById(item.modal)?.classList.remove('open');
+        });
+      }
+    });
   }
 
-  /* ══════════════════════════════════════════
-     21. FAIL-PROOF BOOTSTRAP INITIALIZATION PIPELINE
-  ══════════════════════════════════════════ */
-  initVoiceBriefing();
-  initSlaRadar();
-  initTalentTelemetry();
-  initBudgetOptimizer();
-  initOnboardingFlightDeck();
-  initTimeToFill();
-  initExecutiveReport();
-  initInterviewAnalytics();
-  initChatbot();
-  initTimelineModals();
-
-  rebuildRoleSelectors();
-  applyGlobalFilters();
-  renderAllCharts();
-  renderDirectoryTable();
-
-  setTimeout(() => {
-    renderAllCharts();
-    window.dispatchEvent(new Event('resize'));
-  }, 50);
+  // Call initCardDeepModalPortals during initialization
+  initCardDeepModalPortals();
 }
 
-// Guarantee execution whether script runs before or after DOMContentLoaded
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initDashboardApp);
 } else {
   initDashboardApp();
 }
-
-window.addEventListener('load', () => {
-  if (typeof window.renderAllCharts === 'function') {
-    window.renderAllCharts();
-  }
-  window.dispatchEvent(new Event('resize'));
-});
-
-
-  /* ══════════════════════════════════════════════════════════════════
-     RI8FIT GUIDE — FULL WORKING AI CHATBOT & CLINICAL INTELLIGENCE ENGINE
-     (Engineered directly from https://frontend.invotrx.com/)
-  ══════════════════════════════════════════════════════════════════ */
-  (function initRi8FitGuideChatbot() {
-    // Knowledge Base ported from frontend.invotrx.com + Live CDM Recruitment Intelligence
-    const KNOWLEDGE_BASE = [
-      {
-        id: "what-is-ri8fit",
-        keywords: ["what is ri8fit", "about ri8fit", "platform", "product", "what do you do", "invotrx"],
-        answer: "Ri8Fit is a hiring management platform with a built-in ATS for Clinical, IT, and Non-IT teams. It brings job creation, candidate matching, interviews, workflow tracking, and real-time recruitment analytics into one unified command center.",
-        action: { label: "Explore Analytics Matrix", fn: () => window.switchView && window.switchView('analytics') }
-      },
-      {
-        id: "clinical-intelligence",
-        keywords: ["clinical", "clinical hiring", "clinical roles", "clinical intelligence", "life sciences", "clinical skills", "cdm", "biostatistics", "pharmacovigilance", "rave"],
-        answer: "Ri8Fit supports clinical hiring with role-specific skill frameworks, mandatory and weighted skills, domain-aware matching, and explainable candidate-fit information for specialised life-sciences roles including Clinical Data Managers, RAVE Programmers, and UAT Testers.",
-        action: { label: "View Role Requisition Alignment", fn: () => document.getElementById('dashFunctionContainer')?.scrollIntoView({ behavior: 'smooth' }) }
-      },
-      {
-        id: "candidate-matching",
-        keywords: ["match", "matching", "match score", "find candidates", "candidate score", "ai matching", "skill matching"],
-        answer: "When a requisition includes required EDC platforms (Medidata RAVE, Veeva Vault, Oracle InForm) and protocol criteria, Ri8Fit instantly surfaces matching candidates and presents an explainable fit score against those benchmarks.",
-        action: { label: "Open Candidate Directory", fn: () => window.switchView && window.switchView('directory') }
-      },
-      {
-        id: "live-pipeline-stats",
-        keywords: ["stats", "pipeline", "how many candidates", "numbers", "summary", "live stats", "metrics", "overview", "counts"],
-        answer: () => {
-          const total = masterData.length;
-          const l1 = masterData.filter(d => Boolean(d.interviewDate && d.interviewDate.trim() && d.interviewDate !== '-')).length;
-          const l2 = masterData.filter(d => (d.interview2 || '').trim().toLowerCase() === 'completed').length;
-          const offers = masterData.filter(d => (d.status || '').toLowerCase() === 'offered').length;
-          const shortlisted = masterData.filter(d => /shortlisted/.test((d.status || '').toLowerCase()) || /shortlisted/.test((d.clientFeedback || '').toLowerCase())).length;
-          const joined = masterData.filter(d => (d.onboard || '').toLowerCase() === 'onboarded' || (d.doj || '').includes('08')).length;
-          const yto = masterData.filter(d => (d.onboard || '').toLowerCase() === 'yto').length;
-
-          return `📊 Live Recruitment Pipeline Status:
-• Total Sourced: ${total} Candidates across 9 Clinical Disciplines
-• L1 Technical Cleared: ${l1} (41.8% velocity)
-• L2 Client Cleared: ${l2} (23.8%)
-• Confirmed Offers Released: ${offers} Candidates
-• Offer Shortlisted: ${shortlisted} Candidates awaiting formal release
-• Onboarded (Joined 03-Aug): ${joined} Joiners
-• Yet to Onboard (YTO): ${yto} Joiners (Sep 1, Oct 1, Nov 4)
-• Average Offered CTC: ₹12.16 LPA (₹2.43 Cr Annual Payroll Committed)
-• Agency Sourcing Fees Saved: ₹20.25 Lakhs (8.33% Placement Fee Avoided)`;
-        },
-        action: { label: "Open Executive Briefing & PDF", fn: () => document.getElementById('printBtn')?.click() }
-      },
-      {
-        id: "notice-period",
-        keywords: ["notice", "notice period", "immediate", "joiner", "buyout", "fast joiner", "yto", "availability"],
-        answer: "Candidate availability breakdown: 18 immediate joiners / serving notice (<=15 days), 45 candidates with 30-day notice, 38 candidates with 60-day notice, and 21 candidates with 90-day buyout eligibility.",
-        action: { label: "Open Notice Period Radar", fn: () => document.getElementById('btnNoticeRadar')?.click() }
-      },
-      {
-        id: "compensation-roi",
-        keywords: ["compensation", "salary", "ctc", "budget", "roi", "savings", "hike", "payroll"],
-        answer: "Campaign compensation analysis: Total committed annual payroll is ₹2.43 Crores across 20 released offers, with an average offered salary of ₹12.16 LPA (+34.2% average hike against previous CTC). Direct in-house sourcing saved ₹20.25 Lakhs in external recruitment headhunter fees.",
-        action: { label: "Open Compensation ROI Optimizer", fn: () => document.getElementById('btnBudgetOptimizer')?.click() }
-      },
-      {
-        id: "export-reports",
-        keywords: ["export", "pdf", "csv", "download", "report", "briefing deck"],
-        answer: "You can download data and executive summaries anytime: Use 'Export PDF' in the topbar for the C-Suite Briefing Deck, or 'Export CSV' to download the complete 122-candidate dataset with salary and feedback records.",
-        action: { label: "Export C-Suite PDF Deck", fn: () => document.getElementById('printBtn')?.click() }
-      },
-      {
-        id: "audio-briefing",
-        keywords: ["audio", "podcast", "voice", "listen", "speech", "briefing studio"],
-        answer: "Ri8Fit includes an AI Executive Audio Briefing Studio. You can listen to executive briefings, adjust playback speed (1x - 2x), follow the teleprompter, and download briefing transcripts in Markdown.",
-        action: { label: "Open Audio Briefing Studio", fn: () => document.getElementById('btnVoiceBriefing')?.click() }
-      }
-    ];
-
-    const SUGGESTION_CHIPS = [
-      "What is Ri8Fit?",
-      "Clinical hiring",
-      "Live pipeline stats",
-      "Notice period radar",
-      "Compensation & Savings",
-      "How does matching work?",
-      "Export reports"
-    ];
-
-    let isOpen = false;
-    let messages = [
-      {
-        from: "ai",
-        text: "Hi — I’m Ri8Fit Guide. Ask me about our hiring platform, clinical skill intelligence, candidate matching, live pipeline metrics, compensation ROI, or candidate availability."
-      }
-    ];
-
-    // Create Widget Container
-    const widget = document.createElement('div');
-    widget.className = 'ri8-guide-widget';
-    widget.id = 'ri8GuideWidget';
-    document.body.appendChild(widget);
-
-    function renderWidget() {
-      widget.innerHTML = `
-        ${isOpen ? `
-          <div class="ri8-guide-window">
-            <!-- Header -->
-            <div class="ri8-guide-header">
-              <div class="ri8-header-icon">✦</div>
-              <div style="flex:1;">
-                <div class="ri8-header-title">Ri8Fit Guide</div>
-                <div class="ri8-header-sub">● WORKFLOW ASSISTANT</div>
-              </div>
-              <button class="ri8-header-btn" id="ri8ClearBtn" title="Clear Chat History">↻</button>
-              <button class="ri8-header-btn" id="ri8CloseBtn" title="Close Guide">×</button>
-            </div>
-
-            <!-- Messages Area -->
-            <div class="ri8-guide-messages" id="ri8GuideMessages">
-              ${messages.map((m, idx) => `
-                <div class="ri8-msg-row ${m.from}">
-                  <div class="ri8-msg-bubble">${typeof m.text === 'function' ? m.text() : m.text}</div>
-                  ${m.action ? `
-                    <button class="ri8-action-pill-btn" onclick="window._executeRi8Action(${idx})">
-                      <span>${m.action.label}</span> →
-                    </button>
-                  ` : ''}
-                </div>
-              `).join('')}
-            </div>
-
-            <!-- Footer with Chips and Input -->
-            <div class="ri8-guide-footer">
-              <div class="ri8-chips-scroll">
-                ${SUGGESTION_CHIPS.map(chip => `
-                  <button class="ri8-chip-btn" onclick="window._sendRi8Prompt('${chip.replace(/'/g, "\\'")}')">${chip}</button>
-                `).join('')}
-              </div>
-
-              <div class="ri8-input-wrap">
-                <input type="text" class="ri8-input-field" id="ri8InputField" placeholder="Ask about your hiring workflow..." />
-                <button class="ri8-send-btn" id="ri8SendBtn" title="Ask Ri8Fit Guide">↑</button>
-              </div>
-
-              <div class="ri8-guide-disclaimer">GUIDANCE ONLY · FINAL HIRING DECISIONS REQUIRE HUMAN REVIEW</div>
-            </div>
-          </div>
-        ` : ''}
-
-        <!-- Floating Trigger Pill -->
-        <button class="ri8-guide-trigger" id="ri8TriggerBtn" title="Open Ri8Fit Workflow Guide">
-          <span class="ri8-trigger-icon">✦</span>
-          <span>${isOpen ? 'Close guide' : 'Ask Ri8Fit Guide'}</span>
-        </button>
-      `;
-
-      // Attach DOM Listeners
-      const triggerBtn = document.getElementById('ri8TriggerBtn');
-      if (triggerBtn) {
-        triggerBtn.onclick = () => {
-          isOpen = !isOpen;
-          renderWidget();
-          if (isOpen) {
-            setTimeout(() => {
-              document.getElementById('ri8InputField')?.focus();
-              scrollMessagesToBottom();
-            }, 50);
-          }
-        };
-      }
-
-      const closeBtn = document.getElementById('ri8CloseBtn');
-      if (closeBtn) {
-        closeBtn.onclick = () => {
-          isOpen = false;
-          renderWidget();
-        };
-      }
-
-      const clearBtn = document.getElementById('ri8ClearBtn');
-      if (clearBtn) {
-        clearBtn.onclick = () => {
-          messages = [{
-            from: "ai",
-            text: "Hi — I’m Ri8Fit Guide. Ask me about our hiring platform, clinical skill intelligence, candidate matching, live pipeline metrics, compensation ROI, or candidate availability."
-          }];
-          renderWidget();
-        };
-      }
-
-      const sendBtn = document.getElementById('ri8SendBtn');
-      const inputField = document.getElementById('ri8InputField');
-      if (sendBtn && inputField) {
-        sendBtn.onclick = () => handleSend();
-        inputField.onkeydown = (e) => {
-          if (e.key === 'Enter') handleSend();
-        };
-      }
-
-      scrollMessagesToBottom();
-    }
-
-    function scrollMessagesToBottom() {
-      const container = document.getElementById('ri8GuideMessages');
-      if (container) {
-        container.scrollTop = container.scrollHeight;
-      }
-    }
-
-    function handleSend() {
-      const input = document.getElementById('ri8InputField');
-      if (!input) return;
-      const text = input.value.trim();
-      if (!text) return;
-
-      messages.push({ from: "user", text: text });
-      input.value = '';
-      renderWidget();
-
-      // Formulate AI response
-      setTimeout(() => {
-        const response = getAiResponse(text);
-        messages.push({ from: "ai", text: response.text, action: response.action });
-        renderWidget();
-      }, 150);
-    }
-
-    window._sendRi8Prompt = function(promptText) {
-      if (!isOpen) isOpen = true;
-      messages.push({ from: "user", text: promptText });
-      renderWidget();
-
-      setTimeout(() => {
-        const response = getAiResponse(promptText);
-        messages.push({ from: "ai", text: response.text, action: response.action });
-        renderWidget();
-      }, 150);
-    };
-
-    window._executeRi8Action = function(msgIndex) {
-      const msg = messages[msgIndex];
-      if (msg && msg.action && typeof msg.action.fn === 'function') {
-        msg.action.fn();
-      }
-    };
-
-    function getAiResponse(query) {
-      const q = query.toLowerCase().trim();
-
-      // Greetings
-      if (/^(hi|hello|hey|good morning|good afternoon|good evening|namaste)/.test(q)) {
-        return {
-          text: "Hello! I’m the Ri8Fit Guide. I can assist with clinical talent intelligence, candidate screening velocity, offer releases, compensation ROI, and recruitment analytics.",
-          action: { label: "View Live Pipeline Stats", fn: () => window._sendRi8Prompt("Live pipeline stats") }
-        };
-      }
-
-      // Specific Candidate Lookups (e.g. "Kavitha", "#24", "Rajesh")
-      const numMatch = q.match(/#?(\d+)/);
-      if (numMatch) {
-        const sno = parseInt(numMatch[1], 10);
-        const cand = masterData.find(c => c.sno === sno);
-        if (cand) {
-          return {
-            text: `Found Candidate #${cand.sno}: ${cand.name}
-• Specialist Role: ${cand.role}
-• Status: ${cand.status || 'Active Pipeline'}
-• Client Feedback: ${cand.clientFeedback || 'Pending Evaluation'}
-• Offered CTC: ${cand.offeredCtcRaw || 'N/A'} (DOJ: ${cand.doj || 'TBD'})
-• Onboard Cohort: ${cand.onboard || 'YTO'}`,
-            action: { label: `View ${cand.name}'s Dossier`, fn: () => window.openCandidateProfileBySno && window.openCandidateProfileBySno(cand.sno) }
-          };
-        }
-      }
-
-      // Keyword Knowledge Base Matching
-      for (const entry of KNOWLEDGE_BASE) {
-        if (entry.keywords.some(k => q.includes(k))) {
-          const ans = typeof entry.answer === 'function' ? entry.answer() : entry.answer;
-          return { text: ans, action: entry.action };
-        }
-      }
-
-      // Role specific matching
-      const roles = ['rave programmer', 'data reviewer', 'uat tester', 'lab data manager', 'vendor data manager', 'external data manager', 'report programmer', 'clinical programmer'];
-      for (const r of roles) {
-        if (q.includes(r)) {
-          const cands = masterData.filter(d => (d.role || '').toLowerCase().includes(r));
-          const offers = cands.filter(d => (d.status || '').toLowerCase() === 'offered').length;
-          return {
-            text: `Role Intelligence: ${r.toUpperCase()}
-• Total Sourced: ${cands.length} Candidates
-• Confirmed Offers Released: ${offers} Offers
-• Target Requisition: Active campaign priority`,
-            action: { label: "Inspect in Directory", fn: () => {
-              if (window.switchView) window.switchView('directory');
-              const sel = document.getElementById('roleFilter');
-              if (sel) { sel.value = r; sel.dispatchEvent(new Event('change')); }
-            }}
-          };
-        }
-      }
-
-      // Default Intelligent Fallback
-      return {
-        text: "I can help with Ri8Fit’s recruitment overview, clinical hiring, candidate matching, interview stages, compensation ROI, and live campaign analytics. Try asking: “Live pipeline stats”, “How many offers?”, or “Notice period radar”.",
-        action: { label: "Explore Live Pipeline Stats", fn: () => window._sendRi8Prompt("Live pipeline stats") }
-      };
-    }
-
-    // Initialize Widget on DOM Load
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', renderWidget);
-    } else {
-      renderWidget();
-    }
-  })();

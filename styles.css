@@ -4983,28 +4983,7 @@ html, body, .app-layout, .topbar, .kpi-box, .chart-card, .table-card, .btn, .sea
 [data-theme="dark"] .kpi-box.graphite .kpi-icon { color: #a8a29e; }
 
 /* ── High-Performance GPU View Transitions Engine (Ultra-Clean, Zero-Lag) ── */
-::view-transition-group(root) {
-  animation-duration: 0.22s;
-  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
-}
-::view-transition-old(root) {
-  animation: 0.22s cubic-bezier(0.25, 1, 0.5, 1) both fadeOutView;
-}
-::view-transition-new(root) {
-  animation: 0.22s cubic-bezier(0.25, 1, 0.5, 1) both fadeInView;
-}
-@keyframes fadeOutView {
-  from { opacity: 1; }
-  to { opacity: 0; }
-}
-@keyframes fadeInView {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
 
-body {
-  transition: background-color 0.18s ease-out, color 0.18s ease-out;
-}
 .theme-fade-overlay {
   display: none !important;
 }
@@ -5324,4 +5303,9 @@ body {
   font-family: 'JetBrains Mono', monospace;
   letter-spacing: 0.3px;
   text-align: center;
+}
+
+/* ── Instant Zero-Buffering Theme Switch ── */
+.theme-fade-overlay {
+  display: none !important;
 }
