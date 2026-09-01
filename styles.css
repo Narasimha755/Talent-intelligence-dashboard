@@ -4986,3 +4986,10 @@ html, body, .app-layout, .topbar, .kpi-box, .chart-card, .table-card, .btn, .sea
     width: 100%;
   }
 }
+
+.kpi-box.slate .kpi-icon { background: rgba(100, 116, 139, 0.14); color: #64748b; }
+.kpi-box.slate:hover { border-color: #64748b; }
+.kpi-box.graphite .kpi-icon { background: rgba(120, 113, 108, 0.14); color: #78716c; }
+.kpi-box.graphite:hover { border-color: #78716c; }
+[data-theme="dark"] .kpi-box.slate .kpi-icon { color: #94a3b8; }
+[data-theme="dark"] .kpi-box.graphite .kpi-icon { color: #a8a29e; }

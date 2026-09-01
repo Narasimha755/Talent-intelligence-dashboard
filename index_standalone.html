@@ -5042,6 +5042,13 @@ html, body, .app-layout, .topbar, .kpi-box, .chart-card, .table-card, .btn, .sea
   }
 }
 
+.kpi-box.slate .kpi-icon { background: rgba(100, 116, 139, 0.14); color: #64748b; }
+.kpi-box.slate:hover { border-color: #64748b; }
+.kpi-box.graphite .kpi-icon { background: rgba(120, 113, 108, 0.14); color: #78716c; }
+.kpi-box.graphite:hover { border-color: #78716c; }
+[data-theme="dark"] .kpi-box.slate .kpi-icon { color: #94a3b8; }
+[data-theme="dark"] .kpi-box.graphite .kpi-icon { color: #a8a29e; }
+
 </style>
 </head>
 <body>
@@ -5208,18 +5215,18 @@ html, body, .app-layout, .topbar, .kpi-box, .chart-card, .table-card, .btn, .sea
       <div class="kpi-box amber" data-tilt>
         <div class="kpi-icon"><i data-lucide="clock"></i></div>
         <div class="kpi-data">
-          <span class="kpi-number" id="kpiYto">14</span>
+          <span class="kpi-number" id="kpiYto">16</span>
           <span class="kpi-name">Yet to Onboard</span>
         </div>
       </div>
-      <div class="kpi-box rose" data-tilt>
+      <div class="kpi-box slate" data-tilt>
         <div class="kpi-icon"><i data-lucide="x-circle"></i></div>
         <div class="kpi-data">
           <span class="kpi-number" id="kpiInterviewRejected">16</span>
           <span class="kpi-name">Interview Rejection</span>
         </div>
       </div>
-      <div class="kpi-box terracotta" data-tilt>
+      <div class="kpi-box graphite" data-tilt>
         <div class="kpi-icon"><i data-lucide="user-x"></i></div>
         <div class="kpi-data">
           <span class="kpi-number" id="kpiCandidateRejected">5</span>
@@ -8546,7 +8553,7 @@ function initDashboardApp() {
     cerulean:   '#0284c7', // Glacial Cerulean Frost
     verdigris:  '#059669', // Verdigris Celadon Mint
     ochre:      '#d97706', // Sandalwood Champagne Ochre
-    mulberry:   '#be123c', // Smoky Mulberry Wine
+    mulberry:   '#64748b', // Smoky Mulberry Wine
     terracotta: '#c2410c', // Spiced Terracotta
     titanium:   '#475569', // Graphite Titanium Slate
     
@@ -8556,7 +8563,7 @@ function initDashboardApp() {
     sky:        '#0284c7',
     emerald:    '#059669',
     amber:      '#d97706',
-    rose:       '#be123c',
+    rose:       '#64748b',
     teal:       '#0f766e',
     purple:     '#6366f1',
     slate:      '#475569'
@@ -8583,7 +8590,7 @@ function initDashboardApp() {
     'Vendor Data Manager': '#c2410c',
     'External Data Manager': '#059669',
     'Report Programmer': '#d97706',
-    'Clinical Programmer': '#be123c',
+    'Clinical Programmer': '#4f46e5',
     'Medical Coder': '#475569'
   };
 
@@ -9276,7 +9283,7 @@ function initDashboardApp() {
     animateValue('kpiL2', l2);
     animateValue('kpiOffered', activeRole === 'ALL' ? 20 : offeredPure);
     animateValue('kpiOnboard', onboarded);
-    animateValue('kpiYto', activeRole === 'ALL' ? 14 : yto);
+    animateValue('kpiYto', activeRole === 'ALL' ? 16 : yto);
     animateValue('kpiInterviewRejected', interviewRejected);
     animateValue('kpiCandidateRejected', candidateRejected);
 
@@ -9935,16 +9942,16 @@ function initDashboardApp() {
     const labels = entries.map(e => e[0]);
     const data = entries.map(e => e[1]);
     const colors = labels.map(l => {
-      if (l === 'Offered') return PALETTE.verdigris;
-      if (/shortlisted/i.test(l)) return PALETTE.cerulean;
-      if (/waiting/i.test(l)) return PALETTE.ochre;
-      if (l === 'Interview Rejection') return PALETTE.mulberry;
-      if (l === 'Candidate Rejection') return PALETTE.terracotta;
-      if (/reject/i.test(l)) return PALETTE.mulberry;
-      if (/no show/i.test(l)) return '#e11d48';
-      if (/active pipeline/i.test(l)) return '#3b82f6';
-      if (/sourced pool/i.test(l)) return '#64748b';
-      return PALETTE.titanium;
+      if (l === 'Offered') return '#059669'; // Emerald
+      if (/shortlisted/i.test(l)) return '#8b5cf6'; // Royal Violet (Positive Selected State)
+      if (/waiting/i.test(l)) return '#d97706'; // Amber
+      if (l === 'Interview Rejection') return '#64748b'; // Cool Neutral Slate (No jarring red)
+      if (l === 'Candidate Rejection') return '#78716c'; // Warm Graphite
+      if (/reject/i.test(l)) return '#64748b';
+      if (/no show/i.test(l)) return '#94a3b8'; // Steel Slate
+      if (/active pipeline/i.test(l)) return '#2563eb'; // Royal Blue
+      if (/sourced pool/i.test(l)) return '#0284c7'; // Cerulean
+      return '#64748b';
     });
 
     if (dashCharts.status) dashCharts.status.destroy();
@@ -10016,7 +10023,7 @@ function initDashboardApp() {
         roleStats[r] = { role: r, target: ROLE_TARGETS[r] || 2, poolSize: 0, l1Passed: 0, offered: 0 };
       }
       roleStats[r].poolSize++;
-      if (d.interviewDate && d.interviewDate.trim()) roleStats[r].l1Passed++;
+      if (d.interviewDate && d.interviewDate.trim() && d.interviewDate !== '-') roleStats[r].l1Passed++;
       const st = (d.status || '').toLowerCase();
       const fb = (d.clientFeedback || '').toLowerCase();
       if (st === 'offered' || fb === 'offered' || /shortlisted/.test(st) || /shortlisted/.test(fb)) {
@@ -10024,89 +10031,72 @@ function initDashboardApp() {
       }
     });
 
-    // Ensure non-zero values as requested by user ("if 0 is there keep some random number")
-    Object.values(roleStats).forEach(item => {
-      if (item.poolSize > 0) {
-        if (item.l1Passed === 0) item.l1Passed = Math.max(1, Math.min(item.poolSize, 2));
-        if (item.offered === 0) item.offered = 1;
-      }
-    });
-
-    const allRows = Object.values(roleStats)
-      .filter(item => activeRole === 'ALL' ? (item.poolSize > 0 || item.target > 0) : (item.role === activeRole || item.poolSize > 0))
-      .sort((a, b) => b.poolSize - a.poolSize);
-
-    const totTarget = allRows.reduce((a, b) => a + b.target, 0);
-    const totPool = allRows.reduce((a, b) => a + b.poolSize, 0);
-    const totL1 = allRows.reduce((a, b) => a + b.l1Passed, 0);
-    const totOff = allRows.reduce((a, b) => a + b.offered, 0);
-    const overallPct = totTarget > 0 ? ((totOff / totTarget) * 100).toFixed(1) : '0.0';
-    const overallCoverage = totTarget > 0 ? (totPool / totTarget).toFixed(1) : '1.0';
+    const allRows = Object.values(roleStats).sort((a, b) => b.poolSize - a.poolSize);
+    const totTarget = allRows.reduce((s, r) => s + r.target, 0);
+    const totPool = allRows.reduce((s, r) => s + r.poolSize, 0);
+    const totL1 = allRows.reduce((s, r) => s + r.l1Passed, 0);
+    const totOff = allRows.reduce((s, r) => s + r.offered, 0);
+    const overallPct = totTarget > 0 ? Math.min(Math.round((totOff / totTarget) * 100), 100) : 0;
 
     const rowsHtml = allRows.map((item, idx) => {
-      const color = ROLE_COLORS[item.role] || PALETTE.amethyst;
+      const color = ROLE_COLORS[item.role] || '#4f46e5';
       const target = item.target;
       const pool = item.poolSize;
       const l1 = item.l1Passed;
       const offered = item.offered;
       const fulfillPct = target > 0 ? Math.min(Math.round((offered / target) * 100), 100) : 0;
-      const coverageRatio = target > 0 ? (pool / target).toFixed(1) : '1.0';
       const isMet = fulfillPct >= 100;
       const statusBadge = isMet 
-        ? `<span class="req-badge-pill req-badge-target-met">🟢 Target Met</span>`
-        : `<span class="req-badge-pill req-badge-active-pipeline">🟡 Active Pipeline</span>`;
-      const fulfillColor = isMet ? 'var(--clr-verdigris)' : (fulfillPct >= 50 ? 'var(--clr-cobalt)' : 'var(--clr-ochre)');
+        ? `<span style="color:#059669;font-weight:700;font-size:0.68rem;background:rgba(5,150,105,0.12);padding:2px 6px;border-radius:4px;">🟢 Met</span>`
+        : `<span style="color:#2563eb;font-weight:700;font-size:0.68rem;background:rgba(37,99,235,0.12);padding:2px 6px;border-radius:4px;">🔵 Active</span>`;
 
       return `
-        <tr style="cursor:pointer;" onclick="handleRoleSelection('${item.role}')">
-          <td style="text-align:center;font-weight:700;color:var(--text-muted);width:26px;">${idx + 1}</td>
-          <td>
-            <span class="req-role-cell">
-              <span class="req-role-dot" style="background:${color};box-shadow:0 0 6px ${color}66;"></span>
-              <strong>${item.role}</strong>
-            </span>
+        <tr style="cursor:pointer;border-bottom:1px solid var(--border-subtle);" onclick="handleRoleSelection('${item.role}')">
+          <td style="text-align:center;font-weight:700;color:var(--text-muted);padding:3px 4px;font-size:0.70rem;">${idx + 1}</td>
+          <td style="padding:3px 6px;">
+            <div style="display:flex;align-items:center;gap:5px;">
+              <span class="req-role-dot" style="background:${color};box-shadow:0 0 4px ${color}66;width:7px;height:7px;border-radius:50%;"></span>
+              <strong style="font-size:0.72rem;color:var(--text-primary);">${item.role}</strong>
+            </div>
           </td>
-          <td class="num-col" style="text-align:center;font-weight:700;">${target}</td>
-          <td class="num-col" style="text-align:center;font-weight:800;color:var(--clr-cobalt);">${pool}</td>
-          <td class="num-col" style="text-align:center;font-weight:700;color:var(--clr-cerulean);">${l1}</td>
-          <td class="num-col" style="text-align:center;font-weight:800;color:var(--clr-verdigris);">${offered}</td>
-          <td class="num-col" style="text-align:center;font-weight:900;color:${fulfillColor};">${fulfillPct}%</td>
-          <td class="num-col" style="text-align:center;font-weight:800;color:var(--clr-amethyst);">${coverageRatio}x</td>
-          <td style="text-align:center;">${statusBadge}</td>
+          <td style="text-align:center;font-weight:700;font-size:0.70rem;padding:3px 4px;">${target}</td>
+          <td style="text-align:center;font-weight:800;color:#2563eb;font-size:0.70rem;padding:3px 4px;">${pool}</td>
+          <td style="text-align:center;font-weight:600;color:#0284c7;font-size:0.70rem;padding:3px 4px;">${l1}</td>
+          <td style="text-align:center;font-weight:800;color:#059669;font-size:0.70rem;padding:3px 4px;">${offered}</td>
+          <td style="text-align:center;font-weight:800;font-size:0.70rem;padding:3px 4px;color:${isMet ? '#059669' : '#2563eb'};">${fulfillPct}%</td>
+          <td style="text-align:center;padding:3px 4px;">${statusBadge}</td>
         </tr>
       `;
     }).join('');
 
     container.innerHTML = `
       <div class="req-table-wrap" style="width:100%;height:100%;overflow-y:auto;position:relative;">
-        <table class="req-table" style="width:100%;border-collapse:separate;border-spacing:0;">
+        <table class="req-table" style="width:100%;border-collapse:collapse;font-size:0.72rem;">
           <thead>
-            <tr style="position:sticky;top:0;z-index:8;background:var(--bg-surface);">
-              <th style="width:26px;text-align:center;">#</th>
-              <th>Role Requisition</th>
-              <th class="num-col" style="text-align:center;">Target</th>
-              <th class="num-col" style="text-align:center;">Pool</th>
-              <th class="num-col" style="text-align:center;">L1 Screened</th>
-              <th class="num-col" style="text-align:center;">Offered</th>
-              <th class="num-col" style="text-align:center;">Fulfillment</th>
-              <th class="num-col" style="text-align:center;">Coverage Ratio</th>
-              <th style="text-align:center;">Execution Status</th>
+            <tr style="position:sticky;top:0;z-index:8;background:var(--bg-surface);border-bottom:1px solid var(--border);">
+              <th style="width:20px;text-align:center;padding:4px;font-size:0.66rem;">#</th>
+              <th style="padding:4px 6px;text-align:left;font-size:0.66rem;">Specialist Role</th>
+              <th style="text-align:center;padding:4px;font-size:0.66rem;">Target</th>
+              <th style="text-align:center;padding:4px;font-size:0.66rem;">Pool</th>
+              <th style="text-align:center;padding:4px;font-size:0.66rem;">L1</th>
+              <th style="text-align:center;padding:4px;font-size:0.66rem;">Offers</th>
+              <th style="text-align:center;padding:4px;font-size:0.66rem;">Fulfill%</th>
+              <th style="text-align:center;padding:4px;font-size:0.66rem;">Status</th>
             </tr>
           </thead>
           <tbody>
             ${rowsHtml}
           </tbody>
-          <tfoot style="position:sticky;bottom:0;z-index:10;background:var(--bg-surface);box-shadow:0 -4px 12px rgba(0,0,0,0.12);">
-            <tr style="font-weight:900;border-top:2px solid var(--border-light);font-size:0.82rem;">
-              <td style="text-align:center;color:var(--text-muted);">∑</td>
-              <td style="text-transform:uppercase;letter-spacing:0.04em;font-size:0.82rem;font-weight:900;color:var(--text-primary);">Total Alignment Summary</td>
-              <td class="num-col" style="text-align:center;font-weight:900;font-size:0.85rem;color:var(--text-primary);">${totTarget}</td>
-              <td class="num-col" style="text-align:center;font-weight:900;font-size:0.85rem;color:var(--clr-cobalt);">${totPool}</td>
-              <td class="num-col" style="text-align:center;font-weight:900;font-size:0.85rem;color:var(--clr-cerulean);">${totL1}</td>
-              <td class="num-col" style="text-align:center;font-weight:900;font-size:0.85rem;color:var(--clr-verdigris);">${totOff}</td>
-              <td class="num-col" style="text-align:center;font-weight:900;font-size:0.85rem;color:var(--clr-verdigris);">${overallPct}%</td>
-              <td class="num-col" style="text-align:center;font-weight:900;font-size:0.85rem;color:var(--clr-amethyst);">${overallCoverage}x</td>
-              <td style="text-align:center;"><span class="req-badge-pill req-badge-target-met" style="font-size:0.75rem;">🟢 Target Met</span></td>
+          <tfoot style="position:sticky;bottom:0;z-index:10;background:var(--bg-surface);border-top:2px solid var(--border);">
+            <tr style="font-weight:800;font-size:0.72rem;">
+              <td style="text-align:center;color:var(--text-muted);padding:4px;">∑</td>
+              <td style="padding:4px 6px;font-weight:800;color:var(--text-primary);">Total Summary</td>
+              <td style="text-align:center;padding:4px;font-weight:800;">${totTarget}</td>
+              <td style="text-align:center;padding:4px;font-weight:800;color:#2563eb;">${totPool}</td>
+              <td style="text-align:center;padding:4px;font-weight:800;color:#0284c7;">${totL1}</td>
+              <td style="text-align:center;padding:4px;font-weight:800;color:#059669;">${totOff}</td>
+              <td style="text-align:center;padding:4px;font-weight:800;color:#059669;">${overallPct}%</td>
+              <td style="text-align:center;padding:4px;"><span style="color:#059669;font-weight:700;font-size:0.68rem;">🟢 Target Met</span></td>
             </tr>
           </tfoot>
         </table>
@@ -10183,7 +10173,7 @@ function initDashboardApp() {
 
     let labels = ['Offers Released', 'Onboarded (Joined)', 'Yet to Onboard', 'Offers Rejected'];
     let data = [offered, onboarded, yto, rejected];
-    let barColors = [PALETTE.cerulean, PALETTE.verdigris, PALETTE.ochre, PALETTE.mulberry];
+    let barColors = ['#2563eb', '#059669', '#0ea5e9', '#64748b'];
 
     // Apply in-card segment filter
     if (activeObFilter === 'offers') {
@@ -10201,7 +10191,7 @@ function initDashboardApp() {
     } else if (activeObFilter === 'rejected') {
       labels = ['Offers Rejected / Drop'];
       data = [rejected];
-      barColors = [PALETTE.mulberry];
+      barColors = ['#64748b'];
     }
 
     if (dashCharts.onboard) dashCharts.onboard.destroy();
@@ -10280,7 +10270,7 @@ function initDashboardApp() {
       const isMet = fulfillPct >= 100;
       const isOverrun = Boolean(item.isOverrun || item.overrunDays > 0);
       const phaseLabel = isOverrun ? '🚨 +15D Overrun' : '15-Sep (On Time)';
-      const phaseColor = isOverrun ? '#ef4444' : '#059669';
+      const phaseColor = isOverrun ? '#d97706' : '#059669';
 
       let trackHtml = `
         <div class="horizon-track" style="height:14px;background:rgba(0,0,0,0.04);border-radius:7px;overflow:hidden;border:1px solid rgba(5,150,105,0.3);position:relative;display:flex;gap:2px;" onclick="openOnTimeModal('${item.role.replace(/'/g, "\\'")}', event)">
@@ -10291,9 +10281,9 @@ function initDashboardApp() {
 
       if (isOverrun) {
         trackHtml = `
-          <div class="horizon-track" style="height:14px;background:rgba(0,0,0,0.04);border-radius:7px;overflow:hidden;border:1px solid rgba(239,68,68,0.35);position:relative;display:flex;gap:2px;">
+          <div class="horizon-track" style="height:14px;background:rgba(0,0,0,0.04);border-radius:7px;overflow:hidden;border:1px solid rgba(217,119,6,0.35);position:relative;display:flex;gap:2px;">
             <div class="horizon-fill" style="width:78%;height:100%;background:linear-gradient(90deg, ${color}, #2563eb);border-radius:7px 0 0 7px;" onclick="openOnTimeModal('${item.role.replace(/'/g, "\\'")}', event)" title="Click to view On-Time Candidates (15-Sep Target)"></div>
-            <div class="horizon-fill overrun-bar" style="width:22%;height:100%;background:linear-gradient(90deg, #ef4444, #dc2626);border-radius:0 7px 7px 0;box-shadow:0 0 8px rgba(239,68,68,0.6);" onclick="openOverrunModal('${item.role.replace(/'/g, "\\'")}', event)" title="Click to view Overrun Candidates (+15 Days Extended to 30-Sep)"></div>
+            <div class="horizon-fill overrun-bar" style="width:22%;height:100%;background:linear-gradient(90deg, #f59e0b, #d97706);border-radius:0 7px 7px 0;box-shadow:0 0 6px rgba(217,119,6,0.35);" onclick="openOverrunModal('${item.role.replace(/'/g, "\\'")}', event)" title="Click to view Overrun Candidates (+15 Days Extended to 30-Sep)"></div>
           </div>
         `;
       }
@@ -10308,7 +10298,7 @@ function initDashboardApp() {
             </div>
             <div style="display:flex;align-items:center;gap:6px;">
               <span class="horizon-target-chip" style="color:${isMet ? 'var(--clr-verdigris)' : 'var(--clr-cobalt)'};">Target: <strong>${offers}/${target}</strong></span>
-              <span class="horizon-phase-badge" onclick="${isOverrun ? `openOverrunModal('${item.role.replace(/'/g, "\\'")}', event)` : `openOnTimeModal('${item.role.replace(/'/g, "\\'")}', event)`}" style="cursor:pointer;color:${phaseColor};border-color:${phaseColor}44;background:${isOverrun ? 'rgba(239,68,68,0.12)' : 'rgba(5,150,105,0.12)'};" title="Click to view Candidate Timeline Report">${phaseLabel}</span>
+              <span class="horizon-phase-badge" onclick="${isOverrun ? `openOverrunModal('${item.role.replace(/'/g, "\\'")}', event)` : `openOnTimeModal('${item.role.replace(/'/g, "\\'")}', event)`}" style="cursor:pointer;color:${phaseColor};border-color:${phaseColor}44;background:${isOverrun ? 'rgba(217,119,6,0.12)' : 'rgba(5,150,105,0.12)'};" title="Click to view Candidate Timeline Report">${phaseLabel}</span>
             </div>
           </div>
 
@@ -11626,7 +11616,7 @@ function initDashboardApp() {
                 const color = ROLE_COLORS[item.role] || PALETTE.amethyst;
                 const isOverrun = Boolean(item.isOverrun || item.overrunDays > 0);
                 const durationChipStyle = isOverrun
-                  ? 'style="background:rgba(239,68,68,0.14);color:#ef4444;border:1px solid rgba(239,68,68,0.35);font-weight:800;padding:4px 10px;font-size:0.75rem;border-radius:6px;"'
+                  ? 'style="background:rgba(239,68,68,0.14);color:#ef4444;border:1px solid rgba(217,119,6,0.35);font-weight:800;padding:4px 10px;font-size:0.75rem;border-radius:6px;"'
                   : 'style="background:rgba(5,150,105,0.14);color:#059669;border:1px solid rgba(5,150,105,0.35);font-weight:800;padding:4px 10px;font-size:0.75rem;border-radius:6px;"';
 
                 let trackHtml = `
@@ -11649,9 +11639,9 @@ function initDashboardApp() {
                     <div style="display:flex;align-items:center;gap:12px;width:100%;">
                       <div style="font-size:0.72rem;font-weight:700;color:var(--text-muted);width:45px;flex-shrink:0;">15-Jul</div>
                       <div style="flex:1;display:flex;">
-                        <div class="roadmap-track" style="height:16px;width:100%;background:rgba(0,0,0,0.04);border-radius:8px;overflow:hidden;border:1px solid rgba(239,68,68,0.35);display:flex;gap:2px;">
+                        <div class="roadmap-track" style="height:16px;width:100%;background:rgba(0,0,0,0.04);border-radius:8px;overflow:hidden;border:1px solid rgba(217,119,6,0.35);display:flex;gap:2px;">
                           <div class="roadmap-runway-bar" style="width:80%;height:100%;background:linear-gradient(90deg, ${color}cc, ${color});border-radius:8px 0 0 8px;box-shadow:0 2px 6px ${color}44;cursor:pointer;" onclick="openOnTimeModal('${item.role.replace(/'/g, "\\'")}', event)" title="Click to view On-Time Candidates (15-Sep Target)"></div>
-                          <div class="roadmap-runway-bar overrun-bar" style="width:20%;height:100%;background:linear-gradient(90deg, #ef4444, #dc2626);border-radius:0 8px 8px 0;box-shadow:0 0 8px rgba(239,68,68,0.7);cursor:pointer;" onclick="openOverrunModal('${item.role.replace(/'/g, "\\'")}', event)" title="Click to view Overrun Candidates (+15 Days Extended to 30-Sep)"></div>
+                          <div class="roadmap-runway-bar overrun-bar" style="width:20%;height:100%;background:linear-gradient(90deg, #f59e0b, #d97706);border-radius:0 8px 8px 0;box-shadow:0 0 6px rgba(217,119,6,0.35);cursor:pointer;" onclick="openOverrunModal('${item.role.replace(/'/g, "\\'")}', event)" title="Click to view Overrun Candidates (+15 Days Extended to 30-Sep)"></div>
                         </div>
                       </div>
                       <div style="min-width:140px;flex-shrink:0;text-align:right;cursor:pointer;" onclick="openOverrunModal('${item.role.replace(/'/g, "\\'")}', event)">
