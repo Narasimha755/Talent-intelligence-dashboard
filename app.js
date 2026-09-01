@@ -386,44 +386,23 @@ function initDashboardApp() {
   /* ══════════════════════════════════════════
      6. EXPORT AS PDF & THEME TOGGLE
   ══════════════════════════════════════════ */
-        /* ── 1-Click Direct Dashboard & Graphs PDF Exporter ── */
+          /* ── 1-Click Executive PDF Briefing Deck & Report Opener ── */
   const printBtn = document.getElementById('printBtn') || document.getElementById('printBriefBtn');
   if (printBtn) {
     printBtn.addEventListener('click', () => {
-      // 1. Close any open popups/modals so the clean dashboard is printed
-      document.querySelectorAll('.studio-modal-overlay.open').forEach(m => {
-        m.classList.remove('open');
-        m.style.display = 'none';
-      });
-
-      // 2. Ensure Analytics Matrix is active if not already
-      const viewAnalytics = document.getElementById('viewAnalytics');
-      const viewDir = document.getElementById('viewDirectory');
-      if (viewAnalytics && viewDir && viewAnalytics.style.display === 'none') {
-        // If user was in directory, switch back to analytics matrix for graphs PDF
-        viewAnalytics.style.display = 'block';
-        viewAnalytics.classList.add('active');
-        viewDir.style.display = 'none';
-        viewDir.classList.remove('active');
-        document.querySelectorAll('.view-nav-btn').forEach(b => {
-          b.classList.toggle('active', b.dataset.view === 'analytics');
-        });
+      // 1. Render the latest dynamic data into the Executive Report Dossier
+      if (typeof renderExecutiveReport === 'function') {
+        renderExecutiveReport();
       }
 
-      // 3. Force instant render of all Chart.js instances with zero animation
-      if (typeof Chart !== 'undefined' && Chart.instances) {
-        Object.values(Chart.instances).forEach(chart => {
-          if (chart) {
-            chart.resize();
-            chart.update('none');
-          }
-        });
+      // 2. Open the Executive Briefing Deck & PDF Report Modal (as in reference image)
+      const reportModal = document.getElementById('executiveReportModal');
+      if (reportModal) {
+        reportModal.style.display = 'flex';
+        setTimeout(() => {
+          reportModal.classList.add('open');
+        }, 10);
       }
-
-      // 4. Launch browser print dialog with full content ready
-      setTimeout(() => {
-        window.print();
-      }, 150);
     });
   }
 
