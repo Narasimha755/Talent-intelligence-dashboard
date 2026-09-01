@@ -3235,6 +3235,7 @@ function initDashboardApp() {
 
   function initVoiceBriefing() {
     bindGenericModal('btnVoiceBriefing', 'audioStudioModal', 'audioCloseBtn');
+    bindGenericModal('btnNoticeRadar', 'noticeRadarModal', 'noticeCloseBtn');
     const btn = document.getElementById('btnVoiceBriefing');
     if (btn) btn.addEventListener('click', () => {
       calculateAudioTimings();
@@ -3363,8 +3364,8 @@ function initDashboardApp() {
               <i data-lucide="clock"></i> SLA Velocity
             </button>
           </div>
-          <button class="btn btn-secondary" onclick="downloadAudioTranscript()" style="font-size:0.74rem;padding:5px 12px;display:flex;align-items:center;gap:6px;">
-            <i data-lucide="download"></i> Download Brief (.MD)
+          <button class="theme-btn" onclick="downloadAudioTranscript()" style="font-size:0.74rem;padding:5px 12px;display:flex;align-items:center;gap:6px;cursor:pointer;">
+            <i data-lucide="download"></i> <span>Download Brief (.MD)</span>
           </button>
         </div>
 

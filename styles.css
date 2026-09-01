@@ -3968,6 +3968,9 @@ html {
 }
 
 /* Distinct color accents for each module */
+.exec-tool-btn.notice-btn { border-color: rgba(99, 102, 241, 0.3); }
+.exec-tool-btn.notice-btn .exec-btn-icon { background: rgba(99, 102, 241, 0.15); color: #6366f1; }
+.exec-tool-btn.notice-btn:hover { border-color: #6366f1; background: rgba(99, 102, 241, 0.12); color: #6366f1; }
 .exec-tool-btn.report-btn { border-color: rgba(99, 102, 241, 0.3); }
 .exec-tool-btn.report-btn .exec-btn-icon { background: rgba(99, 102, 241, 0.15); color: #6366f1; }
 .exec-tool-btn.report-btn:hover { border-color: #6366f1; background: rgba(99, 102, 241, 0.12); color: #6366f1; }

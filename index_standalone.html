@@ -4023,6 +4023,9 @@ html {
 }
 
 /* Distinct color accents for each module */
+.exec-tool-btn.notice-btn { border-color: rgba(99, 102, 241, 0.3); }
+.exec-tool-btn.notice-btn .exec-btn-icon { background: rgba(99, 102, 241, 0.15); color: #6366f1; }
+.exec-tool-btn.notice-btn:hover { border-color: #6366f1; background: rgba(99, 102, 241, 0.12); color: #6366f1; }
 .exec-tool-btn.report-btn { border-color: rgba(99, 102, 241, 0.3); }
 .exec-tool-btn.report-btn .exec-btn-icon { background: rgba(99, 102, 241, 0.15); color: #6366f1; }
 .exec-tool-btn.report-btn:hover { border-color: #6366f1; background: rgba(99, 102, 241, 0.12); color: #6366f1; }
@@ -5111,10 +5114,10 @@ html, body, .app-layout, .topbar, .kpi-box, .chart-card, .table-card, .btn, .sea
     </div>
 
     <div class="exec-tools-grid">
-      <!-- 1. C-Suite Executive Briefing Deck -->
-      <button class="exec-tool-btn report-btn" id="btnExecutiveReport" title="Generate 1-Click C-Suite Executive Briefing Deck & PDF Report">
-        <span class="exec-btn-icon"><i data-lucide="file-text"></i></span>
-        <span class="exec-btn-text">Executive Briefing Deck</span>
+      <!-- 1. Notice Period & Fast-Joiner Radar -->
+      <button class="exec-tool-btn notice-btn" id="btnNoticeRadar" title="View Candidate Availability Timelines, Serving Notice & Fast-Track Buyout Options">
+        <span class="exec-btn-icon"><i data-lucide="clock"></i></span>
+        <span class="exec-btn-text">Notice Period &amp; Fast Joiners</span>
       </button>
 
       <!-- 2. Executive Audio Briefing -->
@@ -11757,6 +11760,7 @@ function initDashboardApp() {
 
   function initVoiceBriefing() {
     bindGenericModal('btnVoiceBriefing', 'audioStudioModal', 'audioCloseBtn');
+    bindGenericModal('btnNoticeRadar', 'noticeRadarModal', 'noticeCloseBtn');
     const btn = document.getElementById('btnVoiceBriefing');
     if (btn) btn.addEventListener('click', () => {
       calculateAudioTimings();
@@ -11885,8 +11889,8 @@ function initDashboardApp() {
               <i data-lucide="clock"></i> SLA Velocity
             </button>
           </div>
-          <button class="btn btn-secondary" onclick="downloadAudioTranscript()" style="font-size:0.74rem;padding:5px 12px;display:flex;align-items:center;gap:6px;">
-            <i data-lucide="download"></i> Download Brief (.MD)
+          <button class="theme-btn" onclick="downloadAudioTranscript()" style="font-size:0.74rem;padding:5px 12px;display:flex;align-items:center;gap:6px;cursor:pointer;">
+            <i data-lucide="download"></i> <span>Download Brief (.MD)</span>
           </button>
         </div>
 
