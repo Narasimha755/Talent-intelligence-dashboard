@@ -412,29 +412,34 @@ function initDashboardApp() {
       const currentTheme = document.documentElement.getAttribute('data-theme') || document.documentElement.dataset.theme || 'dark';
       const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
       
-      document.documentElement.dataset.theme = nextTheme;
-      document.documentElement.setAttribute('data-theme', nextTheme);
-      document.body.setAttribute('data-theme', nextTheme);
-      
-      // Direct logo display switching
-      const logoDark = document.querySelector('.logo-dark');
-      const logoLight = document.querySelector('.logo-light');
-      if (logoDark && logoLight) {
-        if (nextTheme === 'dark') {
-          logoDark.style.display = 'block';
-          logoLight.style.display = 'none';
-        } else {
-          logoDark.style.display = 'none';
-          logoLight.style.display = 'block';
+      const executeThemeSwitch = () => {
+        document.documentElement.dataset.theme = nextTheme;
+        document.documentElement.setAttribute('data-theme', nextTheme);
+        document.body.setAttribute('data-theme', nextTheme);
+        
+        // Direct logo display switching
+        const logoDark = document.querySelector('.logo-dark');
+        const logoLight = document.querySelector('.logo-light');
+        if (logoDark && logoLight) {
+          logoDark.style.display = nextTheme === 'dark' ? 'block' : 'none';
+          logoLight.style.display = nextTheme === 'light' ? 'block' : 'none';
         }
-      }
-      
-      localStorage.setItem('cdm_theme', nextTheme);
-      
-      // Re-render charts with appropriate theme colors smoothly
-      renderAllCharts();
-      if (window.lucide && typeof window.lucide.createIcons === 'function') {
-        window.lucide.createIcons();
+        
+        localStorage.setItem('cdm_theme', nextTheme);
+        
+        // Re-render charts with appropriate theme colors cleanly
+        renderAllCharts();
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+          window.lucide.createIcons();
+        }
+      };
+
+      if (document.startViewTransition) {
+        document.startViewTransition(() => {
+          executeThemeSwitch();
+        });
+      } else {
+        executeThemeSwitch();
       }
     });
   }
