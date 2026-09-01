@@ -4031,7 +4031,7 @@ html {
 .exec-tool-btn.audio-btn .exec-btn-icon { background: rgba(168, 85, 247, 0.15); color: #a855f7; }
 .exec-tool-btn.audio-btn:hover { border-color: #a855f7; background: rgba(168, 85, 247, 0.12); color: #a855f7; }
 
-.exec-tool-btn.forecast-btn { border-color: rgba(16, 185, 129, 0.3); }
+.exec-tool-btn.forecast-btn { border-color: rgba(16, 185, 129, 0.3); color: var(--text-primary); }
 .exec-tool-btn.forecast-btn .exec-btn-icon { background: rgba(16, 185, 129, 0.15); color: #10b981; }
 .exec-tool-btn.forecast-btn:hover { border-color: #10b981; background: rgba(16, 185, 129, 0.12); color: #10b981; }
 
@@ -4638,8 +4638,7 @@ html {
 .exec-tool-btn.comp-btn { border-color: rgba(37, 99, 235, 0.35); color: #2563eb; background: rgba(37, 99, 235, 0.06); }
 .exec-tool-btn.comp-btn:hover { border-color: #2563eb; background: rgba(37, 99, 235, 0.16); color: #2563eb; }
 
-.exec-tool-btn.forecast-btn { border-color: rgba(225, 29, 72, 0.35); color: #e11d48; background: rgba(225, 29, 72, 0.06); }
-.exec-tool-btn.forecast-btn:hover { border-color: #e11d48; background: rgba(225, 29, 72, 0.16); color: #e11d48; }
+
 
 .exec-tool-btn.matcher-btn { border-color: rgba(234, 179, 8, 0.4); color: #d97706; background: rgba(234, 179, 8, 0.08); }
 .exec-tool-btn.matcher-btn:hover { border-color: #d97706; background: rgba(234, 179, 8, 0.18); color: #b45309; }
@@ -4650,16 +4649,7 @@ html {
 }
 
 /* Timeline Overrun Red Extension Bar Styling & Animation */
-@keyframes pulseRedGlow {
-  0% { box-shadow: 0 0 4px rgba(239, 68, 68, 0.4); }
-  50% { box-shadow: 0 0 12px rgba(239, 68, 68, 0.85); }
-  100% { box-shadow: 0 0 4px rgba(239, 68, 68, 0.4); }
-}
 
-.overrun-bar, .overrun-fill {
-  animation: pulseRedGlow 2.2s infinite ease-in-out;
-  cursor: pointer;
-}
 #offerBriefModal .sla-modal-window {
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.85);
 }
