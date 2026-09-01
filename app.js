@@ -5438,12 +5438,46 @@ function initDashboardApp() {
     });
   }
 
-  // Call initCardDeepModalPortals during initialization
-  initCardDeepModalPortals();
+  /* ══════════════════════════════════════════════════════════════════
+     21. FAIL-PROOF BOOTSTRAP INITIALIZATION PIPELINE
+  ══════════════════════════════════════════════════════════════════ */
+  try { initVoiceBriefing(); } catch(e) { console.warn('initVoiceBriefing err:', e); }
+  try { initSlaRadar(); } catch(e) { console.warn('initSlaRadar err:', e); }
+  try { initTalentTelemetry(); } catch(e) { console.warn('initTalentTelemetry err:', e); }
+  try { initBudgetOptimizer(); } catch(e) { console.warn('initBudgetOptimizer err:', e); }
+  try { initOnboardingFlightDeck(); } catch(e) { console.warn('initOnboardingFlightDeck err:', e); }
+  try { initTimeToFill(); } catch(e) { console.warn('initTimeToFill err:', e); }
+  try { initExecutiveReport(); } catch(e) { console.warn('initExecutiveReport err:', e); }
+  try { initInterviewAnalytics(); } catch(e) { console.warn('initInterviewAnalytics err:', e); }
+  try { initChatbot(); } catch(e) { console.warn('initChatbot err:', e); }
+  try { initCardDeepModalPortals(); } catch(e) { console.warn('initCardDeepModalPortals err:', e); }
+
+  rebuildRoleSelectors();
+  applyGlobalFilters();
+  renderAllCharts();
+  renderDirectoryTable();
+
+  setTimeout(() => {
+    renderAllCharts();
+    window.dispatchEvent(new Event('resize'));
+  }, 50);
+
+  setTimeout(() => {
+    renderAllCharts();
+  }, 300);
 }
 
+// Guarantee execution whether script runs before or after DOMContentLoaded
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initDashboardApp);
 } else {
   initDashboardApp();
 }
+
+window.addEventListener('load', () => {
+  if (typeof window.renderAllCharts === 'function') {
+    window.renderAllCharts();
+  }
+  window.dispatchEvent(new Event('resize'));
+});
+
