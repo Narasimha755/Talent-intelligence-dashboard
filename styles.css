@@ -4,21 +4,18 @@
 ══════════════════════════════════════════════════════════════════ */
 
 :root {
-  /* Ultra-Clean Executive Dark Theme (Mapped precisely to #001122 Logo Palette) */
+  /* Ultra-Clean Executive Dark Theme (Exact #001122 Palette matching brand logo) */
   --bg-app: #001122;
-  --bg-app-gradient: radial-gradient(1200px 700px at 50% -120px, rgba(0, 229, 255, 0.08), transparent 70%),
-                     radial-gradient(900px 500px at 100% 100%, rgba(0, 196, 159, 0.06), transparent 60%),
-                     #001122;
-                     
-  --bg-card: rgba(2, 22, 44, 0.88);
-  --bg-card-hover: rgba(3, 31, 61, 0.96);
-  --bg-surface: #011830;
-  --bg-input: rgba(1, 20, 40, 0.90);
+  --bg-app-gradient: #001122;
+  --bg-card: #01162b;
+  --bg-card-hover: #01213d;
+  --bg-surface: #011224;
+  --bg-input: #011428;
 
-  --border: rgba(0, 229, 255, 0.12);
-  --border-light: rgba(0, 229, 255, 0.22);
+  --border: rgba(0, 229, 255, 0.08);
+  --border-light: rgba(0, 229, 255, 0.16);
   --border-focus: #00e5ff;
-  --border-subtle: rgba(255, 255, 255, 0.05);
+  --border-subtle: rgba(255, 255, 255, 0.04);
 
   --text-primary: #f8fafc;
   --text-secondary: #cbd5e1;
@@ -891,9 +888,7 @@ body[data-theme="light"] .logo-light {
   filter: brightness(1.12);
 }
 
-.funnel-flow-path {
-  stroke-dasharray: 4 4;
-}
+.funnel-flow-path { display: none !important; }
 
 /* ── Funnel Legend & Studio Side-by-Side Layout ── */
 .studio-funnel-layout {
@@ -4986,3 +4981,14 @@ html, body, .app-layout, .topbar, .kpi-box, .chart-card, .table-card, .btn, .sea
 .kpi-box.graphite:hover { border-color: #78716c; }
 [data-theme="dark"] .kpi-box.slate .kpi-icon { color: #94a3b8; }
 [data-theme="dark"] .kpi-box.graphite .kpi-icon { color: #a8a29e; }
+
+/* ── Silky Smooth Native Theme Cross-Fade ── */
+html, body, .app-shell, .topbar, .chart-card, .kpi-box, .executive-tools-bar, .modal-window, .sla-modal-window, .theme-btn, .action-btn {
+  transition: background-color 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+              color 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.theme-fade-overlay {
+  display: none !important;
+}

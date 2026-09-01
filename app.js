@@ -412,44 +412,30 @@ function initDashboardApp() {
       const currentTheme = document.documentElement.getAttribute('data-theme') || document.documentElement.dataset.theme || 'dark';
       const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
       
-      const overlay = document.getElementById('themeFadeOverlay');
-      if (overlay) {
-        overlay.classList.add('fading');
+      document.documentElement.dataset.theme = nextTheme;
+      document.documentElement.setAttribute('data-theme', nextTheme);
+      document.body.setAttribute('data-theme', nextTheme);
+      
+      // Direct logo display switching
+      const logoDark = document.querySelector('.logo-dark');
+      const logoLight = document.querySelector('.logo-light');
+      if (logoDark && logoLight) {
+        if (nextTheme === 'dark') {
+          logoDark.style.display = 'block';
+          logoLight.style.display = 'none';
+        } else {
+          logoDark.style.display = 'none';
+          logoLight.style.display = 'block';
+        }
       }
       
-      setTimeout(() => {
-        document.documentElement.dataset.theme = nextTheme;
-        document.documentElement.setAttribute('data-theme', nextTheme);
-        document.body.setAttribute('data-theme', nextTheme);
-        
-        // Direct logo display switching
-        const logoDark = document.querySelector('.logo-dark');
-        const logoLight = document.querySelector('.logo-light');
-        if (logoDark && logoLight) {
-          if (nextTheme === 'light') {
-            logoDark.style.setProperty('display', 'none', 'important');
-            logoLight.style.setProperty('display', 'block', 'important');
-          } else {
-            logoDark.style.setProperty('display', 'block', 'important');
-            logoLight.style.setProperty('display', 'none', 'important');
-          }
-        }
-
-        const icon = themeBtn.querySelector('i');
-        if (icon) icon.setAttribute('data-lucide', nextTheme === 'dark' ? 'sun' : 'moon');
-        if (window.lucide && typeof window.lucide.createIcons === 'function') {
-          window.lucide.createIcons();
-        }
-        
-        requestAnimationFrame(() => {
-          if (typeof renderAllCharts === 'function') {
-            renderAllCharts();
-          }
-          if (overlay) {
-            setTimeout(() => overlay.classList.remove('fading'), 50);
-          }
-        });
-      }, 70);
+      localStorage.setItem('cdm_theme', nextTheme);
+      
+      // Re-render charts with appropriate theme colors smoothly
+      renderAllCharts();
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+      }
     });
   }
 
@@ -1354,8 +1340,7 @@ function initDashboardApp() {
           </filter>
         </defs>
         
-        <path class="funnel-flow-path" d="M68,44 L122,87 L174,130 L220,173 L246,216" stroke="rgba(255,255,255,0.3)" stroke-width="1.2" fill="none"/>
-        <path class="funnel-flow-path" d="M452,44 L398,87 L346,130 L300,173 L274,216" stroke="rgba(255,255,255,0.3)" stroke-width="1.2" fill="none"/>
+        <!-- Funnel Flow Path Dotted Lines Removed -->
         
         <!-- Tier 1: Total Sourced -->
         <polygon class="funnel-tier-polygon" points="18,6 502,6 452,44 68,44" fill="url(#dfg1)"/>
@@ -2306,8 +2291,7 @@ function initDashboardApp() {
           <linearGradient id="sfg4" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#059669"/><stop offset="100%" stop-color="#10b981"/></linearGradient>
           <linearGradient id="sfg5" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#d97706"/><stop offset="100%" stop-color="#c2410c"/></linearGradient>
         </defs>
-        <path class="funnel-flow-path" d="M110,72 L188,142 L266,212 L330,282 L366,352" stroke="rgba(255,255,255,0.22)" stroke-width="1.5" fill="none"/>
-        <path class="funnel-flow-path" d="M650,72 L572,142 L494,212 L430,282 L394,352" stroke="rgba(255,255,255,0.22)" stroke-width="1.5" fill="none"/>
+        <!-- Funnel Flow Path Dotted Lines Removed -->
         
         <polygon class="funnel-tier-polygon" points="40,10 720,10 650,72 110,72" fill="url(#sfg1)"/>
         <text x="380" y="44" font-size="18" font-weight="800" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">${total} (100%)</text>
@@ -3515,18 +3499,77 @@ function initDashboardApp() {
     if (window.lucide) lucide.createIcons();
   }
 
-  window.toggleStudioAudioPlayback = function() {
-    if (!('speechSynthesis' in window)) {
-      alert('Speech synthesis is not supported in this browser.');
-      return;
+    /* ══════════════════════════════════════════
+     BULLETPROOF DUAL-ENGINE AUDIO BRIEFING PLAYER
+  ══════════════════════════════════════════ */
+  let webAudioCtx = null;
+  let audioOscillator = null;
+  let audioGainNode = null;
+  window._activeSpeechUtterance = null;
+
+  function initWebAudioTone() {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx && !webAudioCtx) {
+        webAudioCtx = new AudioCtx();
+      }
+      if (webAudioCtx && webAudioCtx.state === 'suspended') {
+        webAudioCtx.resume();
+      }
+    } catch (e) {
+      console.warn('Web Audio API not initialized:', e);
     }
+  }
+
+  function playAmbientAudioTone() {
+    try {
+      initWebAudioTone();
+      if (!webAudioCtx) return;
+      if (audioOscillator) stopAmbientAudioTone();
+
+      audioOscillator = webAudioCtx.createOscillator();
+      audioGainNode = webAudioCtx.createGain();
+      
+      audioOscillator.type = 'sine';
+      audioOscillator.frequency.setValueAtTime(220, webAudioCtx.currentTime); // Gentle A3 warm briefing tone
+      
+      audioGainNode.gain.setValueAtTime(0.015, webAudioCtx.currentTime); // Soft subtle background presence
+      
+      audioOscillator.connect(audioGainNode);
+      audioGainNode.connect(webAudioCtx.destination);
+      audioOscillator.start();
+    } catch (e) {
+      console.warn('Tone start note:', e);
+    }
+  }
+
+  function stopAmbientAudioTone() {
+    try {
+      if (audioOscillator) {
+        audioOscillator.stop();
+        audioOscillator.disconnect();
+        audioOscillator = null;
+      }
+    } catch (e) {}
+  }
+
+  window.toggleStudioAudioPlayback = function() {
+    initWebAudioTone();
 
     if (isSpeaking) {
       stopStudioAudio();
+      stopAmbientAudioTone();
       return;
     }
 
+    // Chrome unstick fix: cancel any stalled previous utterance
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.resume();
+    }
+
     calculateAudioTimings();
+    playAmbientAudioTone();
     playSentenceAt(currentSentenceIndex);
   };
 
@@ -3537,6 +3580,7 @@ function initDashboardApp() {
     
     if (index >= data.sentences.length) {
       stopStudioAudio();
+      stopAmbientAudioTone();
       audioCurrentSeconds = 0;
       currentSentenceIndex = 0;
       updateTeleprompterHighlight(0);
@@ -3575,27 +3619,64 @@ function initDashboardApp() {
     }, 100);
 
     const sentenceText = data.sentences[index];
-    currentUtterance = new SpeechSynthesisUtterance(sentenceText);
-    currentUtterance.rate = audioPlaybackSpeed;
-    currentUtterance.pitch = 1.02;
 
-    const voices = window.speechSynthesis.getVoices();
-    const naturalVoice = voices.find(v => (v.name.includes('Natural') || v.name.includes('Neural') || v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('David')) && v.lang.startsWith('en')) || voices.find(v => v.lang.startsWith('en'));
-    if (naturalVoice) currentUtterance.voice = naturalVoice;
+    if ('speechSynthesis' in window) {
+      try {
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.resume();
 
-    currentUtterance.onend = () => {
-      if (!isSpeaking) return;
-      // Advance smoothly to next sentence in queue
-      playSentenceAt(index + 1);
-    };
+        const utter = new SpeechSynthesisUtterance(sentenceText);
+        utter.rate = audioPlaybackSpeed;
+        utter.pitch = 1.0;
+        utter.volume = 1.0;
 
-    currentUtterance.onerror = (err) => {
-      console.warn('Speech error on sentence ' + index + ':', err);
-      if (!isSpeaking) return;
-      playSentenceAt(index + 1);
-    };
+        const voices = window.speechSynthesis.getVoices();
+        if (voices.length > 0) {
+          const naturalVoice = voices.find(v => (v.name.includes('Natural') || v.name.includes('Neural') || v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('David') || v.name.includes('Mark')) && v.lang.startsWith('en')) || voices.find(v => v.lang.startsWith('en'));
+          if (naturalVoice) utter.voice = naturalVoice;
+        }
 
-    window.speechSynthesis.speak(currentUtterance);
+        utter.onend = () => {
+          if (!isSpeaking) return;
+          playSentenceAt(index + 1);
+        };
+
+        utter.onerror = (err) => {
+          console.warn('SpeechSynthesis notice on sentence ' + index + ':', err);
+          if (!isSpeaking) return;
+          // Advance gracefully to next sentence if voice error occurs
+          setTimeout(() => playSentenceAt(index + 1), 250);
+        };
+
+        window._activeSpeechUtterance = utter; // Prevent GC freeze in Chromium
+        window.speechSynthesis.speak(utter);
+
+        // Chrome keepalive watchdog
+        const keepAliveTimer = setInterval(() => {
+          if (!isSpeaking) {
+            clearInterval(keepAliveTimer);
+            return;
+          }
+          if (window.speechSynthesis.paused) {
+            window.speechSynthesis.resume();
+          }
+        }, 3000);
+
+      } catch (err) {
+        console.warn('Voice speak exception:', err);
+        // Fallback timer advances sentence in teleprompter
+        const durationSec = data.sentenceDurations[index].duration / audioPlaybackSpeed;
+        setTimeout(() => {
+          if (isSpeaking) playSentenceAt(index + 1);
+        }, durationSec * 1000);
+      }
+    } else {
+      // Fallback timer if speech synthesis is absent
+      const durationSec = data.sentenceDurations[index].duration / audioPlaybackSpeed;
+      setTimeout(() => {
+        if (isSpeaking) playSentenceAt(index + 1);
+      }, durationSec * 1000);
+    }
   }
 
   window.downloadAudioTranscript = function() {
@@ -4021,8 +4102,8 @@ function initDashboardApp() {
                 `).join('')}
               </select>
             </div>
-            <button class="btn btn-secondary" onclick="window.openCandidateProfileBySno(${cand.sno})" style="font-size:0.74rem;padding:6px 12px;display:flex;align-items:center;gap:6px;">
-              <i data-lucide="user"></i> View Candidate Profile
+            <button class="theme-btn view-dossier-btn" onclick="window.openCandidateProfileBySno(${cand.sno})" style="display:inline-flex;align-items:center;gap:6px;font-size:0.74rem;padding:6px 14px;cursor:pointer;">
+              <i data-lucide="user"></i> <span>View Candidate Profile</span>
             </button>
           </div>
 
