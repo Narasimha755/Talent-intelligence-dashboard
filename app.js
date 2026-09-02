@@ -3197,584 +3197,236 @@ function initDashboardApp() {
   }
 
   /* ══════════════════════════════════════════
-     FEATURE 1: AI AUDIO BRIEFING STUDIO & PODCAST MEMO (HIGH-PRECISION V4)
-     (Sentence-by-Sentence Queue, Real-Time Teleprompter Sync & Precision Timers)
+     FEATURE 1: CANDIDATE RENEGING & OFFER DROP-OFF RISK INTELLIGENCE CENTER
+     (Predictive Attrition Risk Scoring, Notice Period Vulnerability & Buyout Simulation)
   ══════════════════════════════════════════ */
-  let currentUtterance = null;
-  let isSpeaking = false;
-  let activeAudioMode = 'blitz';
-  let audioPlaybackSpeed = 1.0;
-  let audioAnimFrame = null;
-  let audioTimerInterval = null;
-  let audioCurrentSeconds = 0;
-  let audioTotalSeconds = 60;
-  let currentSentenceIndex = 0;
-  let sentenceStartElapsed = 0;
-  let sentenceStartTime = 0;
+  let buyoutSelectedCount = 2; // Default simulated candidates for notice buyout
 
-  function initVoiceBriefing() {
-    bindGenericModal('btnVoiceBriefing', 'audioStudioModal', 'audioCloseBtn');
+  function initOfferRiskRadar() {
+    bindGenericModal('btnOfferRiskRadar', 'offerRiskRadarModal', 'offerRiskCloseBtn');
     bindGenericModal('btnNoticeRadar', 'noticeRadarModal', 'noticeCloseBtn');
-    const btn = document.getElementById('btnVoiceBriefing');
-    if (btn) btn.addEventListener('click', () => {
-      calculateAudioTimings();
-      renderAudioStudio();
-    });
+    const btn = document.getElementById('btnOfferRiskRadar');
+    if (btn) btn.addEventListener('click', renderOfferRiskRadar);
   }
 
-  function getAudioBriefingScript(mode) {
-    const total = masterData.length;
-    const l1 = masterData.filter(d => Boolean(d.interviewDate && d.interviewDate.trim() && d.interviewDate !== '-')).length;
-    const l2 = masterData.filter(d => (d.interview2 || '').trim().toLowerCase() === 'completed').length;
-    const offered = masterData.filter(d => (d.status || '').toLowerCase() === 'offered').length;
-    const joined = masterData.filter(d => (d.onboard || '').toLowerCase() === 'onboarded' || (d.doj || '').includes('08')).length;
-    const sepCount = masterData.filter(d => (d.onboard || '').toLowerCase() === 'yto' && (d.doj || '').includes('09')).length;
-    const octCount = masterData.filter(d => (d.onboard || '').toLowerCase() === 'yto' && (d.doj || '').includes('10')).length;
-    const novCount = masterData.filter(d => (d.onboard || '').toLowerCase() === 'yto' && (d.doj || '').includes('11')).length;
-
-    let ctcSum = 0; let ctcCount = 0;
-    masterData.forEach(d => {
-      const o = parseCtc(d.offeredCtcRaw);
-      if (o > 0) { ctcSum += o; ctcCount++; }
-    });
-    const avgCtc = ctcCount > 0 ? (ctcSum / ctcCount) / 100000 : 12.16;
-    const totalPayrollCr = (ctcSum / 10000000).toFixed(2);
-    const agencySavings = (ctcSum * 0.0833 / 100000).toFixed(1);
-
-    if (mode === 'blitz') {
-      return {
-        title: 'Executive 60-Second C-Suite Blitz',
-        sentences: [
-          'Good day, Executive Leadership. Here is your sixty-second talent intelligence briefing on the Clinical Data Management hiring campaign.',
-          'Our total talent pool stands at ' + total + ' verified candidates across nine specialized clinical disciplines.',
-          'Fifty-one candidates have completed Level-1 technical screenings, and twenty-nine have cleared client Level-2 evaluations with a seventy-eight percent pass rate.',
-          'To date, twenty formal offer releases are confirmed, supported by five shortlisted candidates ready for immediate package release.',
-          'Four candidates have onboarded into active operations, with eleven confirmed joiners slated for the September cohort, one for October, and four for November.',
-          'Total committed annual payroll is rupees ' + totalPayrollCr + ' Crores with an average offered package of rupees ' + avgCtc.toFixed(2) + ' Lakhs per annum.',
-          'Direct in-house sourcing has avoided twenty-two point four Lakh rupees in third-party agency headhunting fees.',
-          'Overall campaign delivery remains on track for full requisition closure by September twelfth, three days ahead of deadline.'
-        ]
-      };
-    } else if (mode === 'risk') {
-      return {
-        title: 'Client Feedback & Interview Analytics Briefing',
-        sentences: [
-          'Client Evaluation and Interview Analytics briefing initialized.',
-          'Technical screening velocity is strong, achieving a seventy-eight point four percent clearance rate at client Level-2 interviews.',
-          'Twenty candidates have received formal offer releases backed by positive client endorsements across all nine specialist streams.',
-          'Five high-caliber candidates are currently shortlisted, including Dr. Aniket Somnath Deore and Jitendra Chauhan, ready for package authorization.',
-          'Sixteen candidates were rejected due to technical or custom function protocol gaps, while two candidate drops occurred due to location preferences.',
-          'Recommendation: Authorize immediate offer releases for all five shortlisted candidates to guarantee one hundred percent pipeline delivery.'
-        ]
-      };
-    } else if (mode === 'budget') {
-      return {
-        title: 'Compensation & TA Budget Sourcing Savings',
-        sentences: [
-          'Compensation and TA Sourcing Cost-Avoidance Audit in progress.',
-          'The average salary hike across all released offers is thirty-four point two percent against candidate prior compensation.',
-          'Direct in-house talent acquisition has successfully saved rupees ' + agencySavings + ' Lakhs in avoided headhunting recruitment commissions.',
-          'Total committed annual payroll across twenty offers is rupees ' + totalPayrollCr + ' Crores, maintaining healthy budget surplus headroom.',
-          'Individual packages range from seven point seven Lakhs to twenty-one Lakhs per annum for Lead Medidata RAVE Programmers.'
-        ]
-      };
-    } else {
-      return {
-        title: 'SLA Turnaround Velocity & 15-Sep Delivery Forecast',
-        sentences: [
-          'SLA Turnaround Velocity and Delivery Runway report active.',
-          'Average time from sourcing to Level-1 screening is four point two days, beating the five-day industry standard by sixteen percent.',
-          'Client Level-2 interview turnaround averages five point eight days across all clinical streams.',
-          'Overall campaign SLA compliance stands at ninety-four point two percent on-target.',
-          'Current hiring velocity projects complete campaign fulfillment by September twelfth, three calendar days ahead of the September fifteenth deadline.'
-        ]
-      };
-    }
-  }
-
-  // High-precision word-based timing calculation
-  function calculateAudioTimings() {
-    const data = getAudioBriefingScript(activeAudioMode);
-    // Standard natural TTS speech rate is ~150 words per minute at 1.0x speed
-    const wordsPerSec = (150 * audioPlaybackSpeed) / 60;
-    
-    let cumulative = 0;
-    data.sentenceDurations = data.sentences.map(s => {
-      const words = s.split(/\s+/).filter(Boolean).length;
-      // Minimum duration 2.5s per sentence to account for natural pauses
-      const dur = Math.max(2.5, words / wordsPerSec);
-      const start = cumulative;
-      cumulative += dur;
-      return { words, dur, start, end: cumulative };
-    });
-
-    audioTotalSeconds = Math.max(15, Math.round(cumulative));
-  }
-
-  function formatAudioTime(sec) {
-    const sInt = Math.max(0, Math.floor(sec));
-    const m = Math.floor(sInt / 60);
-    const s = sInt % 60;
-    return m + ':' + (s < 10 ? '0' : '') + s;
-  }
-
-  function renderAudioStudio() {
-    const body = document.getElementById('audioStudioBody');
+  function renderOfferRiskRadar() {
+    const body = document.getElementById('offerRiskBody');
     if (!body) return;
 
-    calculateAudioTimings();
-    const data = getAudioBriefingScript(activeAudioMode);
+    // Filter all released offers (20) and shortlisted candidates (6)
+    const offers = masterData.filter(d => (d.status || '').toLowerCase() === 'offered');
+    const shortlisted = masterData.filter(d => (d.clientFeedback || '').toLowerCase().includes('shortlist') && (d.status || '').toLowerCase() !== 'offered');
+    const combinedCandidates = [...offers, ...shortlisted];
+
+    let lowRiskCount = 0;
+    let medRiskCount = 0;
+    let highRiskCount = 0;
+
+    const scoredList = combinedCandidates.map((c) => {
+      const isJoined = (c.onboard || '').toLowerCase() === 'onboarded' || (c.doj || '').includes('08');
+      const notice = (c.noticePeriod || '').toLowerCase();
+      const role = (c.role || '').toLowerCase();
+      const isRave = role.includes('rave');
+
+      let riskScore = 95;
+      let riskLevel = 'low';
+      let factor = 'Low risk: Confirmed deployment / short notice';
+      let action = 'Maintain standard pre-boarding cadence';
+
+      if (isJoined) {
+        riskScore = 100;
+        riskLevel = 'low';
+        factor = 'Active employee; 100% operational in production';
+        action = 'Post-induction 30-day feedback check-in';
+      } else if (notice.includes('90') || (c.doj || '').includes('11')) {
+        riskScore = isRave ? 54 : 62;
+        riskLevel = 'high';
+        factor = isRave ? 'Elevated risk: 90-day notice in hyper-competitive RAVE market' : 'Elevated risk: 90-day notice period vulnerability';
+        action = 'Authorize 1-month buyout & schedule weekly VP check-in';
+      } else if (notice.includes('60') || (c.doj || '').includes('10')) {
+        riskScore = isRave ? 72 : 78;
+        riskLevel = 'med';
+        factor = 'Moderate risk: 60-day notice; susceptible to counter-offers';
+        action = 'Expedite IT hardware token & schedule hiring manager 1-on-1';
+      } else if (notice.includes('30') || (c.doj || '').includes('09')) {
+        riskScore = 88;
+        riskLevel = 'low';
+        factor = 'Predictable 30-day notice; background verification in progress';
+        action = 'Confirm Day-1 laptop delivery and orientation invite';
+      } else {
+        riskScore = 96;
+        riskLevel = 'low';
+        factor = 'Immediate / <15-day notice; low reneging probability';
+        action = 'Ready for immediate induction';
+      }
+
+      if (riskLevel === 'low') lowRiskCount++;
+      else if (riskLevel === 'med') medRiskCount++;
+      else highRiskCount++;
+
+      return { ...c, riskScore, riskLevel, factor, action };
+    });
+
+    const totalTracked = scoredList.length;
+    const overallConfidence = Math.round(scoredList.reduce((acc, c) => acc + c.riskScore, 0) / totalTracked);
+
+    // Dynamic Buyout Scenario Calculations
+    const buyoutPerCand = 85000;
+    const totalBuyoutCost = (buyoutSelectedCount * buyoutPerCand / 100000).toFixed(2);
+    const daysSaved = buyoutSelectedCount * 16;
+    const revenuePreserved = (buyoutSelectedCount * 24.0).toFixed(1);
+    const roiMultiplier = ((buyoutSelectedCount * 2400000) / (buyoutSelectedCount * buyoutPerCand)).toFixed(1);
 
     body.innerHTML = `
-      <div class="audio-studio-container">
-        <!-- Focus Modes Selector -->
-        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
-          <div class="focus-modes-row">
-            <button class="focus-mode-pill ${activeAudioMode === 'blitz' ? 'active' : ''}" onclick="switchAudioMode('blitz')">
-              <i data-lucide="zap"></i> 60s C-Suite Blitz
-            </button>
-            <button class="focus-mode-pill ${activeAudioMode === 'risk' ? 'active' : ''}" onclick="switchAudioMode('risk')">
-              <i data-lucide="award"></i> Client Feedback
-            </button>
-            <button class="focus-mode-pill ${activeAudioMode === 'budget' ? 'active' : ''}" onclick="switchAudioMode('budget')">
-              <i data-lucide="wallet"></i> Compensation &amp; ROI
-            </button>
-            <button class="focus-mode-pill ${activeAudioMode === 'sla' ? 'active' : ''}" onclick="switchAudioMode('sla')">
-              <i data-lucide="clock"></i> SLA Velocity
-            </button>
-          </div>
-          <button class="theme-btn" onclick="downloadAudioTranscript()" style="font-size:0.74rem;padding:5px 12px;display:flex;align-items:center;gap:6px;cursor:pointer;">
-            <i data-lucide="download"></i> <span>Download Brief (.MD)</span>
-          </button>
-        </div>
-
-        <!-- Frequency Equalizer Waveform Canvas -->
-        <div>
-          <canvas id="audioEqualizerCanvas" class="audio-waveform-canvas"></canvas>
-        </div>
-
-        <!-- Audio Controls & Scrubber -->
-        <div class="audio-controls-bar">
-          <button class="audio-play-btn" id="btnStudioPlay" onclick="toggleStudioAudioPlayback()" title="Play / Pause Audio Briefing">
-            <i data-lucide="${isSpeaking ? 'pause' : 'play'}"></i>
-          </button>
-          
-          <div class="audio-scrubber-container">
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-              <strong style="font-size:0.80rem;color:var(--text-primary);"><span id="audioStudioTitle">${data.title}</span></strong>
-              <span class="audio-status-tag" style="font-size:0.70rem;font-weight:700;color:var(--clr-emerald);" id="audioStatusTag">● ${isSpeaking ? 'Playing Voice Stream (' + audioPlaybackSpeed + 'x)' : 'Ready'}</span>
+      <div style="display:flex;flex-direction:column;gap:18px;color:var(--text-primary);">
+        <!-- Top Operational Alert Banner -->
+        <div style="background:linear-gradient(135deg, rgba(239,68,68,0.10), rgba(245,158,11,0.06));border:1px solid rgba(239,68,68,0.25);border-radius:var(--radius-lg);padding:16px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+            <div>
+              <strong style="font-size:0.86rem;color:#ef4444;display:flex;align-items:center;gap:6px;">
+                <i data-lucide="shield-alert" style="width:16px;height:16px;"></i> Clinical Trial Launch Date Protection &amp; Offer Reneging Intelligence
+              </strong>
+              <p style="font-size:0.74rem;color:var(--text-secondary);margin:4px 0 0 0;">
+                In clinical data operations, candidate drop-offs during notice periods delay study First-Patient-In (FPI) by 45–60 days. This radar predicts attrition probability across 20 released offers &amp; 6 shortlists, prescribing proactive retention actions.
+              </p>
             </div>
-            <input type="range" class="audio-scrubber" id="audioScrubber" min="0" max="100" value="${Math.min(100, (audioCurrentSeconds / audioTotalSeconds) * 100)}" oninput="seekAudioPlayback(this.value)" />
-            <div class="audio-time-row">
-              <span id="audioTimeCurrent">${formatAudioTime(audioCurrentSeconds)}</span>
-              <span id="audioTimeTotal">${formatAudioTime(audioTotalSeconds)}</span>
-            </div>
-          </div>
-
-          <div style="display:flex;align-items:center;gap:6px;">
-            <span style="font-size:0.68rem;color:var(--text-muted);font-weight:700;">SPEED:</span>
-            <div class="audio-speed-btn-group">
-              <button class="speed-btn ${audioPlaybackSpeed === 1.0 ? 'active' : ''}" onclick="setAudioPlaybackSpeed(1.0)">1.0x</button>
-              <button class="speed-btn ${audioPlaybackSpeed === 1.25 ? 'active' : ''}" onclick="setAudioPlaybackSpeed(1.25)">1.25x</button>
-              <button class="speed-btn ${audioPlaybackSpeed === 1.5 ? 'active' : ''}" onclick="setAudioPlaybackSpeed(1.5)">1.5x</button>
-              <button class="speed-btn ${audioPlaybackSpeed === 2.0 ? 'active' : ''}" onclick="setAudioPlaybackSpeed(2.0)">2.0x</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Synchronized Live Teleprompter Transcript -->
-        <div>
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-            <span style="font-size:0.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">
-              🎙️ Live Synchronized Teleprompter Subtitles:
+            <span class="badge-tag" style="background:rgba(16,185,129,0.15);color:#059669;border:1px solid rgba(16,185,129,0.3);font-size:0.74rem;padding:4px 10px;">
+              🟢 Overall Cohort Retention: ${overallConfidence}% Confidence
             </span>
-            <span style="font-size:0.70rem;color:var(--clr-indigo);font-weight:600;">${data.sentences.length} Key Takeaways</span>
           </div>
-          <div class="teleprompter-box" id="teleprompterLog">
-            ${data.sentences.map((s, idx) => `
-              <p class="teleprompter-sentence ${idx === currentSentenceIndex && isSpeaking ? 'active' : ''}" id="teleSent_${idx}" style="margin-bottom:8px;cursor:pointer;" onclick="seekToSentence(${idx})">${s}</p>
-            `).join('')}
+        </div>
+
+        <!-- 4 KPI Risk Diagnostics Cards -->
+        <div style="display:grid;grid-template-columns:repeat(4, 1fr);gap:12px;">
+          <div class="tat-stage-card" style="border-top:3px solid #059669;">
+            <span style="font-size:0.68rem;font-weight:700;color:#059669;text-transform:uppercase;">Low Risk / Safe Joiners</span>
+            <div style="font-size:1.35rem;font-weight:900;color:var(--text-primary);margin:4px 0;">${lowRiskCount} Candidates</div>
+            <p style="font-size:0.68rem;color:#059669;margin:0;">🟢 88%–100% Retention Probability</p>
+          </div>
+
+          <div class="tat-stage-card" style="border-top:3px solid #f59e0b;">
+            <span style="font-size:0.68rem;font-weight:700;color:#f59e0b;text-transform:uppercase;">Moderate Watchlist</span>
+            <div style="font-size:1.35rem;font-weight:900;color:var(--text-primary);margin:4px 0;">${medRiskCount} Candidates</div>
+            <p style="font-size:0.68rem;color:#f59e0b;margin:0;">🟡 70%–87% (30-60d Notice)</p>
+          </div>
+
+          <div class="tat-stage-card" style="border-top:3px solid #ef4444;">
+            <span style="font-size:0.68rem;font-weight:700;color:#ef4444;text-transform:uppercase;">Elevated Reneging Risk</span>
+            <div style="font-size:1.35rem;font-weight:900;color:var(--text-primary);margin:4px 0;">${highRiskCount} Candidates</div>
+            <p style="font-size:0.68rem;color:#ef4444;margin:0;">🔴 &lt;65% (60-90d Notice RAVE)</p>
+          </div>
+
+          <div class="tat-stage-card" style="border-top:3px solid var(--clr-indigo);">
+            <span style="font-size:0.68rem;font-weight:700;color:var(--clr-indigo);text-transform:uppercase;">Total Offers Tracked</span>
+            <div style="font-size:1.35rem;font-weight:900;color:var(--text-primary);margin:4px 0;">${totalTracked} Pipeline</div>
+            <p style="font-size:0.68rem;color:var(--clr-indigo);margin:0;">20 Offers + 6 Shortlisted</p>
+          </div>
+        </div>
+
+        <!-- Interactive Notice Buyout & "What-If" Acceleration Simulator -->
+        <div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius-lg);padding:16px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+            <div>
+              <strong style="font-size:0.84rem;color:var(--clr-indigo);display:flex;align-items:center;gap:6px;">
+                <i data-lucide="calculator" style="width:15px;height:15px;"></i> Notice Period Buyout &amp; Study Acceleration Simulator
+              </strong>
+              <p style="font-size:0.72rem;color:var(--text-muted);margin:2px 0 0 0;">Model the business ROI of buying out 60-to-90 day notices for critical RAVE Programmers &amp; Data Reviewers.</p>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:0.72rem;font-weight:700;color:var(--text-secondary);">Candidates to Buyout:</span>
+              <button class="btn btn-secondary" onclick="window._setBuyoutSim(1)" style="font-size:0.70rem;padding:3px 8px;${buyoutSelectedCount===1?'background:var(--clr-indigo);color:#fff;':''}">1 Cand</button>
+              <button class="btn btn-secondary" onclick="window._setBuyoutSim(2)" style="font-size:0.70rem;padding:3px 8px;${buyoutSelectedCount===2?'background:var(--clr-indigo);color:#fff;':''}">2 Cands</button>
+              <button class="btn btn-secondary" onclick="window._setBuyoutSim(3)" style="font-size:0.70rem;padding:3px 8px;${buyoutSelectedCount===3?'background:var(--clr-indigo);color:#fff;':''}">3 Cands</button>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(4, 1fr);gap:10px;background:var(--bg-surface);padding:12px;border-radius:8px;border:1px solid var(--border-subtle);">
+            <div>
+              <span style="font-size:0.68rem;color:var(--text-muted);text-transform:uppercase;font-weight:700;">Buyout Investment:</span>
+              <div style="font-size:1.15rem;font-weight:900;color:#ef4444;margin-top:2px;">₹${totalBuyoutCost} Lakhs</div>
+              <span style="font-size:0.68rem;color:var(--text-muted);">1-Month Gross per hire</span>
+            </div>
+            <div>
+              <span style="font-size:0.68rem;color:var(--text-muted);text-transform:uppercase;font-weight:700;">Days Accelerated:</span>
+              <div style="font-size:1.15rem;font-weight:900;color:#059669;margin-top:2px;">+${daysSaved} Calendar Days</div>
+              <span style="font-size:0.68rem;color:#059669;">Study Build fast-tracked</span>
+            </div>
+            <div>
+              <span style="font-size:0.68rem;color:var(--text-muted);text-transform:uppercase;font-weight:700;">Trial Revenue Preserved:</span>
+              <div style="font-size:1.15rem;font-weight:900;color:#3b82f6;margin-top:2px;">₹${revenuePreserved} Lakhs</div>
+              <span style="font-size:0.68rem;color:var(--text-muted);">Trial Delay Costs Avoided</span>
+            </div>
+            <div>
+              <span style="font-size:0.68rem;color:var(--text-muted);text-transform:uppercase;font-weight:700;">Net Financial Multiplier:</span>
+              <div style="font-size:1.15rem;font-weight:900;color:#10b981;margin-top:2px;">${roiMultiplier}x ROI</div>
+              <span style="font-size:0.68rem;color:#10b981;">Strong Business Case</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detailed Candidate-by-Candidate Risk & Retention Matrix -->
+        <div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius-lg);padding:16px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <strong style="font-size:0.82rem;color:var(--clr-indigo);">Candidate Attrition Risk Diagnostic &amp; Action Plan (${totalTracked} Pipeline):</strong>
+            <span style="font-size:0.72rem;color:var(--text-muted);">Sorted by risk exposure</span>
+          </div>
+
+          <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;font-size:0.74rem;">
+              <thead>
+                <tr style="border-bottom:1px solid var(--border-light);color:var(--text-muted);">
+                  <th style="text-align:left;padding:6px;">Candidate Name</th>
+                  <th style="text-align:left;padding:6px;">Role</th>
+                  <th style="text-align:center;padding:6px;">Notice / DOJ</th>
+                  <th style="text-align:center;padding:6px;">Offered CTC</th>
+                  <th style="text-align:center;padding:6px;">Retention Confidence</th>
+                  <th style="text-align:left;padding:6px;">Primary Risk Driver</th>
+                  <th style="text-align:right;padding:6px;">Recommended Intervention</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${scoredList.sort((a, b) => a.riskScore - b.riskScore).map(c => {
+                  let badge = '<span class="badge-tag" style="background:rgba(16,185,129,0.15);color:#059669;border:1px solid rgba(16,185,129,0.3);">🟢 ' + c.riskScore + '% Safe</span>';
+                  if (c.riskLevel === 'med') badge = '<span class="badge-tag" style="background:rgba(245,158,11,0.15);color:#d97706;border:1px solid rgba(245,158,11,0.3);">🟡 ' + c.riskScore + '% Watch</span>';
+                  if (c.riskLevel === 'high') badge = '<span class="badge-tag" style="background:rgba(239,68,68,0.15);color:#dc2626;border:1px solid rgba(239,68,68,0.3);">🔴 ' + c.riskScore + '% At-Risk</span>';
+
+                  return `
+                    <tr style="border-bottom:1px solid var(--border-subtle);">
+                      <td style="padding:6px;">
+                        <strong>#${c.sno} · ${c.name}</strong>
+                        ${c.status === 'Offered' ? '' : '<span style="font-size:0.65rem;color:#8b5cf6;margin-left:4px;">(Shortlist)</span>'}
+                      </td>
+                      <td style="padding:6px;color:var(--clr-indigo);">${c.role}</td>
+                      <td style="text-align:center;color:var(--text-secondary);">${c.noticePeriod || '30d'} · ${c.doj || '01-Sep'}</td>
+                      <td style="text-align:center;font-weight:700;">${c.offeredCtcRaw || 'Pending'}</td>
+                      <td style="text-align:center;">${badge}</td>
+                      <td style="padding:6px;color:var(--text-muted);max-width:240px;font-size:0.70rem;">${c.factor}</td>
+                      <td style="text-align:right;padding:6px;">
+                        <button class="btn btn-secondary" onclick="window.openCandidateProfileBySno(${c.sno})" style="font-size:0.68rem;padding:3px 8px;" title="${c.action}">
+                          Inspect Dossier
+                        </button>
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
     `;
 
-    initEqualizerWaveform();
     if (window.lucide && typeof window.lucide.createIcons === 'function') {
       window.lucide.createIcons();
     }
   }
 
-  window.switchAudioMode = function(mode) {
-    stopStudioAudio();
-    activeAudioMode = mode;
-    audioCurrentSeconds = 0;
-    currentSentenceIndex = 0;
-    renderAudioStudio();
+  window._setBuyoutSim = function(count) {
+    buyoutSelectedCount = count;
+    renderOfferRiskRadar();
   };
-
-  window.setAudioPlaybackSpeed = function(spd) {
-    audioPlaybackSpeed = spd;
-    calculateAudioTimings();
-    
-    if (isSpeaking) {
-      // Restart current sentence speech with new rate immediately
-      if (window.speechSynthesis) window.speechSynthesis.cancel();
-      playSentenceAt(currentSentenceIndex);
-    } else {
-      renderAudioStudio();
-    }
-  };
-
-  window.seekAudioPlayback = function(percent) {
-    calculateAudioTimings();
-    const data = getAudioBriefingScript(activeAudioMode);
-    const targetSec = (percent / 100) * audioTotalSeconds;
-    audioCurrentSeconds = targetSec;
-
-    // Find matching sentence index
-    let targetIdx = 0;
-    for (let i = 0; i < data.sentenceDurations.length; i++) {
-      if (targetSec >= data.sentenceDurations[i].start && targetSec <= data.sentenceDurations[i].end) {
-        targetIdx = i;
-        break;
-      }
-    }
-
-    currentSentenceIndex = targetIdx;
-    updateTeleprompterHighlight(targetIdx);
-
-    if (isSpeaking) {
-      if (window.speechSynthesis) window.speechSynthesis.cancel();
-      playSentenceAt(targetIdx);
-    } else {
-      const timeCurr = document.getElementById('audioTimeCurrent');
-      if (timeCurr) timeCurr.textContent = formatAudioTime(audioCurrentSeconds);
-    }
-  };
-
-  window.seekToSentence = function(idx) {
-    calculateAudioTimings();
-    const data = getAudioBriefingScript(activeAudioMode);
-    if (idx >= data.sentenceDurations.length) return;
-    
-    currentSentenceIndex = idx;
-    audioCurrentSeconds = data.sentenceDurations[idx].start;
-    updateTeleprompterHighlight(idx);
-
-    if (isSpeaking) {
-      if (window.speechSynthesis) window.speechSynthesis.cancel();
-      playSentenceAt(idx);
-    } else {
-      const scrubber = document.getElementById('audioScrubber');
-      if (scrubber) scrubber.value = Math.min(100, (audioCurrentSeconds / audioTotalSeconds) * 100);
-      const timeCurr = document.getElementById('audioTimeCurrent');
-      if (timeCurr) timeCurr.textContent = formatAudioTime(audioCurrentSeconds);
-    }
-  };
-
-  function updateTeleprompterHighlight(idx) {
-    document.querySelectorAll('.teleprompter-sentence').forEach(el => el.classList.remove('active'));
-    const el = document.getElementById('teleSent_' + idx);
-    if (el) {
-      el.classList.add('active');
-      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-  }
 
   /* ══════════════════════════════════════════
-     BULLETPROOF DUAL-ENGINE AUDIO BRIEFING & SPEECH SYNTHESIZER
-     (Zero-Race Condition, Web Audio Chime + High-Fidelity SpeechSynthesis)
-  ══════════════════════════════════════════ */
-  let webAudioCtx = null;
-  let audioOscillator = null;
-  let audioGainNode = null;
-  let speechKeepAliveTimer = null;
-  let cachedVoicesList = [];
-  window._activeSpeechUtterance = null;
-
-  // Preload and cache browser speech synthesis voices
-  function initVoiceCache() {
-    if ('speechSynthesis' in window) {
-      cachedVoicesList = window.speechSynthesis.getVoices();
-      if (window.speechSynthesis.onvoiceschanged !== undefined) {
-        window.speechSynthesis.onvoiceschanged = () => {
-          cachedVoicesList = window.speechSynthesis.getVoices();
-        };
-      }
-    }
-  }
-  initVoiceCache();
-
-  function initWebAudio() {
-    try {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (AudioCtx && !webAudioCtx) {
-        webAudioCtx = new AudioCtx();
-      }
-      if (webAudioCtx && webAudioCtx.state === 'suspended') {
-        webAudioCtx.resume();
-      }
-    } catch (e) {
-      console.warn('Web Audio initialization note:', e);
-    }
-  }
-
-  // Crisp executive briefing chime to unlock audio hardware and provide instant acoustic feedback
-  function playExecutiveBriefingChime() {
-    try {
-      initWebAudio();
-      if (!webAudioCtx) return;
-
-      const now = webAudioCtx.currentTime;
-      // Two-tone executive chime (D5: 587.33Hz -> A5: 880Hz)
-      const osc1 = webAudioCtx.createOscillator();
-      const osc2 = webAudioCtx.createOscillator();
-      const gain = webAudioCtx.createGain();
-
-      osc1.type = 'sine';
-      osc1.frequency.setValueAtTime(587.33, now);
-      osc2.type = 'sine';
-      osc2.frequency.setValueAtTime(880.00, now + 0.12);
-
-      gain.gain.setValueAtTime(0.001, now);
-      gain.gain.linearRampToValueAtTime(0.18, now + 0.04);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
-
-      osc1.connect(gain);
-      osc2.connect(gain);
-      gain.connect(webAudioCtx.destination);
-
-      osc1.start(now);
-      osc1.stop(now + 0.20);
-      osc2.start(now + 0.12);
-      osc2.stop(now + 0.45);
-    } catch (err) {
-      console.warn('Chime audio note:', err);
-    }
-  }
-
-  function stopStudioAudio() {
-    if (audioTimerInterval) { clearInterval(audioTimerInterval); audioTimerInterval = null; }
-    if (speechKeepAliveTimer) { clearInterval(speechKeepAliveTimer); speechKeepAliveTimer = null; }
-    
-    if ('speechSynthesis' in window) {
-      try {
-        window.speechSynthesis.pause();
-        window.speechSynthesis.cancel();
-      } catch (e) {}
-    }
-    
-    window._activeSpeechUtterance = null;
-    isSpeaking = false;
-    
-    const statusTag = document.getElementById('audioStatusTag');
-    if (statusTag) statusTag.innerHTML = '● Ready';
-    const playBtn = document.getElementById('btnStudioPlay');
-    if (playBtn) playBtn.innerHTML = '<i data-lucide="play"></i>';
-    if (window.lucide) lucide.createIcons();
-  }
-
-  window.toggleStudioAudioPlayback = function() {
-    initWebAudio();
-
-    if (isSpeaking) {
-      stopStudioAudio();
-      return;
-    }
-
-    // Play pleasant executive chime to immediately unlock audio hardware
-    playExecutiveBriefingChime();
-
-    // Ensure speech synthesis is completely resumed
-    if ('speechSynthesis' in window) {
-      if (window.speechSynthesis.paused) {
-        window.speechSynthesis.resume();
-      }
-    }
-
-    calculateAudioTimings();
-
-    // Give a brief 120ms tick so the chime plays cleanly before speech begins
-    setTimeout(() => {
-      playSentenceAt(currentSentenceIndex);
-    }, 120);
-  };
-
-  // High-precision sentence-by-sentence audio synthesis
-  function playSentenceAt(index) {
-    calculateAudioTimings();
-    const data = getAudioBriefingScript(activeAudioMode);
-    
-    if (index >= data.sentences.length) {
-      stopStudioAudio();
-      audioCurrentSeconds = 0;
-      currentSentenceIndex = 0;
-      updateTeleprompterHighlight(0);
-      const scrubber = document.getElementById('audioScrubber');
-      if (scrubber) scrubber.value = 0;
-      const timeCurr = document.getElementById('audioTimeCurrent');
-      if (timeCurr) timeCurr.textContent = formatAudioTime(0);
-      return;
-    }
-
-    currentSentenceIndex = index;
-    isSpeaking = true;
-    sentenceStartElapsed = data.sentenceDurations[index].start;
-    sentenceStartTime = Date.now();
-
-    updateTeleprompterHighlight(index);
-
-    const statusTag = document.getElementById('audioStatusTag');
-    if (statusTag) statusTag.innerHTML = '● Streaming Voice Audio (' + audioPlaybackSpeed + 'x)';
-    const playBtn = document.getElementById('btnStudioPlay');
-    if (playBtn) playBtn.innerHTML = '<i data-lucide="pause"></i>';
-    if (window.lucide) lucide.createIcons();
-
-    // Start precision high-frequency UI timer
-    if (audioTimerInterval) clearInterval(audioTimerInterval);
-    audioTimerInterval = setInterval(() => {
-      if (!isSpeaking) return;
-      const elapsedInSec = (Date.now() - sentenceStartTime) / 1000;
-      audioCurrentSeconds = Math.min(audioTotalSeconds, sentenceStartElapsed + elapsedInSec);
-
-      const scrubber = document.getElementById('audioScrubber');
-      if (scrubber) scrubber.value = Math.min(100, (audioCurrentSeconds / audioTotalSeconds) * 100);
-
-      const timeCurr = document.getElementById('audioTimeCurrent');
-      if (timeCurr) timeCurr.textContent = formatAudioTime(audioCurrentSeconds);
-    }, 100);
-
-    const sentenceText = data.sentences[index];
-
-    if ('speechSynthesis' in window) {
-      try {
-        if (window.speechSynthesis.paused) {
-          window.speechSynthesis.resume();
-        }
-
-        const utter = new SpeechSynthesisUtterance(sentenceText);
-        utter.rate = audioPlaybackSpeed || 1.0;
-        utter.pitch = 1.0;
-        utter.volume = 1.0;
-        utter.lang = 'en-US';
-
-        // Select the most articulate English voice available
-        if (cachedVoicesList.length === 0) {
-          cachedVoicesList = window.speechSynthesis.getVoices();
-        }
-        if (cachedVoicesList.length > 0) {
-          const naturalVoice = cachedVoicesList.find(v => 
-            v.lang.startsWith('en') && (
-              v.name.includes('Natural') || 
-              v.name.includes('Neural') || 
-              v.name.includes('Google') || 
-              v.name.includes('Samantha') || 
-              v.name.includes('David') || 
-              v.name.includes('Zira') || 
-              v.name.includes('Mark') || 
-              v.name.includes('Jenny')
-            )
-          ) || cachedVoicesList.find(v => v.lang.startsWith('en')) || cachedVoicesList[0];
-
-          if (naturalVoice) utter.voice = naturalVoice;
-        }
-
-        utter.onend = () => {
-          if (!isSpeaking) return;
-          playSentenceAt(index + 1);
-        };
-
-        utter.onerror = (evt) => {
-          console.warn('SpeechSynthesis event on sentence ' + index + ':', evt.error);
-          if (!isSpeaking) return;
-          if (evt.error !== 'canceled' && evt.error !== 'interrupted') {
-            setTimeout(() => {
-              if (isSpeaking) playSentenceAt(index + 1);
-            }, 250);
-          }
-        };
-
-        window._activeSpeechUtterance = utter; // Anchor reference to prevent V8 garbage-collection freeze
-        window.speechSynthesis.speak(utter);
-
-        // Chrome keepalive watchdog: Chromium pauses SpeechSynthesis after 14 seconds
-        if (speechKeepAliveTimer) clearInterval(speechKeepAliveTimer);
-        speechKeepAliveTimer = setInterval(() => {
-          if (!isSpeaking) {
-            clearInterval(speechKeepAliveTimer);
-            return;
-          }
-          if ('speechSynthesis' in window && window.speechSynthesis.speaking && window.speechSynthesis.paused) {
-            window.speechSynthesis.resume();
-          }
-        }, 3000);
-
-      } catch (err) {
-        console.warn('Voice speak exception:', err);
-        const durationSec = data.sentenceDurations[index].duration / audioPlaybackSpeed;
-        setTimeout(() => {
-          if (isSpeaking) playSentenceAt(index + 1);
-        }, durationSec * 1000);
-      }
-    } else {
-      // Fallback timer if speech synthesis is completely unsupported in environment
-      const durationSec = data.sentenceDurations[index].duration / audioPlaybackSpeed;
-      setTimeout(() => {
-        if (isSpeaking) playSentenceAt(index + 1);
-      }, durationSec * 1000);
-    }
-  }
-
-  window.downloadAudioTranscript = function() {
-    const data = getAudioBriefingScript(activeAudioMode);
-    const md = '# CDM Talent Intelligence — Executive Audio Briefing Memo\n\n**Briefing Focus:** ' + data.title + '\n**Generated Date:** ' + new Date().toLocaleDateString('en-US', { dateStyle: 'full' }) + '\n\n---\n\n## Executive Transcript:\n\n' + data.sentences.map(s => '> "' + s + '"').join('\n\n') + '\n\n---\n*CDM Executive Command Center · Clinical Data Management Operations*';
-    
-    const blob = new Blob([md], { type: 'text/markdown;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'CDM_Executive_Audio_Briefing_' + activeAudioMode.toUpperCase() + '.md';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  };
-
-  function initEqualizerWaveform() {
-    const canvas = document.getElementById('audioEqualizerCanvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    canvas.width = canvas.parentElement.clientWidth || 600;
-    canvas.height = 80;
-
-    let bars = 48;
-    function draw() {
-      if (!canvas || !document.getElementById('audioStudioModal')?.classList.contains('open')) {
-        cancelAnimationFrame(audioAnimFrame);
-        return;
-      }
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const barWidth = canvas.width / bars;
-      const t = Date.now() * 0.005;
-
-      for (let i = 0; i < bars; i++) {
-        let h = isSpeaking ? (Math.sin(t + i * 0.3) * 0.5 + 0.5) * 60 + 8 : 4;
-        const x = i * barWidth;
-        const y = (canvas.height - h) / 2;
-
-        const grad = ctx.createLinearGradient(0, y, 0, y + h);
-        grad.addColorStop(0, '#3b82f6');
-        grad.addColorStop(1, '#06b6d4');
-
-        ctx.fillStyle = grad;
-        ctx.fillRect(x + 2, y, barWidth - 4, h);
-      }
-      audioAnimFrame = requestAnimationFrame(draw);
-    }
-    draw();
-  }
-/* ══════════════════════════════════════════
      FEATURE 2: SLA RADAR & TURNAROUND VELOCITY (ALL 9 ROLES FROM DATA)
   ══════════════════════════════════════════ */
   function initSlaRadar() {
@@ -5495,7 +5147,7 @@ function initDashboardApp() {
   /* ══════════════════════════════════════════════════════════════════
      21. FAIL-PROOF BOOTSTRAP INITIALIZATION PIPELINE
   ══════════════════════════════════════════════════════════════════ */
-  try { initVoiceBriefing(); } catch(e) { console.warn('initVoiceBriefing err:', e); }
+  try { initOfferRiskRadar(); } catch(e) { console.warn('initOfferRiskRadar err:', e); }
   try { initSlaRadar(); } catch(e) { console.warn('initSlaRadar err:', e); }
   try { initTalentTelemetry(); } catch(e) { console.warn('initTalentTelemetry err:', e); }
   try { initBudgetOptimizer(); } catch(e) { console.warn('initBudgetOptimizer err:', e); }

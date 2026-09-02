@@ -89,11 +89,10 @@
         <span class="exec-btn-text">Notice Period &amp; Fast Joiners</span>
       </button>
 
-      <!-- 2. Executive Audio Briefing -->
-      <button class="exec-tool-btn audio-btn" id="btnVoiceBriefing" title="Play Executive Audio Summary Briefing">
-        <span class="exec-btn-icon"><i data-lucide="volume-2"></i></span>
-        <span class="exec-btn-text">Audio Briefing Studio</span>
-        <span class="audio-wave-pulse" id="audioWavePulse" style="display:none;"></span>
+      <!-- 2. Candidate Reneging & Offer Drop-Off Risk Radar -->
+      <button class="exec-tool-btn risk-btn" id="btnOfferRiskRadar" title="View Candidate Reneging Risk, Drop-Off Predictor & Proactive Retention Protocols">
+        <span class="exec-btn-icon"><i data-lucide="shield-alert"></i></span>
+        <span class="exec-btn-text">Offer Risk &amp; Retention Radar</span>
       </button>
 
       <!-- 3. 15-Sep Sourcing Goals & Closure Tracker -->
@@ -1341,23 +1340,23 @@
 <!-- ── FLOATING AI TALENT ASSISTANT CHATBOT TRIGGER & PANEL ── -->
 <!-- ── AI OFFER RISK & CAMPAIGN BOTTLENECK INTELLIGENCE CENTER MODAL ───── -->
 
-<!-- ── AI AUDIO BRIEFING STUDIO & EXECUTIVE PODCAST MEMO MODAL ───── -->
-<div id="audioStudioModal" class="studio-modal-overlay">
-  <div class="sla-modal-window" style="max-width:960px;">
-    <div class="studio-modal-header">
+<!-- ── CANDIDATE RENEGING & OFFER DROP-OFF RISK RADAR MODAL ───── -->
+<div id="offerRiskRadarModal" class="studio-modal-overlay">
+  <div class="sla-modal-window" style="max-width:1160px;">
+    <div class="studio-modal-header" style="background:rgba(239,68,68,0.06);border-bottom:1px solid rgba(239,68,68,0.20);">
       <div class="studio-modal-title" style="display:flex;align-items:center;gap:10px;">
-        <div style="width:34px;height:34px;border-radius:8px;background:rgba(37,99,235,0.16);display:flex;align-items:center;justify-content:center;color:#3b82f6;font-size:1.1rem;">
-          <i data-lucide="volume-2"></i>
+        <div style="width:34px;height:34px;border-radius:8px;background:rgba(239,68,68,0.16);display:flex;align-items:center;justify-content:center;color:#ef4444;font-size:1.1rem;">
+          <i data-lucide="shield-alert"></i>
         </div>
         <div>
-          <h3 style="font-size:1.05rem;font-weight:700;color:var(--text-primary);margin:0;">AI Executive Audio Briefing Studio &amp; Podcast Memo</h3>
-          <p style="font-size:0.72rem;color:var(--text-muted);margin:2px 0 0 0;">Interactive Voice Synthesis, Live Frequency Equalizer, 4 Focus Modes &amp; Transcript Export</p>
+          <h3 style="font-size:1.05rem;font-weight:700;color:var(--text-primary);margin:0;">Candidate Reneging &amp; Offer Drop-Off Risk Intelligence Center</h3>
+          <p style="font-size:0.72rem;color:var(--text-muted);margin:2px 0 0 0;">Predictive Attrition Risk Scoring, Notice Period Vulnerability Analysis &amp; Executive Buyout Interventions Across 20 Released Offers &amp; 6 Shortlists</p>
         </div>
       </div>
-      <button class="modal-close-btn" id="audioCloseBtn" title="Close Audio Studio">&times;</button>
+      <button class="modal-close-btn" id="offerRiskCloseBtn" title="Close Risk Intelligence Center">&times;</button>
     </div>
-    <div class="studio-modal-body" id="audioStudioBody" style="padding:18px;max-height:80vh;overflow-y:auto;">
-      <!-- Dynamic Content Injected via JS -->
+    <div class="studio-modal-body" id="offerRiskBody" style="padding:20px;max-height:80vh;overflow-y:auto;">
+      <!-- Injected Dynamically via JS -->
     </div>
   </div>
 </div>
