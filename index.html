@@ -12329,27 +12329,31 @@ function initDashboardApp() {
     }
   }
 
-  function stopStudioAudio() {
-    if (audioTimerInterval) { clearInterval(audioTimerInterval); audioTimerInterval = null; }
-    if (window.speechSynthesis) { window.speechSynthesis.cancel(); }
-    isSpeaking = false;
-    
-    const statusTag = document.getElementById('audioStatusTag');
-    if (statusTag) statusTag.innerHTML = '● Ready';
-    const playBtn = document.getElementById('btnStudioPlay');
-    if (playBtn) playBtn.innerHTML = '<i data-lucide="play"></i>';
-    if (window.lucide) lucide.createIcons();
-  }
-
-    /* ══════════════════════════════════════════
-     BULLETPROOF DUAL-ENGINE AUDIO BRIEFING PLAYER
+  /* ══════════════════════════════════════════
+     BULLETPROOF DUAL-ENGINE AUDIO BRIEFING & SPEECH SYNTHESIZER
+     (Zero-Race Condition, Web Audio Chime + High-Fidelity SpeechSynthesis)
   ══════════════════════════════════════════ */
   let webAudioCtx = null;
   let audioOscillator = null;
   let audioGainNode = null;
+  let speechKeepAliveTimer = null;
+  let cachedVoicesList = [];
   window._activeSpeechUtterance = null;
 
-  function initWebAudioTone() {
+  // Preload and cache browser speech synthesis voices
+  function initVoiceCache() {
+    if ('speechSynthesis' in window) {
+      cachedVoicesList = window.speechSynthesis.getVoices();
+      if (window.speechSynthesis.onvoiceschanged !== undefined) {
+        window.speechSynthesis.onvoiceschanged = () => {
+          cachedVoicesList = window.speechSynthesis.getVoices();
+        };
+      }
+    }
+  }
+  initVoiceCache();
+
+  function initWebAudio() {
     try {
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
       if (AudioCtx && !webAudioCtx) {
@@ -12359,70 +12363,98 @@ function initDashboardApp() {
         webAudioCtx.resume();
       }
     } catch (e) {
-      console.warn('Web Audio API not initialized:', e);
+      console.warn('Web Audio initialization note:', e);
     }
   }
 
-  function playAmbientAudioTone() {
+  // Crisp executive briefing chime to unlock audio hardware and provide instant acoustic feedback
+  function playExecutiveBriefingChime() {
     try {
-      initWebAudioTone();
+      initWebAudio();
       if (!webAudioCtx) return;
-      if (audioOscillator) stopAmbientAudioTone();
 
-      audioOscillator = webAudioCtx.createOscillator();
-      audioGainNode = webAudioCtx.createGain();
-      
-      audioOscillator.type = 'sine';
-      audioOscillator.frequency.setValueAtTime(220, webAudioCtx.currentTime); // Gentle A3 warm briefing tone
-      
-      audioGainNode.gain.setValueAtTime(0.015, webAudioCtx.currentTime); // Soft subtle background presence
-      
-      audioOscillator.connect(audioGainNode);
-      audioGainNode.connect(webAudioCtx.destination);
-      audioOscillator.start();
-    } catch (e) {
-      console.warn('Tone start note:', e);
+      const now = webAudioCtx.currentTime;
+      // Two-tone executive chime (D5: 587.33Hz -> A5: 880Hz)
+      const osc1 = webAudioCtx.createOscillator();
+      const osc2 = webAudioCtx.createOscillator();
+      const gain = webAudioCtx.createGain();
+
+      osc1.type = 'sine';
+      osc1.frequency.setValueAtTime(587.33, now);
+      osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(880.00, now + 0.12);
+
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.linearRampToValueAtTime(0.18, now + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+
+      osc1.connect(gain);
+      osc2.connect(gain);
+      gain.connect(webAudioCtx.destination);
+
+      osc1.start(now);
+      osc1.stop(now + 0.20);
+      osc2.start(now + 0.12);
+      osc2.stop(now + 0.45);
+    } catch (err) {
+      console.warn('Chime audio note:', err);
     }
   }
 
-  function stopAmbientAudioTone() {
-    try {
-      if (audioOscillator) {
-        audioOscillator.stop();
-        audioOscillator.disconnect();
-        audioOscillator = null;
-      }
-    } catch (e) {}
+  function stopStudioAudio() {
+    if (audioTimerInterval) { clearInterval(audioTimerInterval); audioTimerInterval = null; }
+    if (speechKeepAliveTimer) { clearInterval(speechKeepAliveTimer); speechKeepAliveTimer = null; }
+    
+    if ('speechSynthesis' in window) {
+      try {
+        window.speechSynthesis.pause();
+        window.speechSynthesis.cancel();
+      } catch (e) {}
+    }
+    
+    window._activeSpeechUtterance = null;
+    isSpeaking = false;
+    
+    const statusTag = document.getElementById('audioStatusTag');
+    if (statusTag) statusTag.innerHTML = '● Ready';
+    const playBtn = document.getElementById('btnStudioPlay');
+    if (playBtn) playBtn.innerHTML = '<i data-lucide="play"></i>';
+    if (window.lucide) lucide.createIcons();
   }
 
   window.toggleStudioAudioPlayback = function() {
-    initWebAudioTone();
+    initWebAudio();
 
     if (isSpeaking) {
       stopStudioAudio();
-      stopAmbientAudioTone();
       return;
     }
 
-    // Chrome unstick fix: cancel any stalled previous utterance
+    // Play pleasant executive chime to immediately unlock audio hardware
+    playExecutiveBriefingChime();
+
+    // Ensure speech synthesis is completely resumed
     if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.resume();
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
     }
 
     calculateAudioTimings();
-    playAmbientAudioTone();
-    playSentenceAt(currentSentenceIndex);
+
+    // Give a brief 120ms tick so the chime plays cleanly before speech begins
+    setTimeout(() => {
+      playSentenceAt(currentSentenceIndex);
+    }, 120);
   };
 
-  // High-precision sequential sentence audio synthesis
+  // High-precision sentence-by-sentence audio synthesis
   function playSentenceAt(index) {
     calculateAudioTimings();
     const data = getAudioBriefingScript(activeAudioMode);
     
     if (index >= data.sentences.length) {
       stopStudioAudio();
-      stopAmbientAudioTone();
       audioCurrentSeconds = 0;
       currentSentenceIndex = 0;
       updateTeleprompterHighlight(0);
@@ -12446,7 +12478,7 @@ function initDashboardApp() {
     if (playBtn) playBtn.innerHTML = '<i data-lucide="pause"></i>';
     if (window.lucide) lucide.createIcons();
 
-    // Start precision high-frequency timer
+    // Start precision high-frequency UI timer
     if (audioTimerInterval) clearInterval(audioTimerInterval);
     audioTimerInterval = setInterval(() => {
       if (!isSpeaking) return;
@@ -12464,17 +12496,34 @@ function initDashboardApp() {
 
     if ('speechSynthesis' in window) {
       try {
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.resume();
+        if (window.speechSynthesis.paused) {
+          window.speechSynthesis.resume();
+        }
 
         const utter = new SpeechSynthesisUtterance(sentenceText);
-        utter.rate = audioPlaybackSpeed;
+        utter.rate = audioPlaybackSpeed || 1.0;
         utter.pitch = 1.0;
         utter.volume = 1.0;
+        utter.lang = 'en-US';
 
-        const voices = window.speechSynthesis.getVoices();
-        if (voices.length > 0) {
-          const naturalVoice = voices.find(v => (v.name.includes('Natural') || v.name.includes('Neural') || v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('David') || v.name.includes('Mark')) && v.lang.startsWith('en')) || voices.find(v => v.lang.startsWith('en'));
+        // Select the most articulate English voice available
+        if (cachedVoicesList.length === 0) {
+          cachedVoicesList = window.speechSynthesis.getVoices();
+        }
+        if (cachedVoicesList.length > 0) {
+          const naturalVoice = cachedVoicesList.find(v => 
+            v.lang.startsWith('en') && (
+              v.name.includes('Natural') || 
+              v.name.includes('Neural') || 
+              v.name.includes('Google') || 
+              v.name.includes('Samantha') || 
+              v.name.includes('David') || 
+              v.name.includes('Zira') || 
+              v.name.includes('Mark') || 
+              v.name.includes('Jenny')
+            )
+          ) || cachedVoicesList.find(v => v.lang.startsWith('en')) || cachedVoicesList[0];
+
           if (naturalVoice) utter.voice = naturalVoice;
         }
 
@@ -12483,37 +12532,40 @@ function initDashboardApp() {
           playSentenceAt(index + 1);
         };
 
-        utter.onerror = (err) => {
-          console.warn('SpeechSynthesis notice on sentence ' + index + ':', err);
+        utter.onerror = (evt) => {
+          console.warn('SpeechSynthesis event on sentence ' + index + ':', evt.error);
           if (!isSpeaking) return;
-          // Advance gracefully to next sentence if voice error occurs
-          setTimeout(() => playSentenceAt(index + 1), 250);
+          if (evt.error !== 'canceled' && evt.error !== 'interrupted') {
+            setTimeout(() => {
+              if (isSpeaking) playSentenceAt(index + 1);
+            }, 250);
+          }
         };
 
-        window._activeSpeechUtterance = utter; // Prevent GC freeze in Chromium
+        window._activeSpeechUtterance = utter; // Anchor reference to prevent V8 garbage-collection freeze
         window.speechSynthesis.speak(utter);
 
-        // Chrome keepalive watchdog
-        const keepAliveTimer = setInterval(() => {
+        // Chrome keepalive watchdog: Chromium pauses SpeechSynthesis after 14 seconds
+        if (speechKeepAliveTimer) clearInterval(speechKeepAliveTimer);
+        speechKeepAliveTimer = setInterval(() => {
           if (!isSpeaking) {
-            clearInterval(keepAliveTimer);
+            clearInterval(speechKeepAliveTimer);
             return;
           }
-          if (window.speechSynthesis.paused) {
+          if ('speechSynthesis' in window && window.speechSynthesis.speaking && window.speechSynthesis.paused) {
             window.speechSynthesis.resume();
           }
         }, 3000);
 
       } catch (err) {
         console.warn('Voice speak exception:', err);
-        // Fallback timer advances sentence in teleprompter
         const durationSec = data.sentenceDurations[index].duration / audioPlaybackSpeed;
         setTimeout(() => {
           if (isSpeaking) playSentenceAt(index + 1);
         }, durationSec * 1000);
       }
     } else {
-      // Fallback timer if speech synthesis is absent
+      // Fallback timer if speech synthesis is completely unsupported in environment
       const durationSec = data.sentenceDurations[index].duration / audioPlaybackSpeed;
       setTimeout(() => {
         if (isSpeaking) playSentenceAt(index + 1);
