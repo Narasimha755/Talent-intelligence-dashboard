@@ -1,4 +1,4 @@
-# 📊 CDM Talent Intelligence Executive Command Center (Ri8Fit)
+# 📊 Talent Intelligence Executive Command Center (Ri8Fit)
 ### *Next-Generation Clinical Data Management Recruitment Intelligence & Decision Engine*
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-blue?style=for-the-badge&logo=github)](https://narasimha755.github.io/Talent-intelligence-dashboard/)
@@ -26,9 +26,9 @@
 
 ## 🎯 Executive Summary & Purpose
 
-The **CDM Talent Intelligence Executive Command Center (`Ri8Fit`)** is a specialized, enterprise-grade talent analytics and strategic decision platform engineered for Clinical Research Organizations (CROs), biotechnology firms, and pharmaceutical sponsors.
+The **Talent Intelligence Executive Command Center (`Ri8Fit`)** is a specialized, enterprise-grade talent analytics and strategic decision platform engineered for Clinical Research Organizations (CROs), biotechnology firms, and pharmaceutical sponsors.
 
-Designed specifically for **Clinical Data Management (CDM)** recruitment operations, the platform tracks and optimizes a high-priority sourcing campaign of **122 verified candidates** across **9 critical clinical disciplines** with a commitment to close **20 critical requisitions** on or ahead of the **September 15 deadline**.
+Designed specifically for **Clinical Data Management** recruitment operations, the platform tracks and optimizes a high-priority sourcing campaign of **122 verified candidates** across **9 critical clinical disciplines** with a commitment to close **20 critical requisitions** on or ahead of the **September 15 deadline**.
 
 > In clinical trials, database build and electronic data capture (EDC) lock must precede First-Patient-In (FPI). Sourcing delays directly translate to trial startup postponement at an estimated cost of **\$30,000 to \$75,000 per calendar day**. Ri8Fit bridges the gap between talent acquisition velocity and clinical operational milestones.
 
@@ -39,7 +39,7 @@ Designed specifically for **Clinical Data Management (CDM)** recruitment operati
 Clinical Data Management requires specialized technical competencies adhering strictly to FDA 21 CFR Part 11, CDISC standards (SDTM/ADaM), and leading Electronic Data Capture (EDC) platforms. The candidate pool is partitioned across 9 distinct disciplines:
 
 ```mermaid
-pie title Candidate Distribution Across 9 CDM Roles (122 Total)
+pie title Candidate Distribution Across 9 Clinical Roles (122 Total)
     "Data Reviewer (32)" : 32
     "RAVE Programmer (22)" : 22
     "UAT Tester (18)" : 18
@@ -68,7 +68,7 @@ The dashboard header delivers instantaneous visibility into mission-critical hir
 |:---|:---:|:---|
 | **Total Talent Pool** | **122 Candidates** | Total verified profiles sourced across 9 clinical disciplines |
 | **L1 Technical Screenings** | **51 Screened (41.8%)** | Rigorous technical evaluation on EDC and clinical protocols |
-| **L2 Client Clearances** | **29 Cleared (23.8%)** | Final stakeholder and Lead CDM client interview clearance |
+| **L2 Client Clearances** | **29 Cleared (23.8%)** | Final stakeholder and Lead clinical client interview clearance |
 | **Formal Offers Released** | **20 Confirmed** | 100% of target headcount fulfilled across target requisitions |
 | **Shortlisted Reserves** | **6 Backups** | High-readiness reserves primed for immediate release |
 | **Joined Operations** | **4 Deployed** | Candidates onboarded and actively billing on clinical protocols |
@@ -163,7 +163,7 @@ Positioned directly above the analytics grid, the **Executive Strategic Suite** 
 * **Telemetry:** 51 L1 Screenings, 29 L2 Clearances (**78.4% client pass rate**), 11 client technical rejections, and 4 candidate-initiated drop-offs.
 
 ### 6. 🌐 Talent Pool & Specialization Telemetry (`#btnTalentTelemetry`)
-* **Purpose:** Comprehensive role-by-role competency mapping across all 9 CDM streams.
+* **Purpose:** Comprehensive role-by-role competency mapping across all 9 clinical streams.
 * **Insights:** Technical balance between study build configuration engineers vs. ongoing clinical data review and query management specialists.
 
 ### 7. 💰 Compensation & TA Budget ROI Optimizer (`#btnBudgetOptimizer`)
@@ -213,7 +213,7 @@ The **Candidate Directory** provides comprehensive, searchable records for all 1
 * **Instant Search & Filter:** Filter by role, status, notice period, or search by candidate name and skill keywords.
 * **One-Click Candidate Profile Dossier:** Clicking any candidate row opens their exhaustive profile dossier:
   * **Demographics:** Candidate ID, Full Name, Contact Email, Location.
-  * **Clinical Experience:** Years in CDM, EDC Platforms mastered (Medidata RAVE, Veeva, InForm), Therapeutic Experience (Oncology, Cardiology, Rare Diseases).
+  * **Clinical Experience:** Years in Clinical Data, EDC Platforms mastered (Medidata RAVE, Veeva, InForm), Therapeutic Experience (Oncology, Cardiology, Rare Diseases).
   * **Compensation Dossier:** Current CTC, Offered CTC, Salary Hike Percentage.
   * **Hiring Status & Timeline:** L1 Interview Date, L2 Feedback, Offer Status, Notice Period, Target DOJ.
   * **Interview Evaluator Remarks:** Verbatim technical feedback from client evaluators.

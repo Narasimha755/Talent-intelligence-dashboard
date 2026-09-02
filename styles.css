@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════════
-   CDM TALENT INTELLIGENCE — EXECUTIVE ENTERPRISE PLATFORM
+   Clinical TALENT INTELLIGENCE — EXECUTIVE ENTERPRISE PLATFORM
    Clean Corporate Elegance · 240Hz High-Refresh Native Engine
 ══════════════════════════════════════════════════════════════════ */
 
@@ -3792,7 +3792,7 @@ html {
   color: var(--text-primary);
 }
 
-/* ── 24. Requisition Alignment & Health 4 CDM Domains Strip ── */
+/* ── 24. Requisition Alignment & Health 4 Clinical Domains Strip ── */
 .req-domain-header-strip {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

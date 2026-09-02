@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════════
-   CDM TALENT INTELLIGENCE — EXECUTIVE COMMAND CENTER ANALYTICS ENGINE
+   TALENT INTELLIGENCE — EXECUTIVE COMMAND CENTER ANALYTICS ENGINE
    100% Verified Raw Data Pipeline · Dynamic Excel/CSV Dataset Importer
    Per-Card Role Filters · L1 vs L2 Dual Tracking · Haute-Couture Palette
 ══════════════════════════════════════════════════════════════════ */
@@ -37,7 +37,7 @@ function initDashboardApp() {
     slate:      '#475569'
   };
 
-  /* 9 Unique, Distinct Non-VIBGYOR Shades for 9 Specialized CDM Roles */
+  /* 9 Unique, Distinct Non-VIBGYOR Shades for 9 specialized Clinical Roles */
   const COLOR_ARRAY = [
     '#1e3a8a', // 1. RAVE Programmer: Obsidian Midnight Cobalt
     '#0f766e', // 2. Data Reviewer: Nordic Aegean Teal
@@ -122,11 +122,11 @@ function initDashboardApp() {
       return String(defaultVal).trim();
     }
 
-    let role = getVal(['role', 'specialistrole', 'specialization', 'position', 'stream', 'jobtitle', 'title'], 'CDM Specialist');
+    let role = getVal(['role', 'specialistrole', 'specialization', 'position', 'stream', 'jobtitle', 'title'], 'Clinical Specialist');
     if (/^rave programmer$/i.test(role)) role = 'RAVE Programmer';
 
     let name = getVal(['name', 'candidatename', 'candidate', 'person', 'fullname'], `Candidate ${idx + 1}`);
-    let fn = getVal(['function', 'functionaldomain', 'domain', 'dept', 'department'], 'CDM');
+    let fn = getVal(['function', 'functionaldomain', 'domain', 'dept', 'department'], 'Clinical');
     let l1Date = getVal(['interviewdate', 'l1date', 'l1interviewdate', 'round1', 'r1', 'date', 'interview1'], '');
     let l2 = getVal(['interview2', 'l2round2', 'l2date', 'round2', 'r2', 'interview2date'], '');
     let fb = getVal(['clientfeedback', 'feedback', 'clientstatus', 'remarks', 'clientfeedbackstatus'], '');
@@ -135,7 +135,7 @@ function initDashboardApp() {
     let oCtc = getVal(['offeredctcraw', 'offeredctc', 'offeredctcnr', 'approvedctc', 'offeredsalary', 'finalctc'], '');
     let doj = getVal(['doj', 'dateofjoining', 'joiningdate', 'dojdate'], '');
     let ob = getVal(['onboard', 'onboarding', 'onboardingstatus', 'joined'], '');
-    let skill = getVal(['skillgroup', 'skill', 'primaryskill', 'skills'], 'CDM');
+    let skill = getVal(['skillgroup', 'skill', 'primaryskill', 'skills'], 'Clinical');
 
     let city = getVal(['currentlocation', 'city', 'location', 'locationhub', 'basecity'], 'Bangalore Hub');
     let notice = getVal(['noticeperiod', 'notice', 'availability', 'joiningtime'], '30 Days Notice');
@@ -145,7 +145,7 @@ function initDashboardApp() {
 
     return {
       sno: parseInt(snoVal, 10) || (idx + 1),
-      id: getVal(['id'], `CDM-${String(idx + 1).padStart(3, '0')}`),
+      id: getVal(['id'], `CLI-${String(idx + 1).padStart(3, '0')}`),
       name,
       function: fn,
       role,
@@ -167,9 +167,9 @@ function initDashboardApp() {
   // Master live mutable dataset (initialized with default 122 raw records)
   let masterData = recruitmentData.map(normalizeRecord);
 
-  /* ── Functional Domain Categorization (4 CDM Streams) ── */
+  /* ── Functional Domain Categorization (4 Clinical Streams) ── */
   function getFunctionalDomain(d) {
-    if (d.function && d.function !== 'CDM' && d.function !== 'Data Management') return d.function;
+    if (d.function && d.function !== 'Clinical' && d.function !== 'Data Management') return d.function;
     const r = (d.role || '').toLowerCase();
     if (r.includes('programmer') || r.includes('rave')) return 'Clinical Programming';
     if (r.includes('data manager') || r.includes('data reviewer') || r.includes('vendor') || r.includes('lab') || r.includes('external')) return 'Data Management';
@@ -787,7 +787,7 @@ function initDashboardApp() {
     const subRole = document.getElementById('subRole');
     const distinctRoles = [...new Set(masterData.map(d => d.role).filter(Boolean))];
     if (badgeRole) badgeRole.textContent = activeRole === 'ALL' ? `${distinctRoles.length} Distinct Roles` : `${activeRole} (${total})`;
-    if (subRole) subRole.textContent = activeRole === 'ALL' ? 'Ranked volume across specialized CDM talent streams' : `Detailed pool evaluation for ${activeRole}`;
+    if (subRole) subRole.textContent = activeRole === 'ALL' ? 'Ranked volume across specialized clinical talent streams' : `Detailed pool evaluation for ${activeRole}`;
 
     const badgeOnboard = document.getElementById('badgeOnboard');
     const subOnboard = document.getElementById('subOnboard');
@@ -1070,12 +1070,12 @@ function initDashboardApp() {
           <div class="dossier-field">
             <span class="dossier-label">Onboarding Readiness</span>
             <span class="dossier-value" style="color:${c.onboard === 'Onboarded' ? PALETTE.teal : c.onboard === 'YTO' ? PALETTE.orange : 'inherit'};font-weight:700;">
-              ${c.onboard === 'Onboarded' ? '✓ Joined Active CDM Operations' : c.onboard === 'YTO' ? '⏳ Confirmed Sep 1 Cohort' : 'Pending Milestone'}
+              ${c.onboard === 'Onboarded' ? '✓ Joined active clinical operations' : c.onboard === 'YTO' ? '⏳ Confirmed Sep 1 Cohort' : 'Pending Milestone'}
             </span>
           </div>
           <div class="dossier-field" style="grid-column: span 2;">
             <span class="dossier-label">Skill Group Classification</span>
-            <span class="dossier-value">${c.skillGroup || 'CDM Generalist'}</span>
+            <span class="dossier-value">${c.skillGroup || 'Clinical Specialist'}</span>
           </div>
         </div>
       `;
@@ -1967,8 +1967,8 @@ function initDashboardApp() {
           results.push({
             sno: results.length + 1,
             name: parts[1] || parts[0],
-            function: parts[2] || 'CDM',
-            role: parts[3] || parts[2] || 'CDM Specialist',
+            function: parts[2] || 'Clinical',
+            role: parts[3] || parts[2] || 'Clinical Specialist',
             interviewDate: parts[4] || '',
             interview2: parts[5] || '',
             clientFeedback: parts[6] || '',
@@ -1977,7 +1977,7 @@ function initDashboardApp() {
             offeredCtcRaw: parts[9] || '',
             doj: parts[10] || '',
             onboard: parts[11] || '',
-            skillGroup: parts[12] || 'CDM'
+            skillGroup: parts[12] || 'Clinical'
           });
         }
       }
@@ -2075,8 +2075,8 @@ function initDashboardApp() {
     downloadTemplateBtn.addEventListener('click', () => {
       const template = [
         ['S.No', 'Candidate Name', 'Function', 'Role', 'L1 Interview Date', 'L2 Round 2', 'Client Feedback', 'Status', 'Present CTC', 'Offered CTC', 'DOJ', 'Onboard', 'Skill Group'],
-        ['1', 'Aditya Sharma', 'CDM', 'RAVE Programmer', '15th July', 'Completed', 'Offer Shortlisted', 'Offered', 'INR 8,50,000', '1350000', '01-09-2026', 'YTO', 'CDM'],
-        ['2', 'Pooja Verma', 'CDM', 'Data Reviewer', '16th July', 'Completed', 'Joined', 'Offered', 'INR 6,20,000', '980000', '14-08-2026', 'Onboarded', 'CDM']
+        ['1', 'Aditya Sharma', 'Clinical', 'RAVE Programmer', '15th July', 'Completed', 'Offer Shortlisted', 'Offered', 'INR 8,50,000', '1350000', '01-09-2026', 'YTO', 'Clinical'],
+        ['2', 'Pooja Verma', 'Clinical', 'Data Reviewer', '16th July', 'Completed', 'Joined', 'Offered', 'INR 6,20,000', '980000', '14-08-2026', 'Onboarded', 'Clinical']
       ];
       const csv = template.map(r => r.join(',')).join('\n');
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -2475,7 +2475,7 @@ function initDashboardApp() {
   function studioFunction(tc) {
     const curRole = studioState.activeStudioRole || 'ALL';
     modalTitle.textContent = `Requisition vs. Candidate Pool Alignment — ${curRole === 'ALL' ? 'All Roles' : curRole}`;
-    modalDesc.textContent = '4 CDM Domains & 9 Specialist Requisitions (Target vs Sourced Pool vs Offers Extended)';
+    modalDesc.textContent = '4 Functional Domains & 9 Specialist Requisitions (Target vs Sourced Pool vs Offers Extended)';
 
     if (studioChart) {
       studioChart.destroy();
@@ -2486,7 +2486,7 @@ function initDashboardApp() {
       ? masterData
       : masterData.filter(d => d.role === curRole);
 
-    // 1. 4 CDM Domains
+    // 1. 4 Functional Domains
     const domSummary = {
       'Data Management': { count: 0, target: 16, offered: 0, color: PALETTE.aegean, icon: 'database', desc: 'RAVE, Reviewer, Lab, Vendor, External' },
       'Clinical Programming': { count: 0, target: 10, offered: 0, color: PALETTE.amethyst, icon: 'code', desc: 'Report & Clinical Programming' },
@@ -2553,7 +2553,7 @@ function initDashboardApp() {
     modalStage.innerHTML = `
       <div class="studio-details-container">
         
-        <!-- 1. 4 CDM Domains Summary Row -->
+        <!-- 1. 4 Functional Domains Summary Row -->
         <div class="studio-domain-grid">
           ${Object.entries(domSummary).map(([dname, dstat]) => {
             const fRate = dstat.target > 0 ? ((dstat.offered / dstat.target) * 100).toFixed(0) : 0;
@@ -2922,7 +2922,7 @@ function initDashboardApp() {
           </div>
           <div style="border-left:3px solid ${PALETTE.verdigris};padding-left:8px">
             <strong>Onboarded: ${onboarded} Candidates</strong><br>
-            <span style="color:var(--text-secondary)">Joined active CDM operations</span>
+            <span style="color:var(--text-secondary)">Joined active clinical operations</span>
           </div>
           <div style="border-left:3px solid ${PALETTE.ochre};padding-left:8px">
             <strong>Yet to Onboard: ${yto} Candidates</strong><br>
@@ -3561,7 +3561,7 @@ function initDashboardApp() {
           <!-- All 9 Roles SLA Speed Matrix Table -->
           <div style="background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:14px;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-              <strong style="font-size:0.80rem;color:var(--text-primary);">Role Turnaround Velocity Across All 9 CDM Disciplines:</strong>
+              <strong style="font-size:0.80rem;color:var(--text-primary);">Role Turnaround Velocity Across All 9 Clinical Disciplines:</strong>
               <span style="font-size:0.70rem;color:var(--text-muted);">${masterData.length} Candidates Tracked</span>
             </div>
             <table style="width:100%;border-collapse:collapse;font-size:0.73rem;">
@@ -4216,7 +4216,7 @@ function initDashboardApp() {
             <div class="brand-sub">Clinical Data Management Operations Command Center</div>
           </div>
           <div class="doc-ref">
-            <strong>Ref:</strong> BFM/CDM-OFF/2026/L${Math.floor(Math.random()*900+100)}<br>
+            <strong>Ref:</strong> BFM/CLI-OFF/2026/L${Math.floor(Math.random()*900+100)}<br>
             <strong>Date:</strong> ${new Date().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })}<br>
             <span class="doc-badge">OFFICIAL AUTHORIZATION</span>
           </div>
@@ -4239,7 +4239,7 @@ function initDashboardApp() {
           </tr>
           <tr>
             <td class="label">Department:</td>
-            <td>Clinical Data Management (CDM)</td>
+            <td>Clinical Data Management</td>
             <td class="label">Date of Joining (DOJ):</td>
             <td><strong style="color:#2563eb;">${doj}</strong></td>
           </tr>
@@ -4298,7 +4298,7 @@ function initDashboardApp() {
           <div class="sign-block">
             <div class="sign-line"></div>
             <div class="sign-label">Authorized Signatory</div>
-            <div class="sign-sub">Director — Talent Acquisition, Bioforum CDM</div>
+            <div class="sign-sub">Director — Talent Acquisition, Bioforum Clinical</div>
           </div>
           <div class="sign-block">
             <div class="sign-line"></div>
@@ -4455,7 +4455,7 @@ function initDashboardApp() {
           <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:14px;border-bottom:1px solid rgba(79,70,229,0.20);padding-bottom:14px;margin-bottom:14px;">
             <div>
               <div style="font-size:0.75rem;font-weight:800;color:#4f46e5;text-transform:uppercase;letter-spacing:1px;">Bioforum Talent Acquisition · Executive Operations Briefing</div>
-              <h2 style="font-size:1.35rem;font-weight:900;margin:4px 0;color:var(--text-primary);">Clinical Data Management (CDM) Campaign Intelligence Dossier</h2>
+              <h2 style="font-size:1.35rem;font-weight:900;margin:4px 0;color:var(--text-primary);">Clinical Data Management Campaign Intelligence Dossier</h2>
               <p style="font-size:0.74rem;color:var(--text-muted);margin:0;">Target Completion: 15-Sep-2026 | Current Runway: 19 Days Remaining | Delivery Outlook: 3 Days Ahead of Schedule</p>
             </div>
             <div style="text-align:right;">
@@ -4624,7 +4624,7 @@ function initDashboardApp() {
       <!DOCTYPE html>
       <html>
       <head>
-        <title>Bioforum CDM — C-Suite Executive Briefing Report</title>
+        <title>Bioforum Clinical — C-Suite Executive Briefing Report</title>
         <style>
           @page { size: A4 portrait; margin: 16mm 14mm; }
           body {
@@ -4662,7 +4662,7 @@ function initDashboardApp() {
         <div class="header">
           <div>
             <div class="title">BIOFORUM TALENT ACQUISITION</div>
-            <div class="sub">Clinical Data Management (CDM) Executive Campaign Report</div>
+            <div class="sub">Clinical Data Management Executive Campaign Report</div>
           </div>
           <div style="text-align:right;font-size:11px;color:#64748b;">
             <strong>Ref:</strong> BFM/EXEC-DOSSIER/2026<br>
@@ -4911,7 +4911,7 @@ function initDashboardApp() {
     trigger.addEventListener('click', () => {
       panel.classList.toggle('open');
       if (panel.classList.contains('open') && log && log.children.length === 0) {
-        appendBotMessage("👋 **Welcome to your Ri8Fit AI Talent Assistant.**\n\nI am your dedicated intelligence consultant for this clinical recruitment campaign. I have indexed all **122 candidates**, **9 specialist CDM roles**, compensation packages, interview histories, and onboarding milestones.\n\n*Ask me any question in detail—whether about candidates, compensation ROI, notice periods, SLA velocity, or platform capabilities—and I will provide a clear, comprehensive answer.*");
+        appendBotMessage("👋 **Welcome to your Ri8Fit AI Talent Assistant.**\n\nI am your dedicated intelligence consultant for this clinical recruitment campaign. I have indexed all **122 candidates**, **9 specialist clinical roles**, compensation packages, interview histories, and onboarding milestones.\n\n*Ask me any question in detail—whether about candidates, compensation ROI, notice periods, SLA velocity, or platform capabilities—and I will provide a clear, comprehensive answer.*");
       }
       if (panel.classList.contains('open') && input) {
         setTimeout(() => input.focus(), 100);
@@ -5019,7 +5019,7 @@ function initDashboardApp() {
         const joined = masterData.filter(d => (d.onboard || '').toLowerCase() === 'onboarded' || (d.doj || '').includes('08')).length;
         const yto = masterData.filter(d => (d.onboard || '').toLowerCase() === 'yto').length;
 
-        return `📊 **Clinical Data Management (CDM) Campaign Executive Briefing:**\n\n**1. Sourcing & Screening Funnel:**\n• **Total Sourced Talent:** **${total} Candidates** indexed across 9 specialist clinical streams.\n• **Technical Level-1 Screened:** **${l1} Candidates** (41.8% screening clearance, avg 4.2 days TAT).\n• **Client Level-2 Cleared:** **${l2} Candidates** (23.8% total pool yield, 78.4% L2 pass rate, avg 5.8 days TAT).\n\n**2. Offers & Goal Delivery Status:**\n• **Confirmed Offers Released:** **${offers} Offers** accepted / issued.\n• **Offer Shortlist (Ready for Immediate Release):** **${shortlisted} Candidates** cleared and awaiting appointment letters.\n• **Requisition Delivery Target:** **September 15, 2026** (Projected finish: **September 12, 2026** — tracking **3 days ahead of schedule**).\n• **Pipeline Coverage:** **100% pipeline health** across all 9 roles.\n\n**3. Cohort Onboarding & Operational Readiness:**\n• **Active Employees (Joined 03-Aug):** **${joined} Joined** (100% deployed in production).\n• **Yet to Onboard (YTO):** **${yto} Candidates** staged across 3 arrival cohorts (Sep 1, Oct 1, Nov 4).\n\n**4. Financial & Budget ROI:**\n• **Total Committed Annual Payroll:** **₹2.43 Crores** (Avg **₹12.16 LPA** per offer).\n• **Average Salary Hike:** **+34.2%** against previous salary bases.\n• **Agency Placement Fee Savings:** **₹20.25 Lakhs** saved in direct headhunter cost avoidance.`;
+        return `📊 **Clinical Data Management Campaign Executive Briefing:**\n\n**1. Sourcing & Screening Funnel:**\n• **Total Sourced Talent:** **${total} Candidates** indexed across 9 specialist clinical streams.\n• **Technical Level-1 Screened:** **${l1} Candidates** (41.8% screening clearance, avg 4.2 days TAT).\n• **Client Level-2 Cleared:** **${l2} Candidates** (23.8% total pool yield, 78.4% L2 pass rate, avg 5.8 days TAT).\n\n**2. Offers & Goal Delivery Status:**\n• **Confirmed Offers Released:** **${offers} Offers** accepted / issued.\n• **Offer Shortlist (Ready for Immediate Release):** **${shortlisted} Candidates** cleared and awaiting appointment letters.\n• **Requisition Delivery Target:** **September 15, 2026** (Projected finish: **September 12, 2026** — tracking **3 days ahead of schedule**).\n• **Pipeline Coverage:** **100% pipeline health** across all 9 roles.\n\n**3. Cohort Onboarding & Operational Readiness:**\n• **Active Employees (Joined 03-Aug):** **${joined} Joined** (100% deployed in production).\n• **Yet to Onboard (YTO):** **${yto} Candidates** staged across 3 arrival cohorts (Sep 1, Oct 1, Nov 4).\n\n**4. Financial & Budget ROI:**\n• **Total Committed Annual Payroll:** **₹2.43 Crores** (Avg **₹12.16 LPA** per offer).\n• **Average Salary Hike:** **+34.2%** against previous salary bases.\n• **Agency Placement Fee Savings:** **₹20.25 Lakhs** saved in direct headhunter cost avoidance.`;
       }
 
       // ── 4. CANDIDATE LOOKUPS (BY S.NO OR NAME) ──
@@ -5072,7 +5072,7 @@ function initDashboardApp() {
         return `⭐ **Priority Action: 6 Shortlisted Candidates Ready for Immediate Offer Release:**\n\nThese candidates have cleared all Technical L1 and Client L2 evaluations with positive recommendations and are pending formal appointment letter generation:\n\n${listStr}\n\n**Recommendation:** Releasing formal offer letters to these 6 candidates completes 100% of the remaining campaign requisitions 3 days ahead of the September 15 deadline.`;
       }
 
-      // ── 9. ROLE BREAKDOWNS (ALL 9 SPECIALIST CDM ROLES) ──
+      // ── 9. ROLE BREAKDOWNS (ALL 9 specialist clinical roles) ──
       const rolesMap = [
         { key: 'rave programmer', name: 'RAVE Programmer', target: 6, filled: 3, shortlist: 3, sourced: 27, avgCtc: '₹14.20 LPA', desc: 'Core Medidata RAVE study build, custom functions, and migrations. 100% pipeline coverage with 3 released + 3 shortlisted.' },
         { key: 'data reviewer', name: 'Data Reviewer', target: 7, filled: 7, shortlist: 0, sourced: 23, avgCtc: '₹11.80 LPA', desc: 'Clinical data cleaning, query management, and discrepancy review. 100% target fulfilled with 7 confirmed releases.' },
@@ -5101,9 +5101,9 @@ function initDashboardApp() {
         return "⚠️ **Campaign Risk & Bottleneck Diagnostic:**\n\n**Overall Health:** The campaign is currently **3 days ahead of schedule**, targeting full closure by September 12 (against the September 15 deadline). However, two specific areas require management attention:\n\n1. **Long Notice Periods (60–90 Days):**\n• 59 candidates in the pool have 60-to-90 day notices. If November joiners receive counter-offers during their notice periods, replacements would delay Q4 study ramp-up.\n• *Mitigation:* We have structured weekly engagement and pre-boarding check-ins to lock candidate commitment.\n\n2. **Technical Rejection Hotspots:**\n• 16 candidates were rejected at Client L2 primarily due to gaps in complex Rave Custom Functions (C# programming) vs standard study build.\n• *Mitigation:* Screening criteria have been updated so L1 technical filters now test custom functions prior to client submission.";
       }
 
-      // ── 12. WHAT IS CDM? (CLINICAL DATA MANAGEMENT) ──
+      // ── 12. WHAT IS CLINICAL DATA MANAGEMENT? ──
       if (q.includes('what is cdm') || q.includes('clinical data management')) {
-        return "🔬 **What is Clinical Data Management (CDM)?**\n\n**Clinical Data Management (CDM)** is a critical discipline in clinical research and drug development that ensures clinical trial data collected from trial sites is high-quality, reliable, complete, and compliant with international regulatory standards (such as FDA 21 CFR Part 11 and ICH-GCP).\n\n**Key Responsibilities in CDM:**\n• **CRF / eCRF Design:** Building Electronic Case Report Forms in EDC systems like Medidata RAVE and Veeva Vault.\n• **Data Validation & Discrepancy Management:** Formulating edit checks to detect anomalies, missing values, and protocol deviations.\n• **Medical Coding:** Standardizing adverse events and medications using MedDRA and WHO-Drug dictionaries.\n• **Database Lock:** Securing finalized, verified trial data for statistical analysis and regulatory submission to regulatory authorities (FDA, EMA, PMDA).";
+        return "🔬 **What is Clinical Data Management?**\n\n**Clinical Data Management** is a critical discipline in clinical research and drug development that ensures clinical trial data collected from trial sites is high-quality, reliable, complete, and compliant with international regulatory standards (such as FDA 21 CFR Part 11 and ICH-GCP).\n\n**Key Responsibilities:**\n• **CRF / eCRF Design:** Building Electronic Case Report Forms in EDC systems like Medidata RAVE and Veeva Vault.\n• **Data Validation & Discrepancy Management:** Formulating edit checks to detect anomalies, missing values, and protocol deviations.\n• **Medical Coding:** Standardizing adverse events and medications using MedDRA and WHO-Drug dictionaries.\n• **Database Lock:** Securing finalized, verified trial data for statistical analysis and regulatory submission to regulatory authorities (FDA, EMA, PMDA).";
       }
 
       // ── 13. EXPORTING REPORTS & DATA ──
