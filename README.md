@@ -53,7 +53,7 @@ pie title Candidate Distribution Across 9 Clinical Roles (122 Total)
 
 ### Core Clinical Systems Tracked:
 * **Medidata RAVE EDC:** Core Configuration, Architect, Custom Functions, RAVE Safety Gateway.
-* **Veeva Vault CDMS:** Study Build, Form Rules, Dynamic Data Entry, Protocol Amendments.
+* **Veeva Vault EDC / Clinical Systems:** Study Build, Form Rules, Dynamic Data Entry, Protocol Amendments.
 * **Oracle InForm / DMW:** Data Management Workbench, Discrepancy Management.
 * **Medical Coding Dictionaries:** MedDRA, WHO-Drug, WHODD Coding and Upversioning.
 * **SAS SDTM / CDISC:** Protocol specifications, annotated CRFs (aCRF), edit check programming.
@@ -258,7 +258,7 @@ Ri8Fit features an instant, 0-millisecond toggle between **Clinical Dark Mode** 
 
 ### Directory Structure:
 ```
-cdm_recruitment_dashboard/
+talent_intelligence_dashboard/
 ├── index_source.html       # Primary source HTML with modular structure
 ├── styles.css              # Unified responsive design system
 ├── app.js                  # Analytics engine, charts, modals, & AI assistant
