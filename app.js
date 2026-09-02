@@ -3378,10 +3378,10 @@ function initDashboardApp() {
                   <th style="text-align:left;padding:6px;">Candidate Name</th>
                   <th style="text-align:left;padding:6px;">Role</th>
                   <th style="text-align:center;padding:6px;">Notice / DOJ</th>
-                  <th style="text-align:center;padding:6px;">Offered CTC</th>
+                  <th style="text-align:center;padding:6px;">Offered Package</th>
                   <th style="text-align:center;padding:6px;">Retention Confidence</th>
                   <th style="text-align:left;padding:6px;">Primary Risk Driver</th>
-                  <th style="text-align:right;padding:6px;">Recommended Intervention</th>
+                  <th style="text-align:left;padding:6px;">Recommended Intervention</th>
                 </tr>
               </thead>
               <tbody>
@@ -3390,21 +3390,27 @@ function initDashboardApp() {
                   if (c.riskLevel === 'med') badge = '<span class="badge-tag" style="background:rgba(245,158,11,0.15);color:#d97706;border:1px solid rgba(245,158,11,0.3);">🟡 ' + c.riskScore + '% Watch</span>';
                   if (c.riskLevel === 'high') badge = '<span class="badge-tag" style="background:rgba(239,68,68,0.15);color:#dc2626;border:1px solid rgba(239,68,68,0.3);">🔴 ' + c.riskScore + '% At-Risk</span>';
 
+                  const rawNum = parseCtc(c.offeredCtcRaw);
+                  let ctcDisplay = 'Pending Release';
+                  if (rawNum > 10000) {
+                    ctcDisplay = '₹' + (rawNum / 100000).toFixed(2) + ' LPA';
+                  } else if (rawNum > 0) {
+                    ctcDisplay = '₹' + rawNum.toFixed(2) + ' LPA';
+                  }
+
                   return `
                     <tr style="border-bottom:1px solid var(--border-subtle);">
                       <td style="padding:6px;">
-                        <strong>#${c.sno} · ${c.name}</strong>
+                        <strong style="cursor:pointer;color:var(--clr-indigo);text-decoration:underline;" onclick="window.openCandidateProfileBySno(${c.sno})" title="Click to view candidate dossier for ${c.name}">#${c.sno} · ${c.name}</strong>
                         ${c.status === 'Offered' ? '' : '<span style="font-size:0.65rem;color:#8b5cf6;margin-left:4px;">(Shortlist)</span>'}
                       </td>
-                      <td style="padding:6px;color:var(--clr-indigo);">${c.role}</td>
+                      <td style="padding:6px;color:var(--clr-indigo);font-weight:600;">${c.role}</td>
                       <td style="text-align:center;color:var(--text-secondary);">${c.noticePeriod || '30d'} · ${c.doj || '01-Sep'}</td>
-                      <td style="text-align:center;font-weight:700;">${c.offeredCtcRaw || 'Pending'}</td>
+                      <td style="text-align:center;font-weight:700;color:var(--text-primary);">${ctcDisplay}</td>
                       <td style="text-align:center;">${badge}</td>
-                      <td style="padding:6px;color:var(--text-muted);max-width:240px;font-size:0.70rem;">${c.factor}</td>
-                      <td style="text-align:right;padding:6px;">
-                        <button class="btn btn-secondary" onclick="window.openCandidateProfileBySno(${c.sno})" style="font-size:0.68rem;padding:3px 8px;" title="${c.action}">
-                          Inspect Dossier
-                        </button>
+                      <td style="padding:6px;color:var(--text-muted);max-width:220px;font-size:0.70rem;">${c.factor}</td>
+                      <td style="text-align:left;padding:6px;font-size:0.71rem;color:var(--text-primary);">
+                        <span style="display:inline-block;padding:2px 8px;border-radius:4px;background:var(--bg-surface);border:1px solid var(--border-subtle);">${c.action}</span>
                       </td>
                     </tr>
                   `;
