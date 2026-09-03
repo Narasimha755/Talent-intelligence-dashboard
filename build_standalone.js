@@ -52,6 +52,15 @@ standalone = standalone.replace(/<script\s+src="app\.js[^"]*"><\/script>/gi, () 
 fs.writeFileSync(path.join(dir, 'index_standalone.html'), standalone, 'utf8');
 console.log('✅ index_standalone.html generated successfully! File size:', (standalone.length / 1024).toFixed(1), 'KB');
 
-// Also write standalone content directly to index.html so GitHub Pages root URL is 100% self-contained!
-fs.writeFileSync(path.join(dir, 'index.html'), standalone, 'utf8');
-console.log('✅ index.html generated successfully as fully self-contained bundle! File size:', (standalone.length / 1024).toFixed(1), 'KB');
+// Generate optimized, high-performance modular index.html (80 KB) for ultra-fast mobile & desktop loading
+// Loads cacheable styles.css, data.js, app.js in parallel with browser caching enabled
+let modularHtml = html;
+modularHtml = modularHtml.replace('<meta name="viewport"', `${noCacheMeta}\n  <meta name="viewport"`);
+// Add cache-busting timestamp query to JS/CSS references
+const cacheBuster = '?v=' + Date.now();
+modularHtml = modularHtml.replace('href="styles.css"', 'href="styles.css' + cacheBuster + '"');
+modularHtml = modularHtml.replace('src="data.js?v=5.0"', 'src="data.js' + cacheBuster + '"');
+modularHtml = modularHtml.replace('src="app.js?v=5.0"', 'src="app.js' + cacheBuster + '"');
+
+fs.writeFileSync(path.join(dir, 'index.html'), modularHtml, 'utf8');
+console.log('✅ index.html generated successfully as high-performance modular build! File size:', (modularHtml.length / 1024).toFixed(1), 'KB');

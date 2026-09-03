@@ -5309,3 +5309,55 @@ html, body, .app-layout, .topbar, .kpi-box, .chart-card, .table-card, .btn, .sea
 .theme-fade-overlay {
   display: none !important;
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   HIGH-PERFORMANCE MOBILE & TABLET ACCELERATION RULES (60FPS SCROLL)
+══════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* Disable heavy particle canvas on mobile to free 100% CPU/GPU fillrate */
+  #bgParticleCanvas {
+    display: none !important;
+  }
+
+  /* Disable expensive backdrop-filter blur on mobile to stop compositing lag */
+  .topbar,
+  .exec-tools-bar,
+  .dashboard-header,
+  .chart-card,
+  .kpi-card,
+  .studio-modal-overlay,
+  .studio-modal-window,
+  .dossier-modal-window,
+  .ai-chatbot-panel {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* Hardware-accelerated smooth momentum scrolling */
+  html, body {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    overscroll-behavior-y: none;
+  }
+
+  /* Layout containment for cards prevents document-wide reflows */
+  .chart-card,
+  .kpi-card,
+  .directory-card {
+    contain: content;
+    transform: translateZ(0);
+  }
+
+  /* Ensure smooth horizontal scroll in tables & toolbars */
+  .executive-tools-bar,
+  .directory-table-container,
+  .table-responsive {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  /* Reduce animation overhead on mobile */
+  *, *::before, *::after {
+    transition-duration: 0.15s !important;
+  }
+}

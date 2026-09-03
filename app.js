@@ -208,26 +208,40 @@ function initDashboardApp() {
   (function initParticleCanvas() {
     const canvas = document.getElementById('bgParticleCanvas');
     if (!canvas) return;
+
+    // Mobile & Touch optimization: disable heavy particle canvas on mobile (<=768px or touch)
+    // This completely prevents 60fps fillrate saturation and GPU throttling on mobile phones
+    const isMobile = window.innerWidth <= 768 || ('ontouchstart' in window && window.innerWidth < 1024);
+    if (isMobile) {
+      canvas.style.display = 'none';
+      return;
+    }
+
     const ctx = canvas.getContext('2d');
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
     window.addEventListener('resize', () => {
+      if (window.innerWidth <= 768) {
+        canvas.style.display = 'none';
+        return;
+      }
+      canvas.style.display = 'block';
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
-    });
+    }, { passive: true });
 
     let mouse = { x: null, y: null };
     window.addEventListener('mousemove', e => {
       mouse.x = e.clientX;
       mouse.y = e.clientY;
-    });
+    }, { passive: true });
     window.addEventListener('mouseleave', () => {
       mouse.x = null;
       mouse.y = null;
-    });
+    }, { passive: true });
 
-    const count = Math.min(65, Math.floor(width / 26));
+    const count = Math.min(40, Math.floor(width / 32));
     const particles = Array.from({ length: count }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
@@ -241,6 +255,7 @@ function initDashboardApp() {
     let lastTime = performance.now();
 
     function loop(now) {
+      if (window.innerWidth <= 768) return; // Stop loop on mobile
       const dt = Math.min((now - lastTime) / 16.666, 2.0) || 1.0;
       lastTime = now;
 
@@ -302,16 +317,21 @@ function initDashboardApp() {
      2. DYNAMIC MOUSE SPOTLIGHT
   ══════════════════════════════════════════ */
   function initSpotlight() {
+    // Only attach on fine-pointer desktop devices with true hover support
+    // Avoids calling getBoundingClientRect() on touchmove which causes mobile scroll jank
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      return;
+    }
     document.querySelectorAll('[data-tilt], .chart-card, .kpi-box, .directory-card').forEach(card => {
       card.addEventListener('mousemove', e => {
         const rect = card.getBoundingClientRect();
         card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
         card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
-      });
+      }, { passive: true });
       card.addEventListener('mouseleave', () => {
         card.style.removeProperty('--mouse-x');
         card.style.removeProperty('--mouse-y');
-      });
+      }, { passive: true });
     });
   }
   initSpotlight();
@@ -5169,27 +5189,30 @@ function initDashboardApp() {
   renderAllCharts();
   renderDirectoryTable();
 
-  setTimeout(() => {
-    renderAllCharts();
-    window.dispatchEvent(new Event('resize'));
-  }, 50);
-
-  setTimeout(() => {
-    renderAllCharts();
-  }, 300);
+  // Single clean requestAnimationFrame check if canvas layout needed an extra tick
+  requestAnimationFrame(() => {
+    const testCanvas = document.getElementById('dashRoleCanvas');
+    if (testCanvas && testCanvas.clientWidth > 0 && !dashCharts.role) {
+      renderAllCharts();
+    }
+  });
 }
 
-// Guarantee execution whether script runs before or after DOMContentLoaded
+// Guarantee clean single execution whether script runs before or after DOMContentLoaded
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initDashboardApp);
 } else {
   initDashboardApp();
 }
 
-window.addEventListener('load', () => {
-  if (typeof window.renderAllCharts === 'function') {
-    window.renderAllCharts();
-  }
-  window.dispatchEvent(new Event('resize'));
-});
+// Debounced window resize handler (prevents chart churn when mobile address bars hide/show)
+let globalResizeDebounce = null;
+window.addEventListener('resize', () => {
+  if (globalResizeDebounce) clearTimeout(globalResizeDebounce);
+  globalResizeDebounce = setTimeout(() => {
+    if (typeof window.renderAllCharts === 'function') {
+      window.renderAllCharts();
+    }
+  }, 180);
+}, { passive: true });
 
